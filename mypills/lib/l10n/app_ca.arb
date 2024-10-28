@@ -1,0 +1,21 @@
+{
+  "@@locale": "ca",
+
+  "appTitle": "Les Pastis",
+
+  "initializing": "Iniciant...",
+
+  "loadingParameters": "Carregant paràmetres...",
+
+  "settingConfiguration": "Establint la configuració...",  
+
+  "requiredPermissions": "Verificant els permissos necessaris...",
+
+  "failedPermissions": "No s'han concedit els permissos necessaris",
+
+  "informationLoaded": "Preparat!",
+
+  "helloWorld": "Hola mon!",
+
+  "hereWeAre": "Aquí hi som!"
+}

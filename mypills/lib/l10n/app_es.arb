@@ -1,0 +1,21 @@
+{
+  "@@locale": "es",
+
+  "appTitle": "Las Pastis",
+
+  "initializing": "Iniciando...",
+
+  "loadingParameters": "Cargando parámetros...",
+
+  "settingConfiguration": "Estableciendo la configuración...",
+
+  "requiredPermissions": "Verificando los permisos necesarios...",
+
+  "failedPermissions": "No se han concedido los permisos necesarios",
+
+  "informationLoaded": "Listo!",
+
+  "helloWorld": "¡Hola mundo!",
+
+  "hereWeAre": "¡Aquí estamos!"
+}

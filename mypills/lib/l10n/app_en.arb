@@ -1,0 +1,49 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "My Pills",
+  "@appTitle": {
+    "description": "Application title"
+  },
+
+  "initializing": "Initializing...",
+  "@initializing": {
+    "description": "Progress title"
+  },
+
+  "loadingParameters": "Loading parameters...",
+  "@loadingParameters": {
+    "description": "Progress: parameters"
+  },
+
+  "settingConfiguration": "Setting configuration...",
+  "@settingConfiguration": {
+    "description": "Progress: settings"
+  },
+
+  "requiredPermissions": "Checking the required permissions...",
+  "@requiredPermissions": {
+    "description": "Progress: permissions"
+  },
+
+  "failedPermissions": "Required permissions have not been granted",
+  "@failedPermissions": {
+    "description": "Progress fail: required permissions not granted"
+  },
+
+  
+  "informationLoaded": "Ready!",
+  "@informationLoaded": {
+    "description": "Last progress message"
+  },
+
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "hereWeAre": "Here we are!",
+  "@hereWeAre": {
+    "description": "Programmer work in process"
+  }
+
+}
