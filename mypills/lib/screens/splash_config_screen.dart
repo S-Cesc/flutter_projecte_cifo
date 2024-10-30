@@ -91,6 +91,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     // Request multiple permissions at once.
     Map<Permission, PermissionStatus> statuses = await [
       Permission.scheduleExactAlarm,
+      Permission.notification,
     ].request();
     developer.log("Permission statuses: ${statuses.toString()}");
     PermissionStatus tmpResult = statuses.values.reduce((result, st) {
@@ -126,7 +127,6 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     changeStatus(AppLocalizations.of(context)!.settingConfiguration);
     initializePort();
     AndroidAlarmManager.initialize();
-
     /* permissions */
     if (!mounted) return;
     changeStatus(AppLocalizations.of(context)!.requiredPermissions);
@@ -145,5 +145,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
           MaterialPageRoute<MainConfigScreen>(
               builder: (context) => const MainConfigScreen()));
     }
+    /* */
+    
   }
 }

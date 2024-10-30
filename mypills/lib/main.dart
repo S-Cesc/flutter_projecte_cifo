@@ -13,10 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-//import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 // Project files
-import '../l10n/fallback_localization_delegate.dart';
+//import '../l10n/fallback_localization_delegate.dart';
 import 'providers/preferences.dart';
 import 'screens/splash_config_screen.dart';
 
@@ -55,9 +54,10 @@ class MainApp extends StatelessWidget {
         supportedLocales: const [Locale('es'), Locale('ca'), Locale('en')],
         localizationsDelegates: [
           AppLocalizations.delegate,
-          FallbackLocalizationDelegate(),
+          //FallbackLocalizationDelegate(),
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
+          //GlobalCupertinoLocalizations.delegate,
         ],
         onGenerateTitle: (context) {
           return AppLocalizations.of(context)!.appTitle;
