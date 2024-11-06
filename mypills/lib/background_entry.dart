@@ -37,10 +37,20 @@ class BackgroundEntry {
       volume: 1.0,
     );
 
-    // TODO Establir ForegroundEntryHelper callback per rebre dades
+    // TODO ForegroundEntryHelper callback per rebre dades
     // des de sendDataToMain
     FlutterForegroundTask.addTaskDataCallback((Object obj) {
       //aquesta funció per retardar l'alarma
+      if (obj is String) {
+        try {
+          final jsonMessage = jsonDecode(obj);
+          developer.log('Message to background: $jsonMessage',
+              level: Level.INFO.value);
+        } catch (e) {
+          developer.log('Error in message to background: ${e.toString()}',
+              level: Level.SEVERE.value);
+        }
+      }
     });
 
     /*
@@ -53,37 +63,6 @@ class BackgroundEntry {
     // This will be null if we're running in the background.
     uiSendPort ??= IsolateNameServer.lookupPortByName(mainIsolateName);
     uiSendPort?.send(null);
-  }
-
-  static void _handleCommandsToIsolate(
-    ReceivePort receivePort,
-    SendPort sendPort,
-  ) {
-    receivePort.listen((message) {
-      if (message is String) {
-        if (message == 'shutdown') {
-          receivePort.close();
-          return;
-        } else {
-          try {
-            final jsonMessage = jsonDecode(message);
-            developer.log('Message to background: $jsonMessage',
-                level: Level.INFO.value);
-          } catch (e) {
-            // TODO
-          }
-        }
-      }
-      /*
-      final (int id, String jsonText) = message as (int, String);
-      try {
-        final jsonData = jsonDecode(jsonText);
-        sendPort.send((id, jsonData));
-      } catch (e) {
-        sendPort.send((id, RemoteError(e.toString(), '')));
-      }
-      */
-    });
   }
 
   @pragma('vm:entry-point')
