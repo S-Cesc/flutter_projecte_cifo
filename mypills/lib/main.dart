@@ -10,17 +10,16 @@ import 'dart:ui' show IsolateNameServer;
 
 // Flutter
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Project files
-//import '../l10n/fallback_localization_delegate.dart';
-import 'providers/preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'screens/splash_config_screen.dart';
+import 'screens/splash_alarm_screen.dart';
 
 /// The name associated with the UI isolate's [SendPort].
-const String isolateName = 'myPillsConfig';
+const String mainIsolateName = 'myPillsConfig';
+const String alarmPortName = "$mainIsolateName/isolateComPort";
+final int isolateId = Isolate.current.hashCode;
 
 /// A port used to communicate from a background isolate to the UI isolate.
 ReceivePort port = ReceivePort();
@@ -33,7 +32,7 @@ Future<void> main() async {
 void initializePort() {
   IsolateNameServer.registerPortWithName(
     port.sendPort,
-    isolateName,
+    alarmPortName,
   );
 }
 
@@ -42,27 +41,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Preferences(),
-      child: MaterialApp(
-        /*
+    return MaterialApp(
+      /*
         theme: ThemeData(
             fontFamily: GoogleFonts.montserrat().fontFamily,
             scaffoldBackgroundColor: AppStyles.babyPowder),
         */
-        home: const SplashConfigScreen(),
-        supportedLocales: const [Locale('es'), Locale('ca'), Locale('en')],
-        localizationsDelegates: [
-          AppLocalizations.delegate,
-          //FallbackLocalizationDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          //GlobalCupertinoLocalizations.delegate,
-        ],
-        onGenerateTitle: (context) {
-          return AppLocalizations.of(context)!.appTitle;
-        },
-      ),
+      routes: {
+        '/config': (context) => const SplashConfigScreen(),
+        '/alarm': (context) => const SplashAlarmScreen(),
+      },
+      initialRoute: '/config',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      onGenerateTitle: (context) {
+        return AppLocalizations.of(context)!.appTitle;
+      },
     );
   }
 }

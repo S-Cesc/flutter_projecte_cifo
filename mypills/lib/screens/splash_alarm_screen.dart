@@ -2,24 +2,23 @@
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Dart base
+import 'dart:io';
 import 'dart:async' show unawaited;
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../providers/preferences.dart';
-import '../main.dart' show initializePort;
-import './main_config_screen.dart';
+import './main_alarm_screen.dart';
 
-
-class SplashAltEntryScreen extends StatefulWidget {
-  const SplashAltEntryScreen({super.key});
+class SplashAlarmScreen extends StatefulWidget {
+  const SplashAlarmScreen({super.key});
 
   @override
-  State<SplashAltEntryScreen> createState() => _SplashAltEntryScreenState();
+  State<SplashAlarmScreen> createState() => _SplashAlarmScreenState();
 }
 
-class _SplashAltEntryScreenState extends State<SplashAltEntryScreen> {
+class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
   String status = "";
 
   @override
@@ -34,6 +33,10 @@ class _SplashAltEntryScreenState extends State<SplashAltEntryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Take the pills'),
+        elevation: 4,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -50,31 +53,30 @@ class _SplashAltEntryScreenState extends State<SplashAltEntryScreen> {
     );
   }
 
-  // TODO
-  
   Future<void> _init() async {
     Preferences preferences = Preferences();
-    /* missatge inicial */
-    changeStatus(AppLocalizations.of(context)!.initializing);
-    await Future.delayed(const Duration(milliseconds: 700), () => null);
-    developer.log('Alarm fired!', level: Level.CONFIG.value);
-    /* loading parameters */
-    if (!mounted) return;
-    changeStatus(AppLocalizations.of(context)!.loadingParameters);
-    await preferences.init();
-    /* setting configuration */
-    if (!mounted) return;
-    changeStatus(AppLocalizations.of(context)!.settingConfiguration);
-    initializePort();
+    if (mounted) {
+      changeStatus(AppLocalizations.of(context)!.loadingParameters);
+      developer.log('Splash screen: parameters', level: Level.FINER.value);
+      await preferences.init();
+    }
     /* missatge final */
-    if (!mounted) return;
-    changeStatus(AppLocalizations.of(context)!.informationLoaded);
+    if (mounted) {
+      changeStatus(AppLocalizations.of(context)!.informationLoaded);
+    }
     /* inici de l'app */
-    if (!mounted) return;
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute<MainConfigScreen>(
-            builder: (context) => const MainConfigScreen()));
+    if (mounted) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<MainAlarmScreen>(
+              builder: (context) => const MainAlarmScreen()));
+    }
+    if (!mounted) {
+      developer.log("Non mounted context. Widget end",
+          level: Level.SEVERE.value);
+      developer.debugger();
+      exit(1);
+    }
   }
 
   void changeStatus(String st) {

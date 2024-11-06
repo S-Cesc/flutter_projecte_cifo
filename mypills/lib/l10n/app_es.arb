@@ -11,6 +11,8 @@
 
   "requiredPermissions": "Verificando los permisos necesarios...",
 
+  "initializingServices": "Iniciando servicios...",
+
   "failedPermissions": "No se han concedido los permisos necesarios",
 
   "informationLoaded": "Listo!",

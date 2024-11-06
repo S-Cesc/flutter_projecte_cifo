@@ -1,23 +1,35 @@
 // logging and debugging
 import 'dart:developer' as developer;
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
+import 'dart:convert';
 import 'dart:isolate';
 import 'dart:ui' show IsolateNameServer;
 // Flutter
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 // Project files
-import '../main.dart' show isolateName;
+import '../main.dart' show mainIsolateName;
+import 'services/foreground_entry_helper.dart';
 
-/* static */ class BackgroundEntry {
+/* ONLY static MEMBERS */
+class BackgroundEntry {
+  static const String backgroundIsolateName = 'myPillsAlarm';
+  static final int isolateId = Isolate.current.hashCode;
   static const id = 7;
   static SendPort? uiSendPort;
+  static SendPort? foregroundSendPort;
 
   // The callback for our alarm
   @pragma('vm:entry-point')
   static Future<void> callback(int alarmId) async {
     developer.log('Alarm $alarmId fired!', level: Level.CONFIG.value);
+    developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+        level: Level.INFO.value);
+
+    ForegroundEntryHelper.initService();
+    await ForegroundEntryHelper.startService();
 
     FlutterRingtonePlayer.playAlarm(
       looping: true,
@@ -25,7 +37,11 @@ import '../main.dart' show isolateName;
       volume: 1.0,
     );
 
-    //showNotification();
+    // TODO Establir ForegroundEntryHelper callback per rebre dades
+    // des de sendDataToMain
+    FlutterForegroundTask.addTaskDataCallback((Object obj) {
+      //aquesta funció per retardar l'alarma
+    });
 
     /*
     // Get the previous cached count and increment it.
@@ -35,50 +51,47 @@ import '../main.dart' show isolateName;
   */
 
     // This will be null if we're running in the background.
-    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+    uiSendPort ??= IsolateNameServer.lookupPortByName(mainIsolateName);
     uiSendPort?.send(null);
   }
 
+  static void _handleCommandsToIsolate(
+    ReceivePort receivePort,
+    SendPort sendPort,
+  ) {
+    receivePort.listen((message) {
+      if (message is String) {
+        if (message == 'shutdown') {
+          receivePort.close();
+          return;
+        } else {
+          try {
+            final jsonMessage = jsonDecode(message);
+            developer.log('Message to background: $jsonMessage',
+                level: Level.INFO.value);
+          } catch (e) {
+            // TODO
+          }
+        }
+      }
+      /*
+      final (int id, String jsonText) = message as (int, String);
+      try {
+        final jsonData = jsonDecode(jsonText);
+        sendPort.send((id, jsonData));
+      } catch (e) {
+        sendPort.send((id, RemoteError(e.toString(), '')));
+      }
+      */
+    });
+  }
 
   @pragma('vm:entry-point')
   static Future<void> stopcallback(int alarmId) async {
-    developer.log('Alarm stoped!');
-    AndroidAlarmManager.initialize();
-    AndroidAlarmManager.cancel(1);
+    final cancelResult = await AndroidAlarmManager.cancel(alarmId);
+    developer.log('Alarm $alarmId stoped! ($cancelResult)',
+        level: Level.CONFIG.value);
     FlutterRingtonePlayer.stop();
+    await ForegroundEntryHelper.stopService();
   }
-
-/*
-  static void showNotification() async {
-    // Initialize the notification plugin
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    // Initialize settings for Android
-    var android = AndroidInitializationSettings('app_icon');
-    var initializationSettings = InitializationSettings(android: android);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    // Define the notification details
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      'your_channel_description',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
-    var platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    // Show the notification
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Reminder',
-      'It\'s time for your task!',
-      platformChannelSpecifics,
-      payload: 'item x',
-    );
-  }
-  */
 }

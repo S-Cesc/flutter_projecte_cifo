@@ -10,6 +10,7 @@ dependencies:
   android_alarm_manager_plus: ^4.0.4
   flutter:
     sdk: flutter
+  flutter_foreground_task: ^8.13.0
   flutter_localizations:
     sdk: flutter
   flutter_ringtone_player: ^4.0.0+3

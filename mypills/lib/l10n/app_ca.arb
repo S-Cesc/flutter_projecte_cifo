@@ -11,6 +11,8 @@
 
   "requiredPermissions": "Verificant els permissos necessaris...",
 
+  "initializingServices": "Iniciant serveis...",
+
   "failedPermissions": "No s'han concedit els permissos necessaris",
 
   "informationLoaded": "Preparat!",
