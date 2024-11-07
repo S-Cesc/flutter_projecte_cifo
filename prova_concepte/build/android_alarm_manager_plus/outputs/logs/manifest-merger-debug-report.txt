@@ -1,0 +1,15 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml:1:1-69
+INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml:1:1-69
+	package
+		ADDED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml:1:11-66
+		INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml
+uses-sdk
+INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml
+INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/cesc/.pub-cache/hosted/pub.dev/android_alarm_manager_plus-4.0.4/android/src/main/AndroidManifest.xml
