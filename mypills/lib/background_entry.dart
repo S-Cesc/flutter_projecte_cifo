@@ -97,18 +97,30 @@ class BackgroundEntry {
   @pragma('vm:entry-point')
   static Future<void> stopcallback(int alarmId) async {
     developer.log('Alarm required to stop', level: Level.FINE.value);
-    await FlutterRingtonePlayer.stop();
-    final cancelResult = await AndroidAlarmManager.cancel(alarmId);
-    developer.log('Alarm $alarmId stoped! ($cancelResult)',
-        level: Level.CONFIG.value);
-    // TODO check?? no other alarms are firing
-    // It is a must simultaneus alarms joined in single alarm
-    while (await FlutterForegroundTask.isRunningService) {
-      ServiceRequestResult result = await ForegroundEntryHelper.stopService();
-      while (!result.success) {
-        developer.log('Repeat stop service', level: Level.FINE.value);
-        result = await ForegroundEntryHelper.stopService();
+    // classic doEvents per permetre escriptura del missatge log
+    await Future.delayed(const Duration(microseconds: 0), () => null);
+    try {
+      final cancelResult = await AndroidAlarmManager.cancel(alarmId);
+      developer.log('Alarm $alarmId stoped! ($cancelResult)',
+          level: Level.CONFIG.value);
+      // TODO check?? no other alarms are firing
+      // It is a must simultaneus alarms joined in single alarm
+      while (await FlutterForegroundTask.isRunningService) {
+        developer.log('Stop foreground service', level: Level.FINE.value);
+        ServiceRequestResult result = await ForegroundEntryHelper.stopService();
+        while (!result.success) {
+          developer.log('Repeat stop foreground service',
+              level: Level.FINE.value);
+          await Future.delayed(const Duration(milliseconds: 10), () async {
+            result = await ForegroundEntryHelper.stopService();
+          });
+        }
       }
+      await FlutterRingtonePlayer.stop();
+    } catch (e) {
+      developer.log('ERROR!');
     }
+    // little wait time for everybody to stop...
+    await Future.delayed(const Duration(milliseconds: 150), () => null);
   }
 }
