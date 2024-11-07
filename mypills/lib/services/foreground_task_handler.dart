@@ -1,4 +1,5 @@
 // logging and debugging
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Dart base
@@ -11,6 +12,23 @@ class ForegroundTaskHandler extends TaskHandler {
   static const String foregroundIsolateName = 'myPillsService';
   static final int isolateId = Isolate.current.hashCode;
 
+  // TODO FlutterForegroundTask.updateService(notificationText: message);
+
+  // Launch d'App at '/alarm' point
+  Future<void> _launchApp() async {
+    developer.log('LAUNCH APP', level: Level.FINE.value);
+    FlutterForegroundTask.launchApp('/alarm');
+    bool isAppOnForeground = await FlutterForegroundTask.isAppOnForeground;
+    developer.log(
+        'APP launched is ${isAppOnForeground ? "" : "not "}on foreground',
+        level: Level.FINE.value);
+    if (isAppOnForeground) {
+      developer.log('Foreground APP', level: Level.FINE.value);
+      FlutterForegroundTask.sendDataToMain("wakeup");
+      developer.log('"wakeup" command sent', level: Level.FINE.value);
+    }
+  }
+
   // Called when the task is started.
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
@@ -18,6 +36,12 @@ class ForegroundTaskHandler extends TaskHandler {
         level: Level.CONFIG.value);
     developer.log('ISOLATE: $foregroundIsolateName, $isolateId',
         level: Level.INFO.value);
+    FlutterForegroundTask.wakeUpScreen();
+    // TODO setOnLockScreenVisibility
+    // setOnLockScreenVisibility gives "ActivityNotAttachedException"
+    // Activity is not attached to FlutterEngine
+    //FlutterForegroundTask.setOnLockScreenVisibility(true);
+    await _launchApp();
   }
 
   // Called by eventAction in [ForegroundTaskOptions].
@@ -54,7 +78,7 @@ class ForegroundTaskHandler extends TaskHandler {
   @override
   void onNotificationPressed() {
     developer.log('onNotificationPressed', level: Level.FINE.value);
-    FlutterForegroundTask.launchApp('/alarm');
+    unawaited(_launchApp());
   }
 
   // Called when the notification itself is dismissed.

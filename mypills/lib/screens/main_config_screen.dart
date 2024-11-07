@@ -1,4 +1,5 @@
 // logging and debugging
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:isolate';
 import 'package:flutter_projecte_cifo/providers/preferences.dart';
@@ -11,7 +12,7 @@ import 'package:provider/provider.dart';
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../background_entry.dart';
-import '../main.dart' show mainIsolateName;
+import '../main.dart' as main;
 
 class MainConfigScreen extends StatefulWidget {
   const MainConfigScreen({super.key});
@@ -26,6 +27,7 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
+    unawaited(main.listenAlarmPort(context));
     return ChangeNotifierProvider(
       create: (context) => Preferences(),
       child: Scaffold(
@@ -33,10 +35,11 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
         Center(
           child: ElevatedButton(
             onPressed: () async {
-              developer.log('ISOLATE: $mainIsolateName, $isolateId', level: Level.INFO.value);
+              developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
+                  level: Level.INFO.value);
               developer.log("Fire alarm button clicked!",
                   level: Level.FINER.value);
-              final time = DateTime.now().add(Duration(seconds: 7));
+              final time = DateTime.now().add(Duration(seconds: 5));
               await AndroidAlarmManager.oneShotAt(
                 time,
                 BackgroundEntry.id,
@@ -74,4 +77,11 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
           ),
     );
   }
+
+  // TODO: super.dispose només si no queden pantalles
+  // @override
+  // void dispose() {
+  //   main.dispose();
+  //   super.dispose();
+  // }
 }

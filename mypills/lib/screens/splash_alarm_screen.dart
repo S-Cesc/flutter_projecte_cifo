@@ -6,8 +6,10 @@ import 'dart:io';
 import 'dart:async' show unawaited;
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
+import '../main.dart' as main;
 import '../providers/preferences.dart';
 import './main_alarm_screen.dart';
 
@@ -58,6 +60,9 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.loadingParameters);
       developer.log('Splash screen: parameters', level: Level.FINER.value);
+      // alarm screen branch also initializes the main port (it doesn't harm)
+      main.initializePort();
+      FlutterForegroundTask.setOnLockScreenVisibility(true);
       await preferences.init();
     }
     /* missatge final */
@@ -84,4 +89,5 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
       status = st;
     });
   }
+
 }

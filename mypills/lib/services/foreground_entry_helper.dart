@@ -19,13 +19,11 @@ class ForegroundEntryHelper {
     FlutterForegroundTask.initCommunicationPort();
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
-        channelId: ForegroundTaskHandler
-            .foregroundIsolateName, // 'foreground_service',
-        channelName:
-            'MyPills foreground service notification', // 'Foreground Service Notification',
-        channelDescription: 'MyPills foreground alarm.',
+        channelId: ForegroundTaskHandler.foregroundIsolateName, // 'foreground_service',
+        channelName: 'MyPills foreground service notification', // 'Foreground Service Notification',
+        channelDescription: 'MyPills service foreground alarm',
         channelImportance: NotificationChannelImportance.HIGH,
-        priority: NotificationPriority.HIGH,
+        priority: NotificationPriority.MAX,
       ),
       iosNotificationOptions: const IOSNotificationOptions(
         showNotification: false,
@@ -50,7 +48,8 @@ class ForegroundEntryHelper {
       return FlutterForegroundTask.startService(
         serviceId: 257,
         notificationTitle: 'Take the pills!',
-        notificationText: 'You have to take the pills. Please, tap to open the app',
+        notificationText:
+            'You have to take the pills./nPlease, tap to open the app',
         // notificationIcon: NotificationIconData(
         //     resType: ResourceType.drawable,
         //     resPrefix: ResourcePrefix.ic,

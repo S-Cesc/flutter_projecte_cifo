@@ -10,7 +10,7 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
-import '../main.dart' show initializePort;
+import '../main.dart' as main;
 import './main_config_screen.dart';
 import '../providers/preferences.dart';
 
@@ -129,7 +129,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.settingConfiguration);
       developer.log('Splash screen: configuration', level: Level.FINER.value);
-      initializePort();
+      main.initializePort();
     }
     /* permissions */
     if (mounted) {
@@ -164,4 +164,5 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       exit(1);
     }
   }
+
 }
