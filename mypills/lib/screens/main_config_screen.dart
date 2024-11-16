@@ -1,18 +1,25 @@
 // logging and debugging
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'dart:isolate';
-import 'package:flutter_projecte_cifo/providers/preferences.dart';
 import 'package:logging/logging.dart' show Level;
-// // Dart base
+// Dart base
+import 'dart:isolate';
+import 'dart:io' show exit;
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_projecte_cifo/providers/config_preferences.dart';
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../background_entry.dart';
 import '../main.dart' as main;
+import '../styles/app_styles.dart';
+import '../services/background_alarm_helper.dart';
+
+//=======================================================================
 
 class MainConfigScreen extends StatefulWidget {
   const MainConfigScreen({super.key});
@@ -29,50 +36,93 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
   Widget build(BuildContext context) {
     unawaited(main.listenAlarmPort(context));
     return ChangeNotifierProvider(
-      create: (context) => Preferences(),
+      create: (context) => ConfigPreferences(),
       child: Scaffold(
+          backgroundColor: AppStyles.colors.mantis,
           body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
-                  level: Level.INFO.value);
-              developer.log("Fire alarm button clicked!",
-                  level: Level.FINER.value);
-              final time = DateTime.now().add(Duration(seconds: 5));
-              await AndroidAlarmManager.oneShotAt(
-                time,
-                BackgroundEntry.id,
-                BackgroundEntry.callback,
-                // alarmClock: true,
-                allowWhileIdle: true,
-                exact: true,
-                wakeup: true,
-                rescheduleOnReboot: true,
-              );
-            },
-            child: const Text('Fire an alarm'),
-          ),
-        ),
-        Center(
-            child: ElevatedButton(
-          onPressed: () async {
-            developer.log("Cancel alarm button clicked!",
-                level: Level.FINER.value);
-            await AndroidAlarmManager.oneShot(
-              const Duration(microseconds: 0),
-              BackgroundEntry.id,
-              BackgroundEntry.stopcallback,
-              // alarmClock: true,
-              allowWhileIdle: true,
-              rescheduleOnReboot: true,
-              exact: true,
-              wakeup: true,
-            );
-          },
-          child: const Text('Cancel the alarm'),
-        )),
-      ])
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  developer.log(
+                      'ISOLATE: ${main.mainIsolateName}, $isolateId, '
+                      '${Isolate.current.debugName}',
+                      level: Level.INFO.value);
+                  developer.log("Fire alarm button clicked!",
+                      level: Level.FINER.value);
+                  final time = DateTime.now().add(Duration(seconds: 5));
+                  await AndroidAlarmManager.oneShotAt(
+                    time,
+                    BackgroundEntry.id,
+                    BackgroundEntry.callback,
+                    alarmClock: true,
+                    allowWhileIdle: true,
+                    exact: true,
+                    wakeup: true,
+                    rescheduleOnReboot: true,
+                  );
+                },
+                child: const Text('Fire an alarm'),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  developer.log(
+                      'ISOLATE: ${main.mainIsolateName}, $isolateId, '
+                      '${Isolate.current.debugName}',
+                      level: Level.INFO.value);
+                  developer.log("Program alarm button clicked!",
+                      level: Level.FINER.value);
+                  final time = DateTime.now().add(Duration(seconds: 30));
+                  BackgroundAlarmHelper.fireAlarm(
+                    time,
+                    BackgroundEntry.id,
+                    BackgroundEntry.callback,
+                  );
+                },
+                child: const Text('Program an alarm (30")'),
+              ),
+            ),
+            Center(
+                child: ElevatedButton(
+              onPressed: () async {
+                developer.log("Cancel alarm button clicked!",
+                    level: Level.FINER.value);
+                developer.log("Cancel alarm", level: Level.INFO.value);
+                await BackgroundAlarmHelper.cancelAlarm(
+                  BackgroundEntry.id,
+                  BackgroundEntry.stopcallback,
+                );
+              },
+              child: const Text('Cancel the alarm'),
+            )),
+            if (kDebugMode)
+              Center(
+                  child: ElevatedButton(
+                onPressed: () async {
+                  developer.log("End application button clicked!",
+                      level: Level.FINER.value);
+                  developer.log("Cancel alarm", level: Level.INFO.value);
+                  await BackgroundAlarmHelper.cancelAlarm(
+                    BackgroundEntry.id,
+                    BackgroundEntry.stopcallback,
+                  );
+                  //FIXME - Application needs delay to finish gently, otherwise it restarts.
+                  // END APPLICATION
+                  // needs to be delayed to allow _cancelAlarm to start
+                  // as _cancelAlarm is fired by AlarmManager
+                  // the bug is the long delay needed
+                  await Future.delayed(const Duration(milliseconds: 7500),
+                      () async {
+                    developer.log("Pop screen", level: Level.INFO.value);
+                    await SystemNavigator.pop();
+                    developer.log("Exit application", level: Level.INFO.value);
+                    exit(0); // kDebugMode
+                  });
+                },
+                child: Text('End the application'),
+              )),
+          ])
           // Text(AppLocalizations.of(context)!.helloWorld),
           ),
     );

@@ -12,7 +12,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../main.dart' as main;
 import './main_config_screen.dart';
-import '../providers/preferences.dart';
+import '../styles/app_styles.dart';
+import '../providers/config_preferences.dart';
+
+//=======================================================================
 
 class SplashConfigScreen extends StatefulWidget {
   const SplashConfigScreen({super.key});
@@ -37,6 +40,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppStyles.colors.mantis,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -104,8 +108,10 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
         return result;
       }
     });
-    developer.log("Result permission statuses: ${statuses.toString()}", level: Level.FINE.value);
-    developer.log("Resulting permission: ${tmpResult.toString()}", level: Level.INFO.value);
+    developer.log("Result permission statuses: ${statuses.toString()}",
+        level: Level.FINE.value);
+    developer.log("Resulting permission: ${tmpResult.toString()}",
+        level: Level.INFO.value);
     if (permissionStatus != tmpResult) {
       setState(() {
         permissionStatus = tmpResult;
@@ -114,11 +120,11 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
   }
 
   Future<void> _init() async {
-    Preferences preferences = Preferences();
     /* missatge inicial */
     changeStatus(AppLocalizations.of(context)!.initializing);
-    await Future.delayed(const Duration(milliseconds: 700), () => null);
     developer.log('Initializing (splash screen)', level: Level.FINER.value);
+    ConfigPreferences preferences = ConfigPreferences();
+    await Future.delayed(const Duration(milliseconds: 100), () => null);
     /* loading parameters */
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.loadingParameters);
@@ -164,5 +170,4 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       exit(1);
     }
   }
-
 }

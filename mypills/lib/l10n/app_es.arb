@@ -3,21 +3,54 @@
 
   "appTitle": "Las Pastis",
 
+  "notificationTitle": "Tómate las pastillas!",
+  "notificationText1": "Te has de tomar las pastillas.",
+  "notificationText2": "Por favor, toque para abrir la app",
+
   "initializing": "Iniciando...",
-
   "loadingParameters": "Cargando parámetros...",
-
   "settingConfiguration": "Estableciendo la configuración...",
-
   "requiredPermissions": "Verificando los permisos necesarios...",
-
   "initializingServices": "Iniciando servicios...",
-
   "failedPermissions": "No se han concedido los permisos necesarios",
-
   "informationLoaded": "Listo!",
 
-  "helloWorld": "¡Hola mundo!",
+  "breakfast": "desayuno",
+  "brunch": "almuerzo",
+  "lunch": "comida",
+  "tea": "café",
+  "highTea": "merienda",
+  "dinner": "cena",
+  "supper": "resopón",
+  
+  "pillsLongBeforeBreakfast": "pastillas de la mañana",
+  "pillsBeforeBreakfast": "pastillas de antes de desayunar",
+  "pillsAtBreakfast": "pastillas del desayuno",
+  "pillsAfterBreakfast": "pastillas de después del desayuno",
+  "pillsLongBeforeBrunch": "pastillas de mucho antes del almuerzo",
+  "pillsBeforeBrunch": "pastillas de antes del almuerzo",
+  "pillsAtBrunch": "pastillas del almuerzo",
+  "pillsAfterBrunch": "pastillas de después del almuerzo",
+  "pillsLongBeforeLunch": "pastillas de mucho antes de la comida",
+  "pillsBeforeLunch": "pastillas de antes de la comida",
+  "pillsAtLunch": "pastillas de la comida",
+  "pillsAfterLunch": "pastillas de después la comida",
+  "pillsLongBeforeTea": "pastillas de mucho antes de la hora del café",
+  "pillsBeforeTea": "pastillas de antes de la hora del café",
+  "pillsAtTea": "pastillas de la hora del café",
+  "pillsAfterTea": "pastillas de después de la hora del café",
+  "pillsLongBeforeHighTea": "pastillas de mucho antes de merendar",
+  "pillsBeforeHighTea": "pastillas de antes de merendar",
+  "pillsAtHighTea": "pastillas de merendar",
+  "pillsAfterHighTea": "pastillas de después de merendar",
+  "pillsLongBeforeDinner": "pastillas de mucho antes de cenar",
+  "pillsBeforeDinner": "pastillas de antes de cenar",
+  "pillsAtDinner": "pastillas de cenar",
+  "pillsAfterDinner": "pastillas de después de cenar",
+  "pillsLongBeforeSupper": "pastillas de mucho antes del resopón",
+  "pillsBeforeSupper": "pastillas de antes del resopón",
+  "pillsAtSupper": "pastillas del resopón",
+  "pillsAfterSupper": "pastillas de después del resopón",
+  "pillsLongAfterSupper": "pastillas de la noche"
 
-  "hereWeAre": "¡Aquí estamos!"
 }

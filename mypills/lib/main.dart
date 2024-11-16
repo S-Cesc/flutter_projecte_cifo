@@ -11,12 +11,16 @@ import 'dart:ui' show IsolateNameServer;
 // Flutter
 import 'package:flutter/material.dart';
 
+// Localization
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 // Project files
 import './styles/app_styles.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'screens/splash_config_screen.dart';
 import 'screens/splash_alarm_screen.dart';
+
+//=======================================================================
 
 /// The name associated with the UI isolate's [SendPort].
 const String mainIsolateName = 'myPillsConfig';
@@ -39,8 +43,8 @@ void initializePort() {
     alarmPortName,
   );
   developer.log(
-      'Alarm send port ${initialized ? "" : "NOT "}registered.'
-      '${initialized ? " Possibly it already were" : ""}',
+      'Alarm send port registered'
+      '${initialized ? "" : "; possibly it already were"}',
       level: Level.FINE.value);
 }
 
@@ -77,7 +81,6 @@ void dispose() {
   IsolateNameServer.removePortNameMapping(alarmPortName);
 }
 
-
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -87,6 +90,8 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
           fontFamily: AppStyles.fonts.fontFamilyName,
           useMaterial3: true,
+          scaffoldBackgroundColor: AppStyles.colors.mantis,
+          dialogBackgroundColor: AppStyles.colors.ochre,
           appBarTheme: AppBarTheme(
             iconTheme: IconThemeData(color: AppStyles.colors.mantis),
             color: AppStyles.colors.ochre,

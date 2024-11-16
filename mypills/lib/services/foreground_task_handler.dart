@@ -8,6 +8,8 @@ import 'dart:isolate';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 // Project files
 
+//=======================================================================
+
 class ForegroundTaskHandler extends TaskHandler {
   static const String foregroundIsolateName = 'myPillsService';
   static final int isolateId = Isolate.current.hashCode;
@@ -34,7 +36,9 @@ class ForegroundTaskHandler extends TaskHandler {
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
     developer.log('onStart(starter: ${starter.name})',
         level: Level.CONFIG.value);
-    developer.log('ISOLATE: $foregroundIsolateName, $isolateId',
+    developer.log(
+        'ISOLATE: $foregroundIsolateName, $isolateId, '
+        '${Isolate.current.debugName}',
         level: Level.INFO.value);
     FlutterForegroundTask.wakeUpScreen();
     // TODO setOnLockScreenVisibility

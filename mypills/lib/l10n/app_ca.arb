@@ -3,21 +3,54 @@
 
   "appTitle": "Les Pastis",
 
+  "notificationTitle": "Pren-te les pastilles!",
+  "notificationText1": "T'has de prendre les pastilles.",
+  "notificationText2": "Si us plau, toca per a obrir l'app",
+
   "initializing": "Iniciant...",
-
   "loadingParameters": "Carregant paràmetres...",
-
   "settingConfiguration": "Establint la configuració...",  
-
   "requiredPermissions": "Verificant els permissos necessaris...",
-
   "initializingServices": "Iniciant serveis...",
-
   "failedPermissions": "No s'han concedit els permissos necessaris",
-
   "informationLoaded": "Preparat!",
 
-  "helloWorld": "Hola mon!",
+  "breakfast": "desdejuni",
+  "brunch": "esmorzar",
+  "lunch": "dinar",
+  "tea": "cafè",
+  "highTea": "berenar",
+  "dinner": "sopar",
+  "supper": "ressopó",
 
-  "hereWeAre": "Aquí hi som!"
+  "pillsLongBeforeBreakfast": "pastilles del matí",
+  "pillsBeforeBreakfast": "pastilles d'abans del desdejuni",
+  "pillsAtBreakfast": "pastilles del desdejuni",
+  "pillsAfterBreakfast": "pastilles de després del desdejuni",
+  "pillsLongBeforeBrunch": "pastilles de molt abans d'esmorzar",
+  "pillsBeforeBrunch": "pastilles d'abans d'esmorzar",
+  "pillsAtBrunch": "pastilles de l'esmorzar",
+  "pillsAfterBrunch": "pastilles de després d'esmorzar",
+  "pillsLongBeforeLunch": "pastilles de molt abans de dinar",
+  "pillsBeforeLunch": "pastilles d'abans de dinar",
+  "pillsAtLunch": "pastilles de dinar",
+  "pillsAfterLunch": "pastilles de després dinar",
+  "pillsLongBeforeTea": "pastilles de molt abans de l'hora del cafè",
+  "pillsBeforeTea": "pastilles d'abans de l'hora del cafè",
+  "pillsAtTea": "pastilles de l'hora del cafè",
+  "pillsAfterTea": "pastilles de després de l'hora del cafè",
+  "pillsLongBeforeHighTea": "pastilles de molt abans de berenar",
+  "pillsBeforeHighTea": "pastilles d'abans de berenar",
+  "pillsAtHighTea": "pastilles del berenar",
+  "pillsAfterHighTea": "pastilles de després de berenar",
+  "pillsLongBeforeDinner": "pastilles de molt abans de sopar",
+  "pillsBeforeDinner": "pastilles d'abans de sopar",
+  "pillsAtDinner": "pastilles de sopar",
+  "pillsAfterDinner": "pastilles de després de sopar",
+  "pillsLongBeforeSupper": "pastilles de molt abans del ressopó",
+  "pillsBeforeSupper": "pastilles d'abans del ressopó",
+  "pillsAtSupper": "pastilles del ressopó",
+  "pillsAfterSupper": "pastilles de després del ressopó",
+  "pillsLongAfterSupper": "pastilles de la nit"
+
 }

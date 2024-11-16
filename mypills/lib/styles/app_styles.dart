@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../extensions/date_relative_day_name.dart';
+
+//=======================================================================
 
 class AppStyles {
   static const _black = Colors.black45;
@@ -155,21 +155,6 @@ https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
       900: Color(0xFFc7e8e5),
     }),
   );
-
-  static String formatDate(
-    DateTime d, {
-    bool includeTime = false,
-    bool includeDayName = false,
-    bool useRelativeDayName = true,
-  }) {
-    final dayName = DateRelativeDayName.fromDate(d);
-    final formatTime = includeTime ? ", ${DateFormat('Hm').format(d)}" : null;
-    if (dayName.name == null) {
-      return "${DateFormat('yMMMd', 'ca_ES').format(d)}${formatTime ?? ''}";
-    } else {
-      return "${dayName.capitalizedName()!}${formatTime ?? ''}";
-    }
-  }
 
   // Invert color index for Brightness.dark mode
   // Caution: do not use when index is not invertible

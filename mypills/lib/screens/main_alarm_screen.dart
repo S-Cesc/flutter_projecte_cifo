@@ -11,9 +11,12 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:one_clock/one_clock.dart';
 // Project files
 import '../main.dart' as main;
-import '../background_entry.dart';
 import '../styles/app_styles.dart';
+import '../background_entry.dart';
+import '../services/background_alarm_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+//=======================================================================
 
 class MainAlarmScreen extends StatefulWidget {
   const MainAlarmScreen({super.key});
@@ -26,15 +29,10 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   bool _alarmIsActivated = true;
 
   Future<void> _cancelAlarm() async {
-    await AndroidAlarmManager.oneShot(
-      const Duration(microseconds: 0),
+    developer.log("Cancel alarm", level: Level.INFO.value);
+    await BackgroundAlarmHelper.cancelAlarm(
       BackgroundEntry.id,
       BackgroundEntry.stopcallback,
-      // alarmClock: true,
-      allowWhileIdle: true,
-      rescheduleOnReboot: true,
-      exact: true,
-      wakeup: true,
     );
     setState(() {
       _alarmIsActivated = false;
@@ -45,6 +43,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   Widget build(BuildContext context) {
     final DateTime alarmDateTime = DateTime.now();
     return Scaffold(
+      backgroundColor: AppStyles.colors.mantis,
       appBar: AppBar(
         title: const Text('Take the pills'),
         elevation: 4,
@@ -62,8 +61,16 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
           child: AnalogClock(
             isLive: true,
             showDigitalClock: false,
-            width: 120,
-            height: 120,
+            width: 180,
+            height: 180,
+            showNumbers: true,
+            showAllNumbers: false,
+            showTicks: true,
+            tickColor: AppStyles.colors.darkSlateGray[700]!,
+            hourHandColor: AppStyles.colors.darkSlateGray[800]!,
+            minuteHandColor: AppStyles.colors.darkSlateGray[800]!,
+            numberColor: AppStyles.colors.darkSlateGray[900]!,
+            decoration: BoxDecoration(color: AppStyles.colors.forestGreen[200] , shape: BoxShape.circle),
           ),
         ),
         Row(
@@ -79,48 +86,14 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                     developer.log("Cancel alarm button clicked!",
                         level: Level.FINER.value);
                     await _cancelAlarm();
-                    //FIXME - Application needs delay to finish gently, otherwise it restarts.
-                    // END APPLICATION
-                    // needs to be delayed to allow _cancelAlarm to start
-                    // as _cancelAlarm is fired by AlarmManager
-                    // the bug is the long delay needed
-                    await Future.delayed(const Duration(milliseconds: 7500),
+                    await Future.delayed(const Duration(milliseconds: 2500),
                         () async {
-                      developer.log("Exit application",
-                          level: Level.INFO.value);
+                      developer.log("Pop screen", level: Level.INFO.value);
                       await SystemNavigator.pop();
                     });
                   },
-                  child: Text('Cancel the alarm',
-                      style: AppStyles.fonts.headline()),
-                )),
-              ),
-            if (_alarmIsActivated && kDebugMode)
-              Expanded(
-                child: Center(
-                    child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(AppStyles.colors.ochre)),
-                  onPressed: () async {
-                    developer.log("End application button clicked!",
-                        level: Level.FINER.value);
-                    await _cancelAlarm();
-                    //FIXME - Application needs delay to finish gently, otherwise it restarts.
-                    // END APPLICATION
-                    // needs to be delayed to allow _cancelAlarm to start
-                    // as _cancelAlarm is fired by AlarmManager
-                    // the bug is the long delay needed
-                    await Future.delayed(const Duration(milliseconds: 7500),
-                        () async {
-                      developer.log("Exit application",
-                          level: Level.INFO.value);
-                      await SystemNavigator.pop();
-                      exit(0);
-                    });
-                  },
-                  child: Text('End the application',
-                      style: AppStyles.fonts.headline()),
+                  child:
+                      Text('Cancel the alarm', style: AppStyles.fonts.headline()),
                 )),
               ),
           ],

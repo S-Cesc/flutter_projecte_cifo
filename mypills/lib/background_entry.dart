@@ -23,11 +23,19 @@ class BackgroundEntry {
   static const id = 7;
   static SendPort? uiSendPort;
 
+//=======================================================================
+
+  // TODO snooze param is from frontend. Use Json instead of alarmId
+  // Json param: id
+  // Json param: snooze -> similar to stop, but with reprogram
+
   // The callback for our alarm
   @pragma('vm:entry-point')
   static Future<void> callback(int alarmId) async {
     developer.log('Alarm $alarmId fired!', level: Level.CONFIG.value);
-    developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+    developer.log(
+        'ISOLATE: $backgroundIsolateName, $isolateId, '
+        '${Isolate.current.debugName}',
         level: Level.INFO.value);
     // init the port
     uiSendPort ??= IsolateNameServer.lookupPortByName(alarmPortName);
@@ -50,7 +58,9 @@ class BackgroundEntry {
     // Recive Foreground service data
     FlutterForegroundTask.addTaskDataCallback((Object obj) {
       //aquesta funció per retardar l'alarma
-      developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+      developer.log(
+          'ISOLATE: $backgroundIsolateName, $isolateId, '
+          '${Isolate.current.debugName}',
           level: Level.INFO.value);
       if (obj is String) {
         try {

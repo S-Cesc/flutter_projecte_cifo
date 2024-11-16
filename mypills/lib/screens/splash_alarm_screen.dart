@@ -10,8 +10,11 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../main.dart' as main;
-import '../providers/preferences.dart';
+import '../styles/app_styles.dart';
+import '../providers/config_preferences.dart';
 import './main_alarm_screen.dart';
+
+//=======================================================================
 
 class SplashAlarmScreen extends StatefulWidget {
   const SplashAlarmScreen({super.key});
@@ -35,6 +38,7 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppStyles.colors.mantis,
       appBar: AppBar(
         title: const Text('Take the pills'),
         elevation: 4,
@@ -56,10 +60,13 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
   }
 
   Future<void> _init() async {
-    Preferences preferences = Preferences();
+    changeStatus(AppLocalizations.of(context)!.initializing);
+    developer.log('Initializing alarm screen (splash screen)', level: Level.FINER.value);
+    ConfigPreferences preferences = ConfigPreferences();
+    await Future.delayed(const Duration(milliseconds: 100), () => null);
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.loadingParameters);
-      developer.log('Splash screen: parameters', level: Level.FINER.value);
+      developer.log('Alarm splash screen: parameters', level: Level.FINER.value);
       // alarm screen branch also initializes the main port (it doesn't harm)
       main.initializePort();
       FlutterForegroundTask.setOnLockScreenVisibility(true);
@@ -89,5 +96,4 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
       status = st;
     });
   }
-
 }

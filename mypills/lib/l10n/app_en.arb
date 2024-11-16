@@ -1,53 +1,197 @@
 {
-  "@@locale": "en",
+   "@@locale": "en",
 
-  "appTitle": "My Pills",
-  "@appTitle": {
-    "description": "Application title"
-  },
+   "appTitle": "My Pills",
+   "@appTitle": {
+      "description": "Application title"
+   },
 
-  "initializing": "Initializing...",
-  "@initializing": {
-    "description": "Progress title"
-  },
+   "notificationTitle": "Take the pills!",
+   "@notificationTitle": {
+      "description": "Title of the notification"
+   },
+   "notificationText1": "You have to take the pills.",
+   "@notificationText1": {
+      "description": "Notification detail text (1st line)"
+   },
+   "notificationText2": "Please tap to open the app",
+   "@notificationText2": {
+      "description": "Notification detail text (2nd line)"
+   },
 
-  "loadingParameters": "Loading parameters...",
-  "@loadingParameters": {
-    "description": "Progress: parameters"
-  },
+   "initializing": "Initializing...",
+   "@initializing": {
+      "description": "Progress title"
+   },
+   "loadingParameters": "Loading parameters...",
+   "@loadingParameters": {
+      "description": "Progress: parameters"
+   },
+   "settingConfiguration": "Setting configuration...",
+   "@settingConfiguration": {
+      "description": "Progress: settings"
+   },
+   "requiredPermissions": "Checking the required permissions...",
+   "@requiredPermissions": {
+      "description": "Progress: permissions"
+   },
+   "initializingServices": "Initializing services...",
+   "@initializingServices": {
+      "description": "Progress: services"
+   },
+   "failedPermissions": "Required permissions have not been granted",
+   "@failedPermissions": {
+      "description": "Progress fail: required permissions not granted"
+   },
+   "informationLoaded": "Ready!",
+   "@informationLoaded": {
+      "description": "Last progress message"
+   },
 
-  "settingConfiguration": "Setting configuration...",
-  "@settingConfiguration": {
-    "description": "Progress: settings"
-  },
+   "breakfast": "breakfast",
+   "@breakfast": {
+      "description": "Meal time"
+   },
+   "brunch": "brunch",
+   "@brunch": {
+      "description": "Meal time"
+   },
+   "lunch": "lunch",
+   "@lunch": {
+      "description": "Meal time"
+   },
+   "tea": "tea",
+   "@tea": {
+      "description": "Meal time"
+   },
+   "highTea": "high tea",
+   "@highTea": {
+      "description": "Meal time"
+   },
+   "dinner": "dinner",
+   "@dinner": {
+      "description": "Meal time"
+   },
+   "supper": "supper",
+   "@supper": {
+      "description": "Meal time"
+   },
 
-  "requiredPermissions": "Checking the required permissions...",
-  "@requiredPermissions": {
-    "description": "Progress: permissions"
-  },
-
-  "initializingServices": "Initializing services...",
-  "@initializingServices": {
-    "description": "Progress: services" 
-  },
-
-  "failedPermissions": "Required permissions have not been granted",
-  "@failedPermissions": {
-    "description": "Progress fail: required permissions not granted"
-  },
-  
-  "informationLoaded": "Ready!",
-  "@informationLoaded": {
-    "description": "Last progress message"
-  },
-
-  "helloWorld": "Hello World!",
-  "@helloWorld": {
-    "description": "The conventional newborn programmer greeting"
-  },
-  "hereWeAre": "Here we are!",
-  "@hereWeAre": {
-    "description": "Programmer work in process"
-  }
+   "pillsLongBeforeBreakfast": "morning pills",
+   "@pillsLongBeforeBreakfast": {
+      "description": "Pill time"
+   },
+   "pillsBeforeBreakfast": "pre-breakfast pills",
+   "@pillsBeforeBreakfast": {
+      "description": "Pill time"
+   },
+   "pillsAtBreakfast": "breakfast pills",
+   "@pillsAtBreakfast": {
+      "description": "Pill time"
+   },
+   "pillsAfterBreakfast": "after-breakfast pills",
+   "@pillsAfterBreakfast": {
+      "description": "Pill time"
+   },
+   "pillsLongBeforeBrunch": "the pills well before brunch",
+   "@pillsLongBeforeBrunch": {
+      "description": "Pill time"
+   },
+   "pillsBeforeBrunch": "pre-brunch pills",
+   "@pillsBeforeBrunch": {
+      "description": "Pill time"
+   },
+   "pillsAtBrunch": "brunch pills",
+   "@pillsAtBrunch": {
+      "description": "Pill time"
+   },
+   "pillsAfterBrunch": "after-brunch pills",
+   "@pillsAfterBrunch": {
+      "description": "Pill time"
+   },
+   "pillsLongBeforeLunch": "the pills well before lunch",
+   "@pillsLongBeforeLunch": {
+      "description": "Meal time"
+   },
+   "pillsBeforeLunch": "pre-lunch pills",
+   "@pillsBeforeLunch": {
+      "description": "Meal time"
+   },
+   "pillsAtLunch": "lunch pills",
+   "@pillsAtLunch": {
+      "description": "Meal time"
+   },
+   "pillsAfterLunch": "after-lunch pills",
+   "@pillsAfterLunch": {
+      "description": "Meal time"
+   },
+   "pillsLongBeforeTea": "the pills well before tea",
+   "@pillsLongBeforeTea": {
+      "description": "Pill time"
+   },
+   "pillsBeforeTea": "pre-tea pills",
+   "@pillsBeforeTea": {
+      "description": "Pill time"
+   },
+   "pillsAtTea": "tea pills",
+   "@pillsAtTea": {
+      "description": "Pill time"
+   },
+   "pillsAfterTea": "after-tea pills",
+   "@pillsAfterTea": {
+      "description": "Pill time"
+   },
+   "pillsLongBeforeHighTea": "the pills well before high tea",
+   "@pillsLongBeforeHighTea": {
+      "description": "Pill time"
+   },
+   "pillsBeforeHighTea": "the pills before high tea",
+   "@pillsBeforeHighTea": {
+      "description": "Pill time"
+   },
+   "pillsAtHighTea": "high tea pills",
+   "@pillsAtHighTea": {
+      "description": "Pill time"
+   },
+   "pillsAfterHighTea": "the pills after high tea",
+   "@pillsAfterHighTea": {
+      "description": "Pill time"
+   },
+   "pillsLongBeforeDinner": "the pills well before dinner",
+   "@pillsLongBeforeDinner": {
+      "description": "Pill time"
+   },
+   "pillsBeforeDinner": "pre-dinner pills",
+   "@pillsBeforeDinner": {
+      "description": "Pill time"
+   },
+   "pillsAtDinner": "dinner pills",
+   "@pillsAtDinner": {
+      "description": "Pill time"
+   },
+   "pillsAfterDinner": "after-dinner pills",
+   "@pillsAfterDinner": {
+      "description": "Pill time"
+   },
+   "pillsLongBeforeSupper": "the pills well before supper",
+   "@pillsLongBeforeSupper": {
+      "description": "Pill time"
+   },
+   "pillsBeforeSupper": "pre-supper pills",
+   "@pillsBeforeSupper": {
+      "description": "Pill time"
+   },
+   "pillsAtSupper": "supper pills",
+   "@pillsAtSupper": {
+      "description": "Pill time"
+   },
+   "pillsAfterSupper": "after-supper pills",
+   "@pillsAfterSupper": {
+      "description": "Pill time"
+   },
+   "pillsLongAfterSupper": "midnight pills",
+   "@pillsLongAfterSupper": {
+      "description": "Pill time (long after supper)"
+   }
 
 }
