@@ -29,7 +29,6 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   bool _alarmIsActivated = true;
 
   Future<void> _cancelAlarm() async {
-    developer.log("Cancel alarm", level: Level.INFO.value);
     await BackgroundAlarmHelper.cancelAlarm(
       BackgroundEntry.id,
       BackgroundEntry.stopcallback,
@@ -86,7 +85,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                     developer.log("Cancel alarm button clicked!",
                         level: Level.FINER.value);
                     await _cancelAlarm();
-                    await Future.delayed(const Duration(milliseconds: 2500),
+                    await Future.delayed(const Duration(milliseconds: 1500),
                         () async {
                       developer.log("Pop screen", level: Level.INFO.value);
                       await SystemNavigator.pop();

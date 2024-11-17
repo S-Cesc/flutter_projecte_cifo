@@ -120,6 +120,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
   }
 
   Future<void> _init() async {
+    bool failed = false;
     /* missatge inicial */
     changeStatus(AppLocalizations.of(context)!.initializing);
     developer.log('Initializing (splash screen)', level: Level.FINER.value);
@@ -135,7 +136,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.settingConfiguration);
       developer.log('Splash screen: configuration', level: Level.FINER.value);
-      main.initializePort();
+      await main.initializePort();
     }
     /* permissions */
     if (mounted) {
@@ -157,13 +158,17 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       }
       /* inici de l'app */
       if (mounted) {
-        Navigator.pushReplacement(
+        await Navigator.pushReplacement(
             context,
             MaterialPageRoute<MainConfigScreen>(
                 builder: (context) => const MainConfigScreen()));
+      } else {
+        failed = true;
       }
-    }
-    if (!mounted) {
+    } else {
+      failed = true;
+    } 
+    if (failed) {
       developer.log("Non mounted context. Widget end",
           level: Level.SEVERE.value);
       developer.debugger();

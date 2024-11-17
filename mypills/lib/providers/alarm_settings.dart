@@ -23,7 +23,7 @@ class AlarmSettings {
   //-----------------------class special members--------------------------------
 
   Future<void> init() async {
-    Future.wait([
+    await Future.wait([
       _shPrefs.getInt(AlarmPreferences.alarmDurationSecondsKey),
       _shPrefs.getInt(AlarmPreferences.alarmSnoozeSecondsKey),
       _shPrefs.getInt(AlarmPreferences.alarmRepeatTimesKey),

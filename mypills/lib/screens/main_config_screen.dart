@@ -1,8 +1,8 @@
 // logging and debugging
-import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Dart base
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:io' show exit;
 // Flutter
@@ -32,9 +32,32 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
   final int isolateId = Isolate.current.hashCode;
   TextEditingController controller = TextEditingController();
 
+  Future<void> _fireAlarm() async {
+    developer.log("Fire alarm", level: Level.INFO.value);
+    final time = DateTime.now().add(Duration(seconds: 3));
+    await BackgroundAlarmHelper.fireAlarm(
+      time,
+      BackgroundEntry.id,
+      1,
+      BackgroundEntry.callback,
+      BackgroundEntry.snoozecallback,
+    );
+  }
+
+  Future<void> _cancelAlarm() async {
+    developer.log("Cancel alarm", level: Level.INFO.value);
+    await BackgroundAlarmHelper.cancelAlarm(
+      BackgroundEntry.id,
+      BackgroundEntry.stopcallback,
+    );
+    await Future.delayed(const Duration(milliseconds: 7500), () async {
+      developer.log("Pop screen", level: Level.INFO.value);
+      await SystemNavigator.pop();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    unawaited(main.listenAlarmPort(context));
     return ChangeNotifierProvider(
       create: (context) => ConfigPreferences(),
       child: Scaffold(
@@ -43,56 +66,42 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  developer.log(
-                      'ISOLATE: ${main.mainIsolateName}, $isolateId, '
-                      '${Isolate.current.debugName}',
+                  developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
                       level: Level.INFO.value);
                   developer.log("Fire alarm button clicked!",
                       level: Level.FINER.value);
-                  final time = DateTime.now().add(Duration(seconds: 5));
-                  await AndroidAlarmManager.oneShotAt(
-                    time,
-                    BackgroundEntry.id,
-                    BackgroundEntry.callback,
-                    alarmClock: true,
-                    allowWhileIdle: true,
-                    exact: true,
-                    wakeup: true,
-                    rescheduleOnReboot: true,
-                  );
+                  await _fireAlarm();
                 },
                 child: const Text('Fire an alarm'),
               ),
             ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  developer.log(
-                      'ISOLATE: ${main.mainIsolateName}, $isolateId, '
-                      '${Isolate.current.debugName}',
-                      level: Level.INFO.value);
-                  developer.log("Program alarm button clicked!",
-                      level: Level.FINER.value);
-                  final time = DateTime.now().add(Duration(seconds: 30));
-                  BackgroundAlarmHelper.fireAlarm(
-                    time,
-                    BackgroundEntry.id,
-                    BackgroundEntry.callback,
-                  );
-                },
-                child: const Text('Program an alarm (30")'),
-              ),
-            ),
+            // Center(
+            //   child: ElevatedButton(
+            //     onPressed: () async {
+            //       developer.log(
+            //           'ISOLATE: ${main.mainIsolateName}, $isolateId, '
+            //           '${Isolate.current.debugName}',
+            //           level: Level.INFO.value);
+            //       developer.log("Program alarm button clicked!",
+            //           level: Level.FINER.value);
+            //       final time = DateTime.now().add(Duration(seconds: 30));
+            //       BackgroundAlarmHelper.fireAlarm(
+            //         time,
+            //         BackgroundEntry.id,
+            //         1,
+            //         BackgroundEntry.callback,
+            //         BackgroundEntry.snoozecallback,
+            //       );
+            //     },
+            //     child: const Text('Program an alarm (30")'),
+            //   ),
+            // ),
             Center(
                 child: ElevatedButton(
               onPressed: () async {
                 developer.log("Cancel alarm button clicked!",
                     level: Level.FINER.value);
-                developer.log("Cancel alarm", level: Level.INFO.value);
-                await BackgroundAlarmHelper.cancelAlarm(
-                  BackgroundEntry.id,
-                  BackgroundEntry.stopcallback,
-                );
+                await _cancelAlarm();
               },
               child: const Text('Cancel the alarm'),
             )),

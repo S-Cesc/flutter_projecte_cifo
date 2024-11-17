@@ -1,33 +1,42 @@
 // logging and debugging
-import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Dart base
+import 'dart:async';
 import 'dart:isolate';
 // Flutter
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 // Project files
+import '../main.dart';
 
 //=======================================================================
 
 class ForegroundTaskHandler extends TaskHandler {
-  static const String foregroundIsolateName = 'myPillsService';
+  static const String foregroundIsolateName = 'myPillsForegroundService';
   static final int isolateId = Isolate.current.hashCode;
 
-  // TODO FlutterForegroundTask.updateService(notificationText: message);
-
-  // Launch d'App at '/alarm' point
+  // Launch d'App at alarmScreenPath point
   Future<void> _launchApp() async {
-    developer.log('LAUNCH APP', level: Level.FINE.value);
-    FlutterForegroundTask.launchApp('/alarm');
+    developer.log('LAUNCH APP comes:', level: Level.FINE.value);
     bool isAppOnForeground = await FlutterForegroundTask.isAppOnForeground;
     developer.log(
-        'APP launched is ${isAppOnForeground ? "" : "not "}on foreground',
+        'APP to launch is '
+        '${isAppOnForeground ? "" : "not "}'
+        'on foreground',
         level: Level.FINE.value);
     if (isAppOnForeground) {
-      developer.log('Foreground APP', level: Level.FINE.value);
       FlutterForegroundTask.sendDataToMain("wakeup");
-      developer.log('"wakeup" command sent', level: Level.FINE.value);
+      developer.log(
+          '$foregroundIsolateName ($isolateId) sent '
+          '"wakeup" command to launcher isolate (background service)',
+          level: Level.FINE.value);
+    } else {
+      developer.log(
+          '$foregroundIsolateName '
+          '($isolateId) '
+          'LAUNCHS APP (not foreground)',
+          level: Level.FINE.value);
+      FlutterForegroundTask.launchApp(alarmScreenPath);
     }
   }
 
@@ -36,12 +45,10 @@ class ForegroundTaskHandler extends TaskHandler {
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
     developer.log('onStart(starter: ${starter.name})',
         level: Level.CONFIG.value);
-    developer.log(
-        'ISOLATE: $foregroundIsolateName, $isolateId, '
-        '${Isolate.current.debugName}',
+    developer.log('ISOLATE: $foregroundIsolateName, $isolateId',
         level: Level.INFO.value);
     FlutterForegroundTask.wakeUpScreen();
-    // TODO setOnLockScreenVisibility
+    // FIXME setOnLockScreenVisibility
     // setOnLockScreenVisibility gives "ActivityNotAttachedException"
     // Activity is not attached to FlutterEngine
     //FlutterForegroundTask.setOnLockScreenVisibility(true);

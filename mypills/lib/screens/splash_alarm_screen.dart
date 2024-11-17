@@ -11,7 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../main.dart' as main;
 import '../styles/app_styles.dart';
-import '../providers/config_preferences.dart';
+import '../providers/background_preferences.dart';
 import './main_alarm_screen.dart';
 
 //=======================================================================
@@ -60,15 +60,18 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
   }
 
   Future<void> _init() async {
+    bool failed = false;
     changeStatus(AppLocalizations.of(context)!.initializing);
-    developer.log('Initializing alarm screen (splash screen)', level: Level.FINER.value);
-    ConfigPreferences preferences = ConfigPreferences();
+    developer.log('Initializing alarm screen (splash screen)',
+        level: Level.FINER.value);
+    BackgroundPreferences preferences = BackgroundPreferences();
     await Future.delayed(const Duration(milliseconds: 100), () => null);
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.loadingParameters);
-      developer.log('Alarm splash screen: parameters', level: Level.FINER.value);
+      developer.log('Alarm splash screen: parameters',
+          level: Level.FINER.value);
       // alarm screen branch also initializes the main port (it doesn't harm)
-      main.initializePort();
+      // main.initializePort();
       FlutterForegroundTask.setOnLockScreenVisibility(true);
       await preferences.init();
     }
@@ -78,12 +81,14 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
     }
     /* inici de l'app */
     if (mounted) {
-      Navigator.pushReplacement(
+      await Navigator.pushReplacement(
           context,
           MaterialPageRoute<MainAlarmScreen>(
               builder: (context) => const MainAlarmScreen()));
+    } else {
+      failed = true;
     }
-    if (!mounted) {
+    if (failed) {
       developer.log("Non mounted context. Widget end",
           level: Level.SEVERE.value);
       developer.debugger();

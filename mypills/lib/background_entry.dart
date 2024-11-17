@@ -1,4 +1,5 @@
 // logging and debugging
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 import 'package:flutter/foundation.dart' show kReleaseMode;
@@ -20,8 +21,9 @@ class BackgroundEntry {
       kReleaseMode || true; // lets avoid sound on debug
   static const String backgroundIsolateName = 'myPillsAlarm';
   static final int isolateId = Isolate.current.hashCode;
-  static const id = 7;
   static SendPort? uiSendPort;
+  static const id = 7; // AlarmId per proves inicials
+  static const int snoozeId = 128;
 
 //=======================================================================
 
@@ -33,9 +35,7 @@ class BackgroundEntry {
   @pragma('vm:entry-point')
   static Future<void> callback(int alarmId) async {
     developer.log('Alarm $alarmId fired!', level: Level.CONFIG.value);
-    developer.log(
-        'ISOLATE: $backgroundIsolateName, $isolateId, '
-        '${Isolate.current.debugName}',
+    developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
         level: Level.INFO.value);
     // init the port
     uiSendPort ??= IsolateNameServer.lookupPortByName(alarmPortName);
@@ -44,48 +44,46 @@ class BackgroundEntry {
     // init Foreground service
     ForegroundEntryHelper.initService();
     await ForegroundEntryHelper.startService();
+    // add callback
+    // Recive Foreground service data
+    FlutterForegroundTask.addTaskDataCallback((Object obj) {
+      //aquesta funció per retardar l'alarma
+      developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+          level: Level.INFO.value);
+      if (obj is String) {
+        try {
+          if (obj == "wakeup") {
+            developer.log('Background callback received "wakeup" message',
+                level: Level.INFO.value);
+            developer.log(
+                'uiSendPort ${uiSendPort == null ? "IS" : "is not"} null',
+                level: Level.FINE.value);
+            uiSendPort?.send("wakeup");
+          } else if (obj == "snooze") {
+            // unawaited(snooze());
+          } else {
+            final jsonMessage = jsonDecode(obj);
+            developer.log('Background callback received message: $jsonMessage',
+                level: Level.INFO.value);
+          }
+        } catch (e) {
+          developer.log(
+              'Background callback received message throwed error: ${e.toString()}',
+              level: Level.SEVERE.value);
+        }
+      }
+    }
+        // TODO ForegroundEntryHelper callback per rebre dades
+        // En concret: quina alarma està sonant ????
+        );
     // RING -- avoid night debugging sound
     if (soundAlarm) {
-      FlutterRingtonePlayer.playAlarm(
+      await FlutterRingtonePlayer.playAlarm(
         looping: true,
         asAlarm: true,
         volume: 1.0,
       );
     }
-    // TODO ForegroundEntryHelper callback per rebre dades
-    // des de sendDataToMain
-
-    // Recive Foreground service data
-    FlutterForegroundTask.addTaskDataCallback((Object obj) {
-      //aquesta funció per retardar l'alarma
-      developer.log(
-          'ISOLATE: $backgroundIsolateName, $isolateId, '
-          '${Isolate.current.debugName}',
-          level: Level.INFO.value);
-      if (obj is String) {
-        try {
-          if (obj == "snooze") {
-            _snooze();
-          } else {
-            if (obj == "wakeup") {
-              developer.log('Received "wakeup" message to background',
-                  level: Level.INFO.value);
-              developer.log(
-                  'uiSendPort ${uiSendPort == null ? "IS" : "is not"} null',
-                  level: Level.FINE.value);
-              uiSendPort?.send("wakeup");
-            } else {
-              final jsonMessage = jsonDecode(obj);
-              developer.log('Message to background: $jsonMessage',
-                  level: Level.INFO.value);
-            }
-          }
-        } catch (e) {
-          developer.log('Error in message to background: ${e.toString()}',
-              level: Level.SEVERE.value);
-        }
-      }
-    });
 
     /*
     // Get the previous cached count and increment it.
@@ -99,10 +97,15 @@ class BackgroundEntry {
       uiSendPort ??= IsolateNameServer.lookupPortByName(mainIsolateName);
       uiSendPort?.send("wakeup");
     */
-  }
+  } // end callback
 
   //TODO delay
-  static Future<void> _snooze() async {}
+  static Future<void> snoozecallback(int alarmId) async {
+    developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+        level: Level.INFO.value);
+    developer.log("Alarm $alarmId snoozed", level: Level.INFO.value);
+    await FlutterRingtonePlayer.stop();
+  }
 
   @pragma('vm:entry-point')
   static Future<void> stopcallback(int alarmId) async {
@@ -113,6 +116,10 @@ class BackgroundEntry {
       final cancelResult = await AndroidAlarmManager.cancel(alarmId);
       developer.log('Alarm $alarmId stoped! ($cancelResult)',
           level: Level.CONFIG.value);
+      final cancelSnoozeResult = await AndroidAlarmManager.cancel(alarmId + snoozeId);
+      developer.log('Snooze alarm $alarmId stoped! ($cancelSnoozeResult)',
+          level: Level.CONFIG.value);
+
       // TODO check?? no other alarms are firing
       // It is a must simultaneus alarms joined in single alarm
       while (await FlutterForegroundTask.isRunningService) {
@@ -133,4 +140,5 @@ class BackgroundEntry {
     // little wait time for everybody to stop...
     await Future.delayed(const Duration(milliseconds: 150), () => null);
   }
+
 }
