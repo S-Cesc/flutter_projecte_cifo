@@ -10,14 +10,13 @@ import '../background_entry.dart';
 
 //=======================================================================
 
-// DEFINITION FOR CALLBACK FUNCTIONS
-// =================================
+// DEFINITION FOR AndroidAlarmManager CALLBACK FUNCTIONS
+// =====================================================
 //
 //    assert(callback is Function() ||
 //        callback is Function(int) ||
 //        callback is Function(int, Map<String, dynamic>));
 //
-
 
 // ONLY STATIC MEMBERS
 class BackgroundAlarmHelper {
@@ -55,7 +54,7 @@ class BackgroundAlarmHelper {
         level: Level.INFO.value);
   }
 
-    static Future<void> snoozeAlarm(
+  static Future<void> snoozeAlarm(
     int alarmId,
     Future<void> Function(int) snoozeCallback,
   ) async {

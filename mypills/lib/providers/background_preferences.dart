@@ -6,6 +6,7 @@ import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:convert';
 // Flutter
+import 'package:flutter_projecte_cifo/model/weekly_time_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/alarm.dart';
@@ -39,9 +40,15 @@ class BackgroundPreferences {
     await _alarmSettings.init();
   }
 
+  Future<void> requery() async {
+    await _alarmSettings.requery();
+    _currentAlarm = null;
+  }
+
   //-----------------------class rest of members--------------------------------
 
   ReadOnlyAlarmPreferences get alarmSettings => _alarmSettings.data;
+  WeeklyTimeTable get weeklyTimeTable => _alarmSettings.wtt;
 
   Future<Alarm?> currentAlarm(int alarmId) async {
     if (_currentAlarm?.id == alarmId) {
@@ -71,5 +78,4 @@ class BackgroundPreferences {
           AlarmSettings.alarmJsonKey(alarmId), jsonEncode(jsonStructured));
     }
   }
-
 }

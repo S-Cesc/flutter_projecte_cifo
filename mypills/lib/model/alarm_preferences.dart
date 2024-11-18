@@ -42,10 +42,6 @@ final class AlarmPreferences extends ReadOnlyAlarmPreferences {
   static const defaultAlarmSnoozeSeconds = 900;
   static const defaultAlarmRepeatTimes = 3;
 
-  static const alarmDurationSecondsKey = 'aDuration';
-  static const alarmSnoozeSecondsKey = 'aSnooze';
-  static const alarmRepeatTimesKey = 'aRepeat';
-
   //-----------------class state members and constructors ----------------------
 
   AlarmPreferences(

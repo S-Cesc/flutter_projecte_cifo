@@ -4,6 +4,8 @@ import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_projecte_cifo/model/enums.dart';
+// Localizations
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import 'meal.dart';
 import 'pill_meal_time.dart';
@@ -96,7 +98,7 @@ class Alarm {
   //    await initializeDateFormatting("ca", null)
   // You can get the current locale from widget
   // locale = WidgetsBinding.instance!.window.locale
-  Future<String> name(Locale locale) => pillMealTime.pillTimeName(meal, locale);
+  String name(AppLocalizations t) => pillMealTime.pillTimeName(meal, t);
 
   void fireAlarm() {
     if (_actualReplay == 0) {
@@ -116,6 +118,7 @@ class Alarm {
   void stopAlarm() {
     _isRunning = false;
     _isSnoozed = false;
+    _actualReplay = 0;
   }
 
   TimeOfDay nextShoot(WeeklyTimeTable wtt) {
@@ -126,8 +129,8 @@ class Alarm {
     } else {
       final DayOfWeek todayWD = DayOfWeek.fromId(_lastShoot!.weekday);
       final DayOfWeek tomorrowWD = todayWD.next();
-      final Meal tomorrowMeal = wtt.tomorrowEquivalentMeal(todayWD, meal);
-      final tomorrowMealTime = wtt.mealTime(tomorrowWD, tomorrowMeal);
+      final Meal tomorrowMeal = wtt.tomorrowEquivalentMeal(meal, todayWD);
+      final tomorrowMealTime = wtt.dayMealTime(tomorrowMeal, tomorrowWD);
       if (tomorrowMealTime == null) {
         developer.log("'tomorrowMeal' not found in WeeklyTimeTable",
             level: Level.SEVERE.value);

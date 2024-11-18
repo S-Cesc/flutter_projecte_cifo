@@ -57,19 +57,19 @@ class WeeklyTimeTable {
 
   //-----------------class state members and constructors ----------------------
 
-  final Map<Meal, TimeOfDay> _defaultMeals;
+  final Map<Meal, TimeOfDay> _defaultDaysMeals;
   final Set<DayOfWeek> _specialWeekDays;
   final Map<Meal, TimeOfDay> _specialDaysMeals;
   //Set<String> specialYearDates = {}; // Per a festius de l'any: Nadal...
 
   WeeklyTimeTable.empty()
-      : _defaultMeals = {},
+      : _defaultDaysMeals = {},
         _specialWeekDays = {},
         _specialDaysMeals = {};
 
   // use Map<String, dynamic> parsedJson = jsonDecode(json);
   WeeklyTimeTable.fromJson(Map<String, dynamic> parsedJson)
-      : _defaultMeals = _timeTableFromJson(
+      : _defaultDaysMeals = _timeTableFromJson(
             parsedJson['defaultMeals'] as Map<String, dynamic>),
         _specialWeekDays =
             _setOfWeekdaysFromJson(parsedJson['specialWD'] as List<dynamic>),
@@ -81,31 +81,43 @@ class WeeklyTimeTable {
   // use String jsonEncode(value.toJson());
   Map<String, dynamic> toJson() {
     return {
-      'defaultMeals': _timeTableToJson(_defaultMeals),
+      'defaultMeals': _timeTableToJson(_defaultDaysMeals),
       'specialWD': _setOfWeekdaysToJson(_specialWeekDays),
       'specialDaysMeals': _timeTableToJson(_specialDaysMeals)
     };
   }
 
   bool get isFullyDefined {
-    return _defaultMeals.length >= 3 &&
+    return _defaultDaysMeals.length >= 3 &&
         (_specialWeekDays.isEmpty && _specialDaysMeals.isEmpty ||
             _specialWeekDays.isNotEmpty && _specialDaysMeals.length >= 3);
   }
 
   //-----------------------class rest of members--------------------------------
 
+  Map<Meal, TimeOfDay> get defaultDaysMeals => _defaultDaysMeals;
+  Map<Meal, TimeOfDay> get spacialDaysMeals => _specialDaysMeals;
+  Set<DayOfWeek> get specialWeekDays => _specialWeekDays;
+
   bool isSpecialWeekDay(DayOfWeek dw) => _specialWeekDays.contains(dw);
 
-  TimeOfDay? mealTime(DayOfWeek dw, Meal meal) {
-    if (isSpecialWeekDay(dw)) {
+  TimeOfDay? mealTime(Meal meal, [bool isSpecialWeekDay = false]) {
+    if (isSpecialWeekDay) {
       return _specialDaysMeals[meal];
     } else {
-      return _defaultMeals[meal];
+      return _defaultDaysMeals[meal];
     }
   }
 
-  Meal tomorrowEquivalentMeal(DayOfWeek todayWD, Meal meal) {
+  TimeOfDay? dayMealTime(Meal meal, DayOfWeek dw) {
+    if (isSpecialWeekDay(dw)) {
+      return _specialDaysMeals[meal];
+    } else {
+      return _defaultDaysMeals[meal];
+    }
+  }
+
+  Meal tomorrowEquivalentMeal(Meal meal, DayOfWeek todayWD) {
     DayOfWeek tomorrow = todayWD.next();
     if (isSpecialWeekDay(todayWD) == isSpecialWeekDay(tomorrow)) {
       return meal;
@@ -132,23 +144,11 @@ class WeeklyTimeTable {
     }
   }
 
-  int _compareTimeOfDay(TimeOfDay x, TimeOfDay other) {
-    final int hourCmp = x.hour.compareTo(other.hour);
-    if (hourCmp == 0) {
-      return hourCmp;
-    } else {
-      return x.minute.compareTo(other.minute);
-    }
-  }
+  List<MapEntry<Meal, TimeOfDay>> sortedMeals(DayOfWeek dw) =>
+      isSpecialWeekDay(dw) ? sortedSpecialDaysMeals() : sortedDefaultMeals();
 
-  // DEBUG: l'ordenació es fa per l'hora;
-  // hauria de quedar també ordenada per les menjades
-  bool _sortOrderIsCorrect(List<MapEntry<Meal, TimeOfDay>> lst) {
-    return lst.indexed.every(
-        (x) => x.$1 == lst.length - 1 || x.$2.key.id < lst[x.$1 + 1].key.id);
-  }
   List<MapEntry<Meal, TimeOfDay>> sortedDefaultMeals() {
-    final defaultMealsLst = _defaultMeals.entries.toList();
+    final defaultMealsLst = _defaultDaysMeals.entries.toList();
     defaultMealsLst.sort((x, y) => _compareTimeOfDay(x.value, y.value));
     developer.log("Els elements correctament ordenats: "
         "${_sortOrderIsCorrect(defaultMealsLst)}");
@@ -163,8 +163,21 @@ class WeeklyTimeTable {
     return specialDaysMealsLst;
   }
 
-  List<MapEntry<Meal, TimeOfDay>> meals(DayOfWeek dw) =>
-      isSpecialWeekDay(dw) ? sortedSpecialDaysMeals() : sortedDefaultMeals();
+  int _compareTimeOfDay(TimeOfDay x, TimeOfDay other) {
+    final int hourCmp = x.hour.compareTo(other.hour);
+    if (hourCmp == 0) {
+      return x.minute.compareTo(other.minute);
+    } else {
+      return hourCmp;
+    }
+  }
+
+  // DEBUG: l'ordenació es fa per l'hora;
+  // hauria de quedar també ordenada per les menjades
+  bool _sortOrderIsCorrect(List<MapEntry<Meal, TimeOfDay>> lst) {
+    return lst.indexed.every(
+        (x) => x.$1 == lst.length - 1 || x.$2.key.id < lst[x.$1 + 1].key.id);
+  }
 
   //----------------------------------------------------------------------------
   //------------   UPDATE   ----------------------------------------------------
@@ -195,8 +208,7 @@ class WeeklyTimeTable {
         _specialDaysMeals[meal] = time;
       }
     } else {
-      _defaultMeals[meal] = time;
+      _defaultDaysMeals[meal] = time;
     }
   }
-
 }

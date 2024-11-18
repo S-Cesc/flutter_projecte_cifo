@@ -23,7 +23,8 @@ import 'screens/splash_alarm_screen.dart';
 
 /// The name associated with the UI isolate's [SendPort].
 const String mainIsolateName = 'myPillsConfig';
-const String alarmPortName = "$mainIsolateName/isolateComPort";
+const String uiWakeupPortName = "$mainIsolateName/isolateComPort";
+const String uiAlarmPortName = "$mainIsolateName/alarmComPort";
 const alarmScreenPath = '/alarm';
 const configScreenPath = '/config';
 
@@ -31,7 +32,7 @@ final int isolateId = Isolate.current.hashCode;
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// A port used to communicate from a background isolate to the UI isolate.
-ReceivePort? port; // warning! there is a late intialization
+ReceivePort? wakeupPort; // warning! there is a late intialization
 // the stream listened on RecivePort
 StreamSubscription<dynamic>? subscription;
 
@@ -75,70 +76,9 @@ class _MainAppState extends State<MainApp> {
   }
 }
 
-Future<void> initializePort() async {
-  Future<StreamSubscription<dynamic>> listenAlarmPort() async {
-    subscription = port!.listen(
-      (d) async {
-        if (d is String && d == "wakeup") {
-          developer.log('Wakeup message arrived foreground',
-              level: Level.INFO.value);
-          final navigator = navigatorKey.currentState;
-          if (navigator != null) {
-            bool currentRouteIsNewRoute = false;
-            navigator.popUntil((currentRoute) {
-              // This is just a way to access currentRoute; the top route in the
-              // Navigator stack.
-              if (currentRoute.settings.name == alarmScreenPath) {
-                currentRouteIsNewRoute = true;
-              }
-              // Return true so popUntil() pops nothing.
-              return true;
-            });
-            if (currentRouteIsNewRoute) {
-              developer.log('Alarm screen is already on top of stack',
-                  level: Level.FINEST.value);
-            } else {
-              while (navigator.canPop()) {
-                navigator.pop();
-              }
-              developer.log(
-                  "Foreground routes popped: now let's replace screen",
-                  level: Level.FINEST.value);
-              await navigator.pushReplacementNamed(alarmScreenPath);
-            }
-          } else {
-            developer.log('NAVIGATOR is null', level: Level.SEVERE.value);
-          }
-        }
-      },
-    );
-    return subscription!;
-  }
-
-  //final dTime = DateTime.now();
-  var newPort = ReceivePort();
-  IsolateNameServer.removePortNameMapping(alarmPortName);
-  if (IsolateNameServer.registerPortWithName(newPort.sendPort, alarmPortName)) {
-    await subscription?.cancel();
-    port?.close();
-    port = newPort;
-    subscription = null;
-    developer.log('Alarm send port registered', level: Level.FINE.value);
-  } else {
-    developer.log('Problems to register Alarm send port',
-        level: Level.FINE.value);
-  }
-  if (port == null) {
-    developer.log('Alarm send port NOT registered', level: Level.CONFIG.value);
-    throw TypeError();
-  } else {
-    await listenAlarmPort();
-  }
-}
-
 @override
 void dispose() {
   developer.log('DISPOSE', level: Level.CONFIG.value);
   subscription?.cancel();
-  IsolateNameServer.removePortNameMapping(alarmPortName);
+  IsolateNameServer.removePortNameMapping(uiWakeupPortName);
 }

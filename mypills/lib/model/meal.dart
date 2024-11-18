@@ -14,7 +14,6 @@ enum Meal {
   dinner(60),
   supper(70);
 
-
   static TimeOfDay defaultMealTime(Meal meal) {
     return switch (meal) {
       Meal.breakfast => const TimeOfDay(hour: 8, minute: 0),
@@ -48,6 +47,10 @@ enum Meal {
     };
   }
 
+  factory Meal.fromOrdinal(int id) {
+    return Meal.fromId(id * 10);
+  }
+
   //-----------------------class special members--------------------------------
 
   bool operator <(covariant Meal other) {
@@ -68,14 +71,15 @@ enum Meal {
 
   //-----------------------class rest of members--------------------------------
 
+  int get ordinal => id ~/ 10;
+
   //--------------------------------i18n----------------------------------------
 
   // Remember localization must be initialized:
   //    await initializeDateFormatting("ca", null)
   // You can get the current locale from widget
   // locale = WidgetsBinding.instance!.window.locale
-  Future<String> mealName(Locale locale) async {
-    AppLocalizations t = await AppLocalizations.delegate.load(locale);
+  String mealName(AppLocalizations t) {
     return switch (this) {
       breakfast => t.breakfast,
       brunch => t.brunch,

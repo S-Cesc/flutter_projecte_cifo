@@ -64,12 +64,7 @@ enum PillMealTime {
 
   //--------------------------------i18n----------------------------------------
 
-  // Remember localization must be initialized:
-  //    await initializeDateFormatting("ca", null)
-  // You can get the current locale from widget
-  // locale = WidgetsBinding.instance!.window.locale
-  Future<String> pillTimeName(Meal meal, Locale locale) async {
-    AppLocalizations t = await AppLocalizations.delegate.load(locale);
+  String pillTimeName(Meal meal, AppLocalizations t) {
     switch (meal) {
       case Meal.breakfast:
         {

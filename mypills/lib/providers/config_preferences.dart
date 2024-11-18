@@ -8,7 +8,7 @@ import 'alarm_settings.dart';
 
 //==============================================================================
 
-class ConfigPreferences extends ChangeNotifier {
+class ConfigPreferences with ChangeNotifier {
   //-------------------------static/constant------------------------------------
 
   static final ConfigPreferences _configPrefs = ConfigPreferences._();
