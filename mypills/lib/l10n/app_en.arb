@@ -48,6 +48,28 @@
       "description": "Last progress message"
    },
 
+   "saveChanges": "Save changes",
+   "@saveChanges": {
+      "description": "Save screen pending changes"
+   },
+   "endApplication": "End config App",
+   "@endApplication": {
+      "description": "button end application"
+   },
+
+   "alarmRepeatTimes": "Alarm repeat times",
+   "@alarmRepeatTimes": {
+      "description": "Ask for alarm repeat times value"
+   },
+   "alarmDurationSeconds": "Alarm duration seconds",
+   "@alarmDurationSeconds": {
+      "description": "Ask for alarm duration seconds value"
+   },
+   "alarmSnoozeSeconds": "Alarm snooze seconds",
+   "@alarmSnoozeSeconds": {
+      "description": "Ask for alarm snooze seconds value"
+   },
+
    "breakfast": "breakfast",
    "@breakfast": {
       "description": "Meal time"
@@ -75,6 +97,31 @@
    "supper": "supper",
    "@supper": {
       "description": "Meal time"
+   },
+
+   "alarms": "Alarms",
+   "@alarms": {
+      "description": "Button & title Alarms"
+   },
+   "weeklyTimetable": "Weekly timetable",
+   "@weeklyTimetable": {
+      "description": "Button text for setting Weekly time for each meal"
+   },
+   "weeklyDefaultTimetable": "Usual",
+   "@weeklyDefaultTimetable" : {
+      "description": "Usual/Other label pair"
+   },
+   "weeklyAltTimetable": "Other",
+   "@weeklyAltTimetable" : {
+      "description": "Usual/Other label pair"
+   },
+   "defaultWeeklyTimetable": "Meals you usually have and at what time",
+   "@defaultWeeklyTimetable": {
+      "description": "Default weekly time table for each meal"
+   },
+   "specialWeeklyTimetable": "Meals on designated days and at what time",
+   "@specialWeeklyTimetable": {
+      "description": "Special days of week time table for each meal"
    },
 
    "pillsLongBeforeBreakfast": "morning pills",

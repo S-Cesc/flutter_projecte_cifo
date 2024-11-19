@@ -6,7 +6,6 @@ class AppStyles {
   static const _black = Colors.black45;
   static const _white = Colors.white;
   static const _mantis = Color(0xFF81c14b);
-  static const _darkOchre = Color(0xFF754306);
   static const _ochre = Color(0xFFc36f09);
   static final fonts = (
     fontFamilyName: 'Montserrat',

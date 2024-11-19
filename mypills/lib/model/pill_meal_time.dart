@@ -1,5 +1,3 @@
-// Flutter
-import 'package:flutter/material.dart';
 // Localizations
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project

@@ -1,18 +1,14 @@
 // logging and debugging
-import 'dart:async';
-import 'dart:convert';
 import 'dart:developer' as developer;
-import 'dart:isolate';
-import 'dart:ui';
-import 'package:flutter_projecte_cifo/providers/background_preferences.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
-import 'dart:io' show exit;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
+import 'dart:ui';
 // Flutter
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:one_clock/one_clock.dart';
 // Localization
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,6 +18,7 @@ import '../util/port_facilities.dart';
 import '../model/alarm.dart';
 import '../styles/app_styles.dart';
 import '../background_entry.dart';
+import '../providers/background_preferences.dart';
 import '../services/background_alarm_helper.dart';
 
 //=======================================================================
@@ -59,21 +56,34 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
       if (obj is String) {
         try {
           final jsonMessage = jsonDecode(obj) as Map<String, dynamic>;
+          developer.log(
+              'Alarm message received '
+              'from ${main.uiAlarmPortName}: '
+              '$jsonMessage',
+              level: Level.FINE.value);
           if (jsonMessage.containsKey(BackgroundEntry.alarmIdMessageKey)) {
             _alarmId = jsonMessage[BackgroundEntry.alarmIdMessageKey] as int;
-            _alarm = await _pref.currentAlarm(_alarmId!);
-            if (_alarm != null) {
-              setState(() {
-                _alarmId;
-                _alarm;
-              });
+            if (_alarmId == BackgroundEntry.idAlarmTest) {
+              developer.log('Alarm message id=$_alarmId (test)'
+                  ' from ${main.uiAlarmPortName}');
+                setState(() {
+                  _alarmId;
+                });
             } else {
-              _alarmId = null;
-              developer.log(
-                  'Alarm id=${_alarmId ?? "null"} message'
-                  ' from ${main.uiAlarmPortName}'
-                  ' did not bind to an alarm object',
-                  level: Level.WARNING.value);
+              _alarm = await _pref.currentAlarm(_alarmId!);
+              if (_alarm != null) {
+                setState(() {
+                  _alarmId;
+                  _alarm;
+                });
+              } else {
+                _alarmId = null;
+                developer.log(
+                    'Alarm id=${_alarmId ?? "null"} message'
+                    ' from ${main.uiAlarmPortName}'
+                    ' did not bind to an alarm object',
+                    level: Level.WARNING.value);
+              }
             }
           }
         } catch (e) {
@@ -90,11 +100,9 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
     });
   }
 
-  Future<void> _cancelAlarm(int alarmId, Alarm alarm) async {
-    alarm.stopAlarm();
-    await _pref.storeChangedAlarm(alarmId);
+  Future<void> _cancelAlarm(int alarmId) async {
     await BackgroundAlarmHelper.cancelAlarm(
-      BackgroundEntry.idTstAlarm,
+      BackgroundEntry.idAlarmTest,
       BackgroundEntry.stopcallback,
     );
     setState(() {
@@ -150,7 +158,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                   onPressed: () async {
                     developer.log("Cancel alarm button clicked!",
                         level: Level.FINER.value);
-                    await _cancelAlarm(_alarmId!, _alarm!);
+                    await _cancelAlarm(_alarmId!);
                     await Future.delayed(const Duration(milliseconds: 1500),
                         () async {
                       developer.log("Pop screen", level: Level.INFO.value);

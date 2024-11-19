@@ -4,7 +4,7 @@ import 'package:logging/logging.dart' show Level;
 
 // Dart base
 import 'dart:isolate';
-import 'dart:async' show unawaited, StreamSubscription;
+import 'dart:async' show StreamSubscription;
 import 'dart:ui' show IsolateNameServer;
 
 // Flutter
@@ -16,6 +16,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import './styles/app_styles.dart';
 import 'package:provider/provider.dart';
+import 'providers/config_preferences.dart';
 import 'screens/splash_config_screen.dart';
 import 'screens/splash_alarm_screen.dart';
 
@@ -51,27 +52,30 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-          fontFamily: AppStyles.fonts.fontFamilyName,
-          useMaterial3: true,
-          scaffoldBackgroundColor: AppStyles.colors.mantis,
-          dialogBackgroundColor: AppStyles.colors.ochre,
-          appBarTheme: AppBarTheme(
-            iconTheme: IconThemeData(color: AppStyles.colors.mantis),
-            color: AppStyles.colors.ochre,
-          )),
-      routes: {
-        configScreenPath: (context) => const SplashConfigScreen(),
-        alarmScreenPath: (context) => const SplashAlarmScreen(),
-      },
-      navigatorKey: navigatorKey,
-      initialRoute: configScreenPath,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateTitle: (context) {
-        return AppLocalizations.of(context)!.appTitle;
-      },
+    return ChangeNotifierProvider(
+      create: (context) => ConfigPreferences(),
+      child: MaterialApp(
+          theme: ThemeData(
+              fontFamily: AppStyles.fonts.fontFamilyName,
+              useMaterial3: true,
+              scaffoldBackgroundColor: AppStyles.colors.mantis,
+              dialogBackgroundColor: AppStyles.colors.ochre,
+              appBarTheme: AppBarTheme(
+                iconTheme: IconThemeData(color: AppStyles.colors.mantis),
+                color: AppStyles.colors.ochre,
+              )),
+          routes: {
+            configScreenPath: (context) => const SplashConfigScreen(),
+            alarmScreenPath: (context) => const SplashAlarmScreen(),
+          },
+          navigatorKey: navigatorKey,
+          initialRoute: configScreenPath,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          onGenerateTitle: (context) {
+            return AppLocalizations.of(context)!.appTitle;
+          },
+        )
     );
   }
 }

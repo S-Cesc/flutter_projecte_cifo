@@ -1,6 +1,7 @@
 // logging and debugging
 import 'dart:developer' as developer;
 import 'dart:isolate';
+import 'package:flutter_projecte_cifo/services/background_alarm_helper.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:async' show StreamSubscription, unawaited;
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 // Project files
 import '../main.dart' as main;
 import '../styles/app_styles.dart';
@@ -100,10 +102,12 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     developer.log('Port ${main.uiWakeupPortName} registered',
         level: Level.CONFIG.value);
     main.subscription = null;
-    main.subscription = _listenWakeupPort(main.wakeupPort!, main.uiWakeupPortName);
+    main.subscription =
+        _listenWakeupPort(main.wakeupPort!, main.uiWakeupPortName);
   }
 
-  StreamSubscription<dynamic> _listenWakeupPort(ReceivePort port, String portName) {
+  StreamSubscription<dynamic> _listenWakeupPort(
+      ReceivePort port, String portName) {
     return port.listen(
       (d) async {
         if (d is String && d == "wakeup") {
@@ -118,6 +122,8 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
               if (currentRoute.settings.name == main.alarmScreenPath) {
                 currentRouteIsNewRoute = true;
               }
+              developer.log('popuntil: ${currentRoute.settings.name ?? "null"}',
+                  level: Level.FINEST.value);
               // Return true so popUntil() pops nothing.
               return true;
             });
@@ -178,7 +184,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     /* missatge inicial */
     changeStatus(AppLocalizations.of(context)!.initializing);
     developer.log('Initializing (splash screen)', level: Level.FINER.value);
-    ConfigPreferences preferences = ConfigPreferences();
+    ConfigPreferences preferences = context.read<ConfigPreferences>();
     await Future.delayed(const Duration(milliseconds: 100), () => null);
     /* loading parameters */
     if (mounted) {
@@ -205,6 +211,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       changeStatus(AppLocalizations.of(context)!.initializingServices);
       developer.log('Splash screen: services', level: Level.FINER.value);
       await AndroidAlarmManager.initialize();
+      await BackgroundAlarmHelper.initialize();
       /* missatge final */
       if (mounted) {
         changeStatus(AppLocalizations.of(context)!.informationLoaded);
@@ -215,7 +222,8 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
         await Navigator.pushReplacement(
             context,
             MaterialPageRoute<MainConfigScreen>(
-                builder: (context) => const MainConfigScreen()));
+                builder: (context) => const MainConfigScreen(),
+                settings: RouteSettings(name: main.configScreenPath)));
       } else {
         failed = true;
       }

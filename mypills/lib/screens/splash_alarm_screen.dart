@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
+import '../main.dart' show alarmScreenPath;
 import '../styles/app_styles.dart';
 import '../providers/background_preferences.dart';
 import './main_alarm_screen.dart';
@@ -83,7 +84,8 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
       await Navigator.pushReplacement(
           context,
           MaterialPageRoute<MainAlarmScreen>(
-              builder: (context) => const MainAlarmScreen()));
+              builder: (context) => const MainAlarmScreen(),
+              settings: RouteSettings(name: alarmScreenPath)));
     } else {
       failed = true;
     }

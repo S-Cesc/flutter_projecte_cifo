@@ -11,7 +11,7 @@ import 'alarm_settings.dart';
 class ConfigPreferences with ChangeNotifier {
   //-------------------------static/constant------------------------------------
 
-  static final ConfigPreferences _configPrefs = ConfigPreferences._();
+  
 
   //-----------------class state members and constructors ----------------------
 
@@ -19,13 +19,9 @@ class ConfigPreferences with ChangeNotifier {
   late AlarmSettings _alarmSettings;
   late AlarmCollection _alarmCollection;
 
-  ConfigPreferences._() {
+  ConfigPreferences() {
     _alarmSettings = AlarmSettings(_shPrefs, callback);
     _alarmCollection = AlarmCollection(_shPrefs, callback);
-  }
-
-  factory ConfigPreferences() {
-    return _configPrefs;
   }
 
   //-----------------------class special members--------------------------------

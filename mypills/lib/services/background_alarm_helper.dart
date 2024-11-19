@@ -20,12 +20,28 @@ import '../background_entry.dart';
 
 // ONLY STATIC MEMBERS
 class BackgroundAlarmHelper {
+
+  static const _initialitzationAlarmId = 0;
+
+  static Future<void> initialize() async {
+    await AndroidAlarmManager.oneShot(
+      Duration(microseconds: 0),
+      _initialitzationAlarmId,
+      BackgroundEntry.initialize,
+      alarmClock: true,
+      allowWhileIdle: true,
+      exact: true,
+      wakeup: true,
+      rescheduleOnReboot: true,
+    );
+  }
+
   static Future<void> fireAlarm(
     DateTime time,
     int alarmId,
-    int alarmDurationMinutes,
+    int alarmDurationSeconds,
     Future<void> Function(int) callback,
-    Future<void> Function(int) snoozeCallback,
+    Future<void> Function(int) autoSnoozeCallback,
   ) async {
     await AndroidAlarmManager.oneShotAt(
       time,
@@ -37,11 +53,11 @@ class BackgroundAlarmHelper {
       wakeup: true,
       rescheduleOnReboot: true,
     );
-    // Snooze the alarm after alarmDurationMinutes
+    // Snooze the alarm after alarmDurationSeconds
     await AndroidAlarmManager.oneShot(
-      Duration(minutes: alarmDurationMinutes),
+      Duration(seconds: alarmDurationSeconds),
       alarmId + BackgroundEntry.snoozeId,
-      snoozeCallback,
+      autoSnoozeCallback,
       alarmClock: true,
       allowWhileIdle: true,
       exact: true,
@@ -52,6 +68,58 @@ class BackgroundAlarmHelper {
         'Alarm $alarmId progammed'
         ' with ${alarmId + BackgroundEntry.snoozeId} autosnooze programmed, ',
         level: Level.INFO.value);
+  }
+
+  static Future<void> repeatAlarm(
+    int alarmId,
+    int alarmSnoozeSeconds,
+    int alarmDurationSeconds,
+    Future<void> Function(int) callback,
+    Future<void> Function(int) autoSnoozeCallback,
+  ) async {
+    await AndroidAlarmManager.oneShot(
+      Duration(seconds: alarmSnoozeSeconds),
+      alarmId,
+      callback,
+      alarmClock: true,
+      allowWhileIdle: true,
+      exact: true,
+      wakeup: true,
+      rescheduleOnReboot: true,
+    );
+    // Snooze the alarm after alarmDurationSeconds
+    await AndroidAlarmManager.oneShot(
+      Duration(seconds: alarmSnoozeSeconds + alarmDurationSeconds + 30),
+      alarmId + BackgroundEntry.snoozeId,
+      autoSnoozeCallback,
+      alarmClock: true,
+      allowWhileIdle: true,
+      exact: true,
+      wakeup: true,
+      rescheduleOnReboot: true,
+    );
+    developer.log(
+        'Alarm $alarmId progammed'
+        ' with ${alarmId + BackgroundEntry.snoozeId} autosnooze programmed, ',
+        level: Level.INFO.value);
+  }
+
+// FIXME REMOVE PROC
+  static Future<void> autoSnoozeAlarm(
+    int alarmId,
+    Future<void> Function(int) snoozeCallback,
+  ) async {
+    developer.log("Auto snooze alarm", level: Level.INFO.value);
+    await AndroidAlarmManager.oneShot(
+      const Duration(microseconds: 0),
+      alarmId,
+      snoozeCallback,
+      alarmClock: true,
+      allowWhileIdle: true,
+      rescheduleOnReboot: true,
+      exact: true,
+      wakeup: true,
+    );
   }
 
   static Future<void> snoozeAlarm(
