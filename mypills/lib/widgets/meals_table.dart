@@ -58,7 +58,7 @@ class _MealsTableState extends State<MealsTable> {
                       ? _localizations.defaultWeeklyTimetable
                       : _localizations.specialWeeklyTimetable,
                   textAlign: TextAlign.center,
-                  style: AppStyles.fonts.headline(),
+                  style: AppStyles.fonts.display(),
                 ),
               ),
             ),
@@ -119,6 +119,7 @@ class _MealsTableState extends State<MealsTable> {
                       padding: EdgeInsets.only(top: 10, bottom: 30),
                       child: Center(
                         child: ElevatedButton(
+                          style: AppStyles.customButtonStyle,
                           onPressed: () async {
                             await widget.saveValues(prefs.alarmSettings.wtt);
                           },

@@ -42,6 +42,9 @@ class BackgroundPreferences {
 
   Future<void> requery() async {
     await _alarmSettings.requery();
+  }
+
+  Future<void> reloadCurrentAlarm() async {
     _currentAlarm = null;
   }
 

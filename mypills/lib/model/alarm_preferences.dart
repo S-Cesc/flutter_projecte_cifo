@@ -6,6 +6,8 @@
 //=======================================================================
 
 /* writable derived class has access to private setters */
+import 'package:flutter/foundation.dart';
+
 base class ReadOnlyAlarmPreferences {
   //-----------------class state members and constructors ----------------------
   int _alarmDurationSeconds;
@@ -30,13 +32,14 @@ base class ReadOnlyAlarmPreferences {
 
 //writable for use in configuration
 final class AlarmPreferences extends ReadOnlyAlarmPreferences {
-
   //-------------------------static/constant------------------------------------
 
-  static const _minAlarmDurationSeconds = 150;
-  static const _maxAlarmDurationSeconds = 900;
-  static const _minAlarmRepeatTimes = 1;
-  static const _maxAlarmRepeatTimes = 5;
+  static const minAlarmDurationSeconds = kDebugMode ? 15 : 150;
+  static const maxAlarmDurationSeconds = kDebugMode ? 90 : 900;
+  static const minAlarmSnoozeSeconds = maxAlarmDurationSeconds ~/ 2;
+  static const maxAlarmSnoozeSeconds = maxAlarmDurationSeconds;
+  static const minAlarmRepeatTimes = 1;
+  static const maxAlarmRepeatTimes = 5;
 
   static const defaultAlarmDurationSeconds = 600;
   static const defaultAlarmSnoozeSeconds = 900;
@@ -57,41 +60,53 @@ final class AlarmPreferences extends ReadOnlyAlarmPreferences {
 
   //-----------------------class rest of members--------------------------------
 
+  // Check before set
+  bool isAlarmDurationSecondsInRange(int value) {
+    return value >= minAlarmDurationSeconds && value <= maxAlarmDurationSeconds;
+  }
+
+  // Check before set
+  bool isAlarmSnoozeSecondsInRange(int value) {
+    return (value >= minAlarmSnoozeSeconds) && value <= maxAlarmSnoozeSeconds;
+  }
+
+  // Check before set
+  bool isAlarmRepeatTimesInRange(int value) {
+    return value >= minAlarmRepeatTimes && value <= maxAlarmRepeatTimes;
+  }
+
   set alarmDurationSeconds(int value) {
-    if (value >= _minAlarmDurationSeconds &&
-        value <= _maxAlarmDurationSeconds) {
+    if (isAlarmDurationSecondsInRange(value)) {
       super._alarmDurationSeconds = value;
     } else {
       throw RangeError.range(
         value,
-        _minAlarmDurationSeconds,
-        _maxAlarmDurationSeconds,
+        minAlarmDurationSeconds,
+        maxAlarmDurationSeconds,
       );
     }
   }
 
   set alarmSnoozeSeconds(int value) {
-    if (value >= _maxAlarmDurationSeconds % 2 &&
-        value <= _maxAlarmDurationSeconds) {
+    if (isAlarmSnoozeSecondsInRange(value)) {
       super._alarmSnoozeSeconds = value;
     } else {
       throw RangeError.range(
         value,
-        _maxAlarmDurationSeconds % 2,
-        _maxAlarmDurationSeconds,
+        maxAlarmDurationSeconds % 2,
+        maxAlarmDurationSeconds,
       );
     }
   }
 
   set alarmRepeatTimes(int value) {
-    if (value >= _minAlarmRepeatTimes &&
-        value <= _maxAlarmRepeatTimes) {
+    if (value >= minAlarmRepeatTimes && value <= maxAlarmRepeatTimes) {
       super._alarmRepeatTimes = value;
     } else {
       throw RangeError.range(
         value,
-        _minAlarmDurationSeconds,
-        _maxAlarmDurationSeconds,
+        minAlarmDurationSeconds,
+        maxAlarmDurationSeconds,
       );
     }
   }

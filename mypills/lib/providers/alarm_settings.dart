@@ -70,6 +70,19 @@ class AlarmSettings {
 
   //-----------------------class rest of members--------------------------------
 
+  bool isAlarmDurationSecondsInRange(int value) {
+    return _data.isAlarmDurationSecondsInRange(value);
+  }
+
+  bool isAlarmSnoozeSecondsInRange(int value) {
+    return _data.isAlarmSnoozeSecondsInRange(value);
+  }
+
+  bool isAlarmRepeatTimesInRange(int value) {
+    return _data.isAlarmRepeatTimesInRange(value);
+  }
+
+
   Future<void> setAlarmDurationSeconds(int value) async {
     _data.alarmDurationSeconds = value;
     await _shPrefs.setInt(alarmDurationSecondsKey, value);

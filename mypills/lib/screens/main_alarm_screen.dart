@@ -37,6 +37,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   int? _alarmId;
   Alarm? _alarm;
   bool _alarmIsActivated = true;
+  bool _alarmIsLost = false;
 
   @override
   void initState() {
@@ -66,9 +67,9 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
             if (_alarmId == BackgroundEntry.idAlarmTest) {
               developer.log('Alarm message id=$_alarmId (test)'
                   ' from ${main.uiAlarmPortName}');
-                setState(() {
-                  _alarmId;
-                });
+              setState(() {
+                _alarmId;
+              });
             } else {
               _alarm = await _pref.currentAlarm(_alarmId!);
               if (_alarm != null) {
@@ -85,10 +86,29 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                     level: Level.WARNING.value);
               }
             }
+          } else if (jsonMessage
+              .containsKey(BackgroundEntry.alarmStatusMessageKey)) {
+            final String status =
+                jsonMessage[BackgroundEntry.alarmStatusMessageKey] as String;
+            switch (status) {
+              case BackgroundEntry.alarmStatusSnoozedKey:
+                setState(() {
+                  _alarmIsActivated = false;
+                });
+              case BackgroundEntry.alarmStatusLostKey:
+                setState(() {
+                  _alarmIsActivated = false;
+                  _alarmIsLost = true;
+                });
+              default:
+                throw TypeError();
+            }
           }
         } catch (e) {
-          _alarmId = null;
-          _alarm = null;
+          setState(() {
+            _alarmId = null;
+            _alarm = null;
+          });
           developer.log(
               'Error receiving message from ${main.uiAlarmPortName}: $e',
               level: Level.WARNING.value);
@@ -104,6 +124,16 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
     await BackgroundAlarmHelper.cancelAlarm(
       BackgroundEntry.idAlarmTest,
       BackgroundEntry.stopcallback,
+    );
+    setState(() {
+      _alarmIsActivated = false;
+    });
+  }
+
+  Future<void> _snoozeAlarm(int alarmId) async {
+    await BackgroundAlarmHelper.snoozeAlarm(
+      BackgroundEntry.idAlarmTest,
+      BackgroundEntry.snoozecallback,
     );
     setState(() {
       _alarmIsActivated = false;
@@ -147,28 +177,69 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
           ),
         ),
         Row(
+          //TODO Localization
           children: [
-            if (_alarmId != null && _alarmIsActivated)
-              Expanded(
-                child: Center(
-                    child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(AppStyles.colors.mantis)),
-                  onPressed: () async {
-                    developer.log("Cancel alarm button clicked!",
-                        level: Level.FINER.value);
-                    await _cancelAlarm(_alarmId!);
-                    await Future.delayed(const Duration(milliseconds: 1500),
-                        () async {
-                      developer.log("Pop screen", level: Level.INFO.value);
-                      await SystemNavigator.pop();
-                    });
-                  },
-                  child: Text('Cancel the alarm',
-                      style: AppStyles.fonts.headline()),
-                )),
-              ),
+            if (_alarmId != null) ...[
+              if (_alarmIsActivated) ...[
+                Expanded(
+                  child: Center(
+                      child: ElevatedButton(
+                    style: AppStyles.alarmButtonStyle,
+                    onPressed: () async {
+                      developer.log("Cancel alarm button clicked!",
+                          level: Level.FINER.value);
+                      await _cancelAlarm(_alarmId!);
+                      await Future.delayed(const Duration(milliseconds: 1500),
+                          () async {
+                        developer.log("Pop screen: " "Cancel button",
+                            level: Level.INFO.value);
+                        await SystemNavigator.pop();
+                      });
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: AppStyles.fonts.headline(),
+                    ),
+                  )),
+                ),
+                Expanded(
+                  child: Center(
+                      child: ElevatedButton(
+                    style: AppStyles.alarmButtonStyle,
+                    onPressed: () async {
+                      developer.log("Snooze alarm button clicked!",
+                          level: Level.FINER.value);
+                      await _snoozeAlarm(_alarmId!);
+                      await Future.delayed(const Duration(milliseconds: 1500),
+                          () async {
+                        developer.log("Pop screen: " "Snooze button",
+                            level: Level.INFO.value);
+                        await SystemNavigator.pop();
+                      });
+                    },
+                    child: Text(
+                      'Snooze',
+                      style: AppStyles.fonts.headline(),
+                    ),
+                  )),
+                )
+              ] else ...[
+                Expanded(
+                  child: Center(
+                    child: Builder(builder: (context) {
+                      // little trick
+                      unawaited(Future.delayed(const Duration(seconds: 7), () {
+                        SystemNavigator.pop();
+                      }));
+                      return Text(
+                        _alarmIsLost ? 'Alarm lost' : 'Alarm snoozed',
+                        style: AppStyles.fonts.headline(),
+                      );
+                    }),
+                  ),
+                )
+              ]
+            ]
           ],
         ),
       ]),

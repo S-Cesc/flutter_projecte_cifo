@@ -95,9 +95,11 @@ class _DebugConfigScreenState extends State<DebugConfigScreen> {
                   );
                   await Future.delayed(const Duration(milliseconds: 5),
                       () async {
-                    developer.log("Pop screen", level: Level.INFO.value);
+                    developer.log("Pop screen: " "Debug exit button",
+                        level: Level.INFO.value);
                     await SystemNavigator.pop();
                     developer.log("Exit application", level: Level.INFO.value);
+                    //REVIEW - exit (kDebugMode)
                     exit(0); // kDebugMode
                   });
                 },
@@ -129,7 +131,8 @@ class _DebugConfigScreenState extends State<DebugConfigScreen> {
       BackgroundEntry.stopcallback,
     );
     await Future.delayed(const Duration(milliseconds: 7500), () async {
-      developer.log("Pop screen", level: Level.INFO.value);
+      developer.log("Pop screen: " "Debug cancel button",
+          level: Level.INFO.value);
       await SystemNavigator.pop();
     });
   }

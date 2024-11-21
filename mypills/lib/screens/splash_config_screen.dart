@@ -1,12 +1,12 @@
 // logging and debugging
 import 'dart:developer' as developer;
 import 'dart:isolate';
-import 'package:flutter_projecte_cifo/services/background_alarm_helper.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:async' show StreamSubscription, unawaited;
 import 'dart:io' show exit;
 // Flutter
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import '../main.dart' as main;
 import '../styles/app_styles.dart';
 import '../util/port_facilities.dart';
+import '../services/background_alarm_helper.dart';
 import '../providers/config_preferences.dart';
 import './main_config_screen.dart';
 
@@ -57,14 +58,20 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
             Text(status),
             if (permissionStatus != PermissionStatus.granted)
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                // TODO Localization!
                 Row(
                   children: [
                     Spacer(),
+                    if (kDebugMode) ...[
+                      OutlinedButton(
+                        style: AppStyles.warningButtonStyle,
+                        // REVIEW - exit (kDebugMode)
+                        onPressed: () => exit(0),
+                        child: const Text('Close application'),
+                      ),
+                    ],
                     ElevatedButton(
-                      onPressed: () => exit(1),
-                      child: const Text('Close application'),
-                    ),
-                    ElevatedButton(
+                      style: AppStyles.customButtonStyle,
                       onPressed: () => _init(),
                       child: const Text('Restart app'),
                     ),
@@ -75,6 +82,7 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ElevatedButton(
+                      style: AppStyles.customButtonStyle,
                       onPressed: () => unawaited(openAppSettings()),
                       child:
                           const Text('Change alarm permission configuration'),

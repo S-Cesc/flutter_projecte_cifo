@@ -1,7 +1,6 @@
 // logging and debugging
 import 'dart:developer' as developer;
 import 'dart:ui';
-import 'package:flutter_projecte_cifo/styles/app_styles.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
 // Flutter
@@ -9,6 +8,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 // Localizations
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
+import '../styles/app_styles.dart';
 import '../foreground_entry.dart';
 import './foreground_task_handler.dart';
 

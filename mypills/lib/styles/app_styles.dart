@@ -3,6 +3,46 @@ import 'package:flutter/material.dart';
 //=======================================================================
 
 class AppStyles {
+  static final customButtonStyle = ButtonStyle(
+    backgroundColor:
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.red;
+      } else if (states.contains(WidgetState.pressed)) {
+        return AppStyles.colors.mantis[300];
+      } else {
+        return AppStyles.colors.mantis[700];
+      }
+    }),
+  );
+  static final customHorizontalButtonStyle = ButtonStyle(
+    shape: WidgetStatePropertyAll<OutlinedBorder>(ContinuousRectangleBorder()),
+    backgroundColor:
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.red;
+      } else if (states.contains(WidgetState.pressed)) {
+        return AppStyles.colors.mantis[300];
+      } else {
+        return AppStyles.colors.mantis[700];
+      }
+    }),
+  );
+  static final warningButtonStyle = ButtonStyle(
+    backgroundColor:
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.red;
+      } else if (states.contains(WidgetState.pressed)) {
+        return AppStyles.colors.darkSlateGray[300];
+      } else {
+        return AppStyles.colors.darkSlateGray[700];
+      }
+    }),
+  );
+  static final alarmButtonStyle = ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(AppStyles.colors.mantis));
+
   static const _black = Colors.black45;
   static const _white = Colors.white;
   static const _mantis = Color(0xFF81c14b);

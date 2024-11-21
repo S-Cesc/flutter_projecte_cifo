@@ -104,24 +104,6 @@ class BackgroundAlarmHelper {
         level: Level.INFO.value);
   }
 
-// FIXME REMOVE PROC
-  static Future<void> autoSnoozeAlarm(
-    int alarmId,
-    Future<void> Function(int) snoozeCallback,
-  ) async {
-    developer.log("Auto snooze alarm", level: Level.INFO.value);
-    await AndroidAlarmManager.oneShot(
-      const Duration(microseconds: 0),
-      alarmId,
-      snoozeCallback,
-      alarmClock: true,
-      allowWhileIdle: true,
-      rescheduleOnReboot: true,
-      exact: true,
-      wakeup: true,
-    );
-  }
-
   static Future<void> snoozeAlarm(
     int alarmId,
     Future<void> Function(int) snoozeCallback,

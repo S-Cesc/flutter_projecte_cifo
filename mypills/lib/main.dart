@@ -23,7 +23,7 @@ import 'screens/splash_alarm_screen.dart';
 //=======================================================================
 
 /// The name associated with the UI isolate's [SendPort].
-const String mainIsolateName = 'myPillsConfig';
+const String mainIsolateName = 'myPills';
 const String uiWakeupPortName = "$mainIsolateName/isolateComPort";
 const String uiAlarmPortName = "$mainIsolateName/alarmComPort";
 const alarmScreenPath = '/alarm';
@@ -75,6 +75,7 @@ class _MainAppState extends State<MainApp> {
           onGenerateTitle: (context) {
             return AppLocalizations.of(context)!.appTitle;
           },
+          //showPerformanceOverlay: true,
         )
     );
   }

@@ -93,6 +93,7 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
       developer.log("Non mounted context. Widget end",
           level: Level.SEVERE.value);
       developer.debugger();
+      //REVIEW - exit(1) (App error)
       exit(1);
     }
   }
