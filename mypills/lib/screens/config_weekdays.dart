@@ -47,16 +47,27 @@ class ConfigWeekdays extends StatelessWidget {
             ),
           ]),
           elevation: 4,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppStyles.colors.forestGreen,
+            ),
+            onPressed: () {
+              // Navigate back to the previous screen by popping the current route
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: TabBarView(
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 25),
-              child: MealsTable(
-                  defaultMeals: true,
-                  saveValues: saveValues),
+              child: MealsTable(defaultMeals: true, saveValues: saveValues),
             ),
-            MealsTableSpecialDays(saveValues: saveValues),
+            Padding(
+              padding: EdgeInsets.only(top: 25),
+              child: MealsTableSpecialDays(saveValues: saveValues),
+            ),
           ],
         ),
       ),

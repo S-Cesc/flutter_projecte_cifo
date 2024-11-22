@@ -15,8 +15,12 @@
   "failedPermissions": "No s'han concedit els permissos necessaris",
   "informationLoaded": "Preparat!",
 
-  "saveChanges": "Desa els canvis",
-  "endApplication": "Sortir de l'App de config",
+  "saveChanges": "Desa",
+  "undoChanges": "Desfés",
+  "cancel": "Cancel·la",
+  "yes": "Sí",
+  "no": "No",
+  "endApplication": "Sortir",
 
   "alarmRepeatTimes": "Nombre de repeticions de l'alarma",
   "alarmDurationSeconds": "Durada de l'alarma en segons",
@@ -29,13 +33,21 @@
   "highTea": "berenar",
   "dinner": "sopar",
   "supper": "ressopó",
+ 
+  "longBefore": "molt abans",
+  "before": "abans",
+  "at": "durant",
+  "after": "després",
+  "longAfter": "molt després",
 
   "alarms": "Alarmes",
   "weeklyTimetable": "Horari setmanal",
   "weeklyDefaultTimetable": "Usual",
   "weeklyAltTimetable": "Resta",
   "defaultWeeklyTimetable": "Menjars que fas habitualment i a quina hora",
-  "specialWeeklyTimetable": "Menjars en els dies determinats i a quina hora",
+  "specialWeeklyTimetable": "Menjars i hora en els dies determinats",
+
+  "createNewAlarm": "Crear nova alarma",
 
   "pillsLongBeforeBreakfast": "pastilles del matí",
   "pillsBeforeBreakfast": "pastilles d'abans del desdejuni",

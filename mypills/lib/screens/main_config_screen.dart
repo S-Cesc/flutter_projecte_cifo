@@ -1,5 +1,7 @@
 // logging and debugging
 import 'dart:developer' as developer;
+import 'package:flutter_projecte_cifo/model/enums.dart';
+import 'package:flutter_projecte_cifo/model/weekly_time_table.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:async';
@@ -12,8 +14,9 @@ import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
-import '../screens/config_weekdays.dart';
 import '../widgets/alarm_preferences_editor.dart';
+import 'alarm_list_screen.dart';
+import 'config_weekdays.dart';
 import 'debug_config_screen.dart';
 
 //=======================================================================
@@ -49,64 +52,53 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             if (kDebugMode)
-              Align(
-                alignment: Alignment.topRight,
-                child: OutlinedButton(
-                  style: AppStyles.warningButtonStyle,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<DebugConfigScreen>(
-                          builder: (context) => DebugConfigScreen()),
-                    );
-                  },
-                  child: const Text('Debug page'),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: OutlinedButton(
+                    style: AppStyles.warningButtonStyle,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<DebugConfigScreen>(
+                            builder: (context) => DebugConfigScreen()),
+                      );
+                    },
+                    child: const Text('Debug page'),
+                  ),
                 ),
               ),
             AlarmPreferencesEditor(),
-            Padding(padding: EdgeInsets.only(top: 20)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.symmetric(vertical: 10),
-                  child: Center(
-                    child: ElevatedButton(
-                      style: AppStyles.customHorizontalButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<ConfigWeekdays>(
-                              builder: (context) => ConfigWeekdays()),
-                        );
-                      },
-                      child: Text(t.weeklyTimetable),
-                    ),
-                  ),
-                ),
-                // TODO: Localization
-                // TODO: Add special days
-                Padding(
-                  padding: EdgeInsetsDirectional.symmetric(vertical: 2),
-                  child: Center(
-                    child: ElevatedButton(
-                      style: AppStyles.customHorizontalButtonStyle,
-                      onPressed: null,
-                      child: Text('Add special days'),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // TODO: Alarms
             Padding(
-              padding: EdgeInsetsDirectional.symmetric(vertical: 2),
-              child: Center(
-                child: ElevatedButton(
-                  style: AppStyles.customHorizontalButtonStyle,
-                  onPressed: null,
-                  child: Text(t.alarms),
-                ),
+              padding: EdgeInsets.only(top: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    style: AppStyles.customHorizontalButtonStyle,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<ConfigWeekdays>(
+                            builder: (context) => ConfigWeekdays()),
+                      );
+                    },
+                    child: Text(t.weeklyTimetable),
+                  ),
+                  ElevatedButton(
+                    style: AppStyles.customHorizontalButtonStyle,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<AlarmListScreen>(
+                          builder: (context) => AlarmListScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(t.alarms),
+                  ),
+                ],
               ),
             ),
             Padding(

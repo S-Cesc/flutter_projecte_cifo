@@ -20,8 +20,9 @@ import '../background_entry.dart';
 
 // ONLY STATIC MEMBERS
 class BackgroundAlarmHelper {
-
   static const _initialitzationAlarmId = 0;
+
+//=======================================================================
 
   static Future<void> initialize() async {
     await AndroidAlarmManager.oneShot(
@@ -35,6 +36,8 @@ class BackgroundAlarmHelper {
       rescheduleOnReboot: true,
     );
   }
+
+//=======================================================================
 
   static Future<void> fireAlarm(
     DateTime time,
@@ -70,6 +73,8 @@ class BackgroundAlarmHelper {
         level: Level.INFO.value);
   }
 
+//=======================================================================
+
   static Future<void> repeatAlarm(
     int alarmId,
     int alarmSnoozeSeconds,
@@ -104,6 +109,8 @@ class BackgroundAlarmHelper {
         level: Level.INFO.value);
   }
 
+//=======================================================================
+
   static Future<void> snoozeAlarm(
     int alarmId,
     Future<void> Function(int) snoozeCallback,
@@ -121,15 +128,33 @@ class BackgroundAlarmHelper {
     );
   }
 
-  static Future<void> cancelAlarm(
-    int alarmId,
-    Future<void> Function(int) stopcallback,
-  ) async {
+//=======================================================================
+
+  // StopAlarm is espected to be called always from UI
+  // It must be the only place to call BackgroundEntry.stopCallback
+  static Future<void> stopAlarm(int alarmId) async {
+    developer.log("Stop alarm", level: Level.INFO.value);
+    await AndroidAlarmManager.oneShot(
+      const Duration(microseconds: 0),
+      alarmId,
+      BackgroundEntry.stopCallback,
+      alarmClock: true,
+      allowWhileIdle: true,
+      rescheduleOnReboot: true,
+      exact: true,
+      wakeup: true,
+    );
+  }
+
+//=======================================================================
+
+  // Always from UI, usually reprogramming the alarm
+  static Future<void> cancelAlarm(int alarmId) async {
     developer.log("Cancel alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
       const Duration(microseconds: 0),
       alarmId,
-      stopcallback,
+      BackgroundEntry.cancelCallback,
       alarmClock: true,
       allowWhileIdle: true,
       rescheduleOnReboot: true,

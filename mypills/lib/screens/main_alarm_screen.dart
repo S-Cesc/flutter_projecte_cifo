@@ -37,6 +37,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   int? _alarmId;
   Alarm? _alarm;
   bool _alarmIsActivated = true;
+  bool _alarmIsStopped = false;
   bool _alarmIsLost = false;
 
   @override
@@ -91,14 +92,23 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
             final String status =
                 jsonMessage[BackgroundEntry.alarmStatusMessageKey] as String;
             switch (status) {
-              case BackgroundEntry.alarmStatusSnoozedKey:
+              case BackgroundEntry.alarmStatusSnoozedMessage:
                 setState(() {
                   _alarmIsActivated = false;
+                  // _alarmIsLost = false;
+                  // _alarmIsStopped = false;
                 });
-              case BackgroundEntry.alarmStatusLostKey:
+              case BackgroundEntry.alarmStatusStoppedMessage:
+                setState(() {
+                  _alarmIsActivated = false;
+                  // _alarmIsLost = false;
+                  _alarmIsStopped = true;
+                });
+              case BackgroundEntry.alarmStatusLostMessage:
                 setState(() {
                   _alarmIsActivated = false;
                   _alarmIsLost = true;
+                  _alarmIsStopped = true;
                 });
               default:
                 throw TypeError();
@@ -121,22 +131,23 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   }
 
   Future<void> _cancelAlarm(int alarmId) async {
-    await BackgroundAlarmHelper.cancelAlarm(
-      BackgroundEntry.idAlarmTest,
-      BackgroundEntry.stopcallback,
-    );
+    await BackgroundAlarmHelper.stopAlarm(alarmId);
     setState(() {
       _alarmIsActivated = false;
+      _alarmIsStopped = true;
+      _alarmIsLost = false;
     });
   }
 
   Future<void> _snoozeAlarm(int alarmId) async {
     await BackgroundAlarmHelper.snoozeAlarm(
-      BackgroundEntry.idAlarmTest,
-      BackgroundEntry.snoozecallback,
+      alarmId,
+      BackgroundEntry.snoozeCallback,
     );
     setState(() {
       _alarmIsActivated = false;
+      _alarmIsStopped = false;
+      _alarmIsLost = false;
     });
   }
 
@@ -177,6 +188,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
           ),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           //TODO Localization
           children: [
             if (_alarmId != null) ...[
@@ -232,7 +244,11 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                         SystemNavigator.pop();
                       }));
                       return Text(
-                        _alarmIsLost ? 'Alarm lost' : 'Alarm snoozed',
+                        _alarmIsLost
+                            ? 'Alarm lost'
+                            : _alarmIsStopped
+                                ? 'Alarm stopped'
+                                : 'Alarm snoozed',
                         style: AppStyles.fonts.headline(),
                       );
                     }),

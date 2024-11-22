@@ -62,6 +62,16 @@ enum PillMealTime {
 
   //--------------------------------i18n----------------------------------------
 
+  String simpleName(AppLocalizations t) {
+    return switch (this) {
+      longBefore => t.longBefore,
+      before => t.before,
+      at => t.at,
+      after => t.after,
+      longAfter => t.longAfter,
+    };
+  }
+
   String pillTimeName(Meal meal, AppLocalizations t) {
     switch (meal) {
       case Meal.breakfast:

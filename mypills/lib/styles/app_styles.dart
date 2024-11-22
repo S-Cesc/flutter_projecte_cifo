@@ -110,7 +110,7 @@ class AppStyles {
     labelSmall /*activityType*/ : ({
       Color color = _black,
       FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.normal,
+      FontWeight fontWeight = FontWeight.bold,
       TextDecoration decoration = TextDecoration.none,
     }) =>
         TextStyle(

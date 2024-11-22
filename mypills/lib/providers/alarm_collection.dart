@@ -29,7 +29,8 @@ final class AlarmCollection {
     developer.log("LOAD ALARMS for editing pourposes");
     var it = AlarmKeyIterator();
     while (it.moveNext()) {
-      final String key = 'a${it.current}';
+      final String key = Alarm.alarmKey("a", it.current.$1, it.current.$2);
+      //  'a${it.current}';
       final json = await _shPrefs.getString(key);
       developer.log("...prova clau: $key", level: Level.FINEST.value);
       if (json != null) {
@@ -54,17 +55,46 @@ final class AlarmCollection {
     return _alarms.values;
   }
 
+  (List<int> insertedIds, List<int> removedIds) setCurrentAlarms(
+    List<Alarm> value, {
+    required Future<void> Function(int) insertCallback,
+    required Future<void> Function(int) removeCallback,
+  }) {
+    final inserted = <int>[], removed = <int>[];
+    // remove alarms not present in parameter
+    for (final id in _alarms.keys) {
+      if (!value.any((x) => x.id == id)) {
+        removeAlarm(id);
+        removed.add(id);
+        removeCallback.call(id);
+      }
+    }
+    // insert absent alarms present in the parameter
+    for (final a in value) {
+      _alarms.putIfAbsent(a.id, () {
+        _setAlarm(a);
+        inserted.add(a.id);
+        insertCallback(a.id);
+        return a;
+      });
+    }
+    return (inserted, removed);
+  }
+
   Alarm? getAlarm(int alarmId) => _alarms[alarmId];
 
   Future<void> setAlarm(Alarm a) async {
     final int alarmId = a.id;
     _alarms[alarmId] = a;
-    final Map<String, dynamic> jsonStructured = a.toJson();
-    await _shPrefs.setString(
-        AlarmSettings.alarmJsonKey(alarmId), jsonEncode(jsonStructured));
-    callbackOnUpdate();
+    await _setAlarm(a);
   }
 
+  Future<void> _setAlarm(Alarm a) async {
+    final Map<String, dynamic> jsonStructured = a.toJson();
+    await _shPrefs.setString(
+        AlarmSettings.alarmJsonKey(a.id), jsonEncode(jsonStructured));
+    callbackOnUpdate();
+  }
   Future<bool> removeAlarm(int alarmId, {bool force = false}) async {
     if (_alarms.containsKey(alarmId)) {
       final Alarm tmpAlarm = _alarms[alarmId]!;
@@ -93,4 +123,5 @@ final class AlarmCollection {
       callbackOnUpdate();
     }
   }
+
 }

@@ -58,7 +58,7 @@ class _MealsTableState extends State<MealsTable> {
                       ? _localizations.defaultWeeklyTimetable
                       : _localizations.specialWeeklyTimetable,
                   textAlign: TextAlign.center,
-                  style: AppStyles.fonts.display(),
+                  style: AppStyles.fonts.headline(),
                 ),
               ),
             ),
@@ -115,17 +115,35 @@ class _MealsTableState extends State<MealsTable> {
                       ),
                     );
                   } else {
-                    return Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 30),
-                      child: Center(
-                        child: ElevatedButton(
-                          style: AppStyles.customButtonStyle,
-                          onPressed: () async {
-                            await widget.saveValues(prefs.alarmSettings.wtt);
-                          },
-                          child: Text(_localizations.saveChanges),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 30, left: 50),
+                          child: Center(
+                            child: ElevatedButton(
+                              style: AppStyles.customButtonStyle,
+                              onPressed: () async {
+                                await prefs.alarmSettings.requery();
+                              },
+                              child: Text(_localizations.undoChanges),
+                            ),
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 30, right: 50),
+                          child: Center(
+                            child: ElevatedButton(
+                              style: AppStyles.customButtonStyle,
+                              onPressed: () async {
+                                await widget
+                                    .saveValues(prefs.alarmSettings.wtt);
+                              },
+                              child: Text(_localizations.saveChanges),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   }
                 }, growable: false),

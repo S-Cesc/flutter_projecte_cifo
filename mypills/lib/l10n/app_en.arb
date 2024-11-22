@@ -48,11 +48,27 @@
       "description": "Last progress message"
    },
 
-   "saveChanges": "Save changes",
+   "saveChanges": "Save",
    "@saveChanges": {
-      "description": "Save screen pending changes"
+      "description": "Save pending changes"
    },
-   "endApplication": "End config App",
+   "undoChanges": "Undo",
+   "@undoChanges": {
+      "description": "Discard pending changes"
+   },
+   "cancel": "Cancel",
+   "@cancel": {
+      "description": "Cancel operation"
+   },
+   "yes": "Yes",
+   "@yes": {
+      "description": "Answer question"
+   },
+   "no": "No",
+   "@no": {
+      "description": "Answer question"
+   },
+   "endApplication": "End",
    "@endApplication": {
       "description": "button end application"
    },
@@ -99,6 +115,32 @@
       "description": "Meal time"
    },
 
+   "longBefore": "long before",
+   "@longBefore":
+   {
+      "description": "Pill meal time, for using alone to pick one option"
+   },
+   "before": "before",
+   "@before":
+   {
+      "description": "Pill meal time, for using alone to pick one option"
+   },
+   "at": "at",
+   "@at":
+   {
+      "description": "Pill meal time, for using alone to pick one option"
+   },
+   "after": "after",
+   "@after":
+   {
+      "description": "Pill meal time, for using alone to pick one option"
+   },
+   "longAfter": "long after",
+   "@longAfter":
+   {
+      "description": "Pill meal time, for using alone to pick one option"
+   },
+
    "alarms": "Alarms",
    "@alarms": {
       "description": "Button & title Alarms"
@@ -119,9 +161,14 @@
    "@defaultWeeklyTimetable": {
       "description": "Default weekly time table for each meal"
    },
-   "specialWeeklyTimetable": "Meals on designated days and at what time",
+   "specialWeeklyTimetable": "Meals and its time on designated days ",
    "@specialWeeklyTimetable": {
       "description": "Special days of week time table for each meal"
+   },
+
+   "createNewAlarm": "Create new alarm",
+   "@createNewAlarm": {
+      "description": "New alarm screen title"
    },
 
    "pillsLongBeforeBreakfast": "morning pills",

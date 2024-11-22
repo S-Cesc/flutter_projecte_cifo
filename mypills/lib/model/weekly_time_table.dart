@@ -122,8 +122,8 @@ class WeeklyTimeTable {
     if (isSpecialWeekDay(todayWD) == isSpecialWeekDay(tomorrow)) {
       return meal;
     } else {
-      final defaultMealsLst = sortedDefaultMeals();
-      final specialDaysMealsLst = sortedSpecialDaysMeals();
+      final defaultMealsLst = _sortedDefaultMeals();
+      final specialDaysMealsLst = _sortedSpecialDaysMeals();
       if (isSpecialWeekDay(todayWD)) {
         final int mealIndex =
             specialDaysMealsLst.indexWhere((x) => x.key == meal);
@@ -144,10 +144,12 @@ class WeeklyTimeTable {
     }
   }
 
+  /*
   List<MapEntry<Meal, TimeOfDay>> sortedMeals(DayOfWeek dw) =>
       isSpecialWeekDay(dw) ? sortedSpecialDaysMeals() : sortedDefaultMeals();
+  */
 
-  List<MapEntry<Meal, TimeOfDay>> sortedDefaultMeals() {
+  List<MapEntry<Meal, TimeOfDay>> _sortedDefaultMeals() {
     final defaultMealsLst = _defaultDaysMeals.entries.toList();
     defaultMealsLst.sort((x, y) => _compareTimeOfDay(x.value, y.value));
     developer.log("Els elements correctament ordenats: "
@@ -155,7 +157,7 @@ class WeeklyTimeTable {
     return defaultMealsLst;
   }
 
-  List<MapEntry<Meal, TimeOfDay>> sortedSpecialDaysMeals() {
+  List<MapEntry<Meal, TimeOfDay>> _sortedSpecialDaysMeals() {
     final specialDaysMealsLst = _specialDaysMeals.entries.toList();
     specialDaysMealsLst.sort((x, y) => _compareTimeOfDay(x.value, y.value));
     developer.log("Els elements correctament ordenats: "

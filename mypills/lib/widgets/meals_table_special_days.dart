@@ -38,31 +38,33 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
     if (!_isInitialized) _initialize();
     return Consumer<ConfigPreferences>(builder: (context, prefs, child) {
       Set<DayOfWeek> specialWeekDays = prefs.alarmSettings.wtt.specialWeekDays;
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25),
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          SelectWeekDays(
-            days: _days(weekDayNames, specialWeekDays),
-            onSelect: (days) {
-              setState(() {
-                for (int d = 1; d <= 7; d++) {
-                  if (days.contains(d.toString())) {
-                    specialWeekDays.add(DayOfWeek.fromId(d));
-                  } else {
-                    specialWeekDays.remove(DayOfWeek.fromId(d));
+      return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: SelectWeekDays(
+              days: _days(weekDayNames, specialWeekDays),
+              onSelect: (days) {
+                setState(() {
+                  for (int d = 1; d <= 7; d++) {
+                    if (days.contains(d.toString())) {
+                      specialWeekDays.add(DayOfWeek.fromId(d));
+                    } else {
+                      specialWeekDays.remove(DayOfWeek.fromId(d));
+                    }
                   }
-                }
-              });
-            },
-          ),
-          Expanded(
+                });
+              },
+            )),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25),
             child: MealsTable(
               defaultMeals: false,
               saveValues: widget.saveValues,
             ),
           ),
-        ]),
-      );
+        ),
+      ]);
     });
   }
 

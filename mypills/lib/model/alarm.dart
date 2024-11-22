@@ -13,7 +13,7 @@ import 'weekly_time_table.dart';
 
 //==============================================================================
 
-class Alarm {
+class Alarm implements Comparable<Alarm> {
   //-------------------------static/constant------------------------------------
 
   static const _midnightId = 75;
@@ -28,8 +28,8 @@ class Alarm {
     return meal.id + pillMealTime.id;
   }
 
-  static String alarmKey(Meal meal, PillMealTime pillMealTime, String key) {
-    return "${getAlarmId(meal, pillMealTime)}$key";
+  static String alarmKey(String key, Meal meal, PillMealTime pillMealTime) {
+    return "$key${getAlarmId(meal, pillMealTime)}";
   }
 
   static (Meal, PillMealTime) getAlarmKeys(int id) {
@@ -74,6 +74,18 @@ class Alarm {
         _actualReplay = json[_actualReplayKey] as int;
 
   //-----------------------class special members--------------------------------
+
+  @override
+  int compareTo(Alarm other) {
+    if (meal < other.meal ||
+        meal == other.meal && pillMealTime < other.pillMealTime) {
+      return -1;
+    } else if (meal == other.meal && pillMealTime == other.pillMealTime) {
+      return 0;
+    } else {
+      return 1;
+    }
+  }
 
   Map<String, dynamic> toJson() {
     return {

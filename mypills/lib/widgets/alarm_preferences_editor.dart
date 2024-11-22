@@ -1,8 +1,6 @@
 // logging and debugging
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'package:flutter_projecte_cifo/model/alarm_preferences.dart';
-import 'package:flutter_projecte_cifo/providers/alarm_settings.dart';
 import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
@@ -12,6 +10,7 @@ import 'package:provider/provider.dart';
 // Localization
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
+import '../model/alarm_preferences.dart';
 import '../providers/config_preferences.dart';
 import '../styles/app_styles.dart';
 

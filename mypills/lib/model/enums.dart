@@ -11,12 +11,14 @@ enum DayOfWeek {
   friday(5),
   saturday(6),
   sunday(7);
-  
+
+  // TODO: NO FUTURE
   static Future<String> dayOfWeekName(DayOfWeek wd) async {
     final weekdays = DateFormat().dateSymbols.WEEKDAYS;
     return weekdays[wd.id % 7];
   }
-  
+
+  // TODO: NO FUTURE
   static Future<String> dayOfWeekShortName(DayOfWeek wd) async {
     final weekdays = DateFormat().dateSymbols.SHORTWEEKDAYS;
     return weekdays[wd.id % 7];
@@ -42,12 +44,15 @@ enum DayOfWeek {
     };
   }
 
+  factory DayOfWeek.fromDate(DateTime d) {
+    return DayOfWeek.fromId(d.weekday);
+  }
+
   //-----------------------class special members--------------------------------
 
   DayOfWeek next() {
     return DayOfWeek.fromId((id % 7) + 1);
   }
-
 }
 
 //==============================================================================

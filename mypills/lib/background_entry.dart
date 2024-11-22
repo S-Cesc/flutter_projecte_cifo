@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
-import 'package:flutter_projecte_cifo/services/background_alarm_helper.dart';
 import 'package:logging/logging.dart' show Level;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 // Dart base
@@ -17,6 +16,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import '../main.dart' show uiWakeupPortName, uiAlarmPortName;
 import '../model/alarm.dart';
 import 'providers/background_preferences.dart';
+import 'services/background_alarm_helper.dart';
 import 'services/foreground_entry_helper.dart';
 
 /* ONLY static MEMBERS */
@@ -26,14 +26,21 @@ class BackgroundEntry {
   static const int snoozeId = 128; // Greatest alarmId to sum is 75
   static const alarmIdMessageKey = "alarmId";
   static const alarmStatusMessageKey = "st";
-  static const alarmStatusSnoozedKey = "snoozed";
-  static const alarmStatusLostKey = "lost";
+  static const alarmStatusSnoozedMessage = "snoozed";
+  static const alarmStatusStoppedMessage = "stopped";
+  static const alarmStatusLostMessage = "lost";
 
   static const idAlarmTest = 3; // AlarmId per proves
   static const bool _soundAlarm =
       kReleaseMode || true; // lets avoid sound on debug
 
   static BackgroundPreferences preferences = BackgroundPreferences();
+
+  // Sorry, an interevent comunication;
+  // Dart doesn't have an other mechanism
+  // This one avoids snooze while stop callback is executing
+  // The object "Alarm" wold need safe access
+  static bool _stopIsExecuting = false;
 
 //=======================================================================
 
@@ -46,10 +53,9 @@ class BackgroundEntry {
   @pragma('vm:entry-point')
   static Future<void> callback(int alarmId) async {
     Alarm? alarm;
-    // TimeOfDay? alarmNextShoot;
-    developer.log('Alarm $alarmId fired!', level: Level.CONFIG.value);
     developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
         level: Level.INFO.value);
+    developer.log('Alarm $alarmId fired!', level: Level.CONFIG.value);
     await preferences.requery();
     if (alarmId != idAlarmTest) {
       alarm = await preferences.currentAlarm(alarmId);
@@ -57,7 +63,7 @@ class BackgroundEntry {
     if (alarm != null || alarmId == idAlarmTest) {
       // block: dispose uiSendPort variable quickly
       // as foreground-service will create a new App instance and a new port
-      // and there'd be a race condition on registered name
+      // and there would be a race condition on registered name
       {
         // init the port and send "wakeup" message to App
         // early message to arrive when config screen in foreground
@@ -84,6 +90,7 @@ class BackgroundEntry {
             volume: 1.0,
           );
         }
+        // update alarm status
         alarm.fireAlarm();
         await preferences.storeChangedAlarm(alarm.id);
       }
@@ -122,7 +129,7 @@ class BackgroundEntry {
             }
           } catch (e) {
             developer.log(
-                'Background callback received message throwed error: ${e.toString()}',
+                'Background callback received message threw error: ${e.toString()}',
                 level: Level.SEVERE.value);
           }
         } else {
@@ -157,32 +164,63 @@ class BackgroundEntry {
 //=======================================================================
 
   @pragma('vm:entry-point')
-  static Future<void> snoozecallback(int alarmId) async {
-    // NOTE No limit of repetitions, no alarm state changed (manual-snooze)
-    bool repeat = true;
-    developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
-        level: Level.INFO.value);
-    developer.log("Alarm $alarmId ($alarmId) snoozed", level: Level.INFO.value);
-    if (alarmId != idAlarmTest) {
-      var alarm = await preferences.currentAlarm(alarmId);
-      if (alarm != null) {
-        repeat =
-            alarm.actualReplay <= preferences.alarmSettings.alarmRepeatTimes;
-        await FlutterRingtonePlayer.stop();
+  static Future<void> snoozeCallback(int alarmId) async {
+    if (!_stopIsExecuting) {
+      try {
+        // NOTE Manual-snoozed have no limit of repetitions, no alarm state changed
+        // auto-snooze calls here to implement snooze
+        // but auto-snooze adds more logic to update the alarm state
+        bool repeat = true;
+        developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+            level: Level.INFO.value);
+        developer.log("Alarm $alarmId snoozed", level: Level.CONFIG.value);
+        if (alarmId != idAlarmTest) {
+          var alarm = await preferences.currentAlarm(alarmId);
+          if (alarm == null) {
+            // Don't repeat erroneous alarms
+            repeat = false;
+          } else if (alarm.actualReplay >=
+              preferences.alarmSettings.alarmRepeatTimes) {
+            if (!_stopIsExecuting) {
+              // LOST ALARM
+              // REVIEW -  TODO: Alarm lost (importance of log)
+              repeat = false;
+              // update alarm status
+              alarm.stopAlarm();
+              await preferences.storeChangedAlarm(alarmId);
+              // inform status
+              if (!_stopIsExecuting) {
+                await _sendStatusMessage(alarmStatusLostMessage);
+              }
+              // next shoot
+              // warning: it's not a replay, replays are exhausted
+              if (!_stopIsExecuting) {
+                await _fireNextShoot(alarm);
+              }
+            }
+          }
+          await FlutterRingtonePlayer.stop();
+        }
+        // Actions for all snoozed alarms, except lost alarms
+        if (repeat) {
+          await _cancelAlarm(alarmId);
+          if (!_stopIsExecuting) {
+            await _sendStatusMessage(alarmStatusSnoozedMessage);
+            if (!_stopIsExecuting) {
+              await BackgroundAlarmHelper.repeatAlarm(
+                alarmId,
+                preferences.alarmSettings.alarmSnoozeSeconds,
+                preferences.alarmSettings.alarmDurationSeconds,
+                callback,
+                autoSnoozeCallback,
+              );
+            }
+          }
+        }
+      } catch (e) {
+        developer.log("ERROR: Alarm snooze ($alarmId): $e",
+            level: Level.SEVERE.value);
       }
-    }
-    // cancel autosnooze
-    await AndroidAlarmManager.cancel(alarmId + snoozeId);
-    // Don't repeat test-alarm, erroneus alarms
-    // or autoSnoozeCallback repeating more than max times
-    if (repeat) {
-      await BackgroundAlarmHelper.repeatAlarm(
-        alarmId,
-        preferences.alarmSettings.alarmSnoozeSeconds,
-        preferences.alarmSettings.alarmDurationSeconds,
-        callback,
-        autoSnoozeCallback,
-      );
     }
   }
 
@@ -190,40 +228,29 @@ class BackgroundEntry {
 
   @pragma('vm:entry-point')
   static Future<void> autoSnoozeCallback(int snoozeAlarmId) async {
-    var alarmId = snoozeAlarmId - snoozeId;
-    await snoozecallback(alarmId);
-    developer.log("Alarm $alarmId ($snoozeAlarmId - $snoozeId) auto-snoozed",
-        level: Level.INFO.value);
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // init the port and send alarmSnoozed message
-    await Future.delayed(const Duration(milliseconds: 50), () async {
-      final SendPort? uiSendInfoPort =
-          IsolateNameServer.lookupPortByName(uiAlarmPortName);
-      if (uiSendInfoPort != null) {
-        uiSendInfoPort.send(json.encode(
-            <String, dynamic>{alarmStatusMessageKey: alarmStatusSnoozedKey}));
-        developer.log(
-            'Sent "$alarmStatusMessageKey": '
-            '"$alarmStatusSnoozedKey" '
-            'to App by uiSendInfoPort',
-            level: Level.FINE.value);
-      } else {
-        developer.log('Alarm snoozed, but uiSendInfoPort IS null',
-            level: Level.FINE.value);
-      }
-    });
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if (alarmId != idAlarmTest) {
-      var alarm = await preferences.currentAlarm(alarmId);
-      if (alarm != null) {
-        alarm.snoozeAlarm();
-        await preferences.storeChangedAlarm(alarmId);
-        if (alarm.actualReplay > preferences.alarmSettings.alarmRepeatTimes) {
-          // NOTE - En stopCallback es pot detectar que l'alarma està perduda:
-          await stopcallback(alarmId);
-        } else {
-          await FlutterRingtonePlayer.stop();
+    if (!_stopIsExecuting) {
+      final alarmId = snoozeAlarmId - snoozeId;
+      try {
+        developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+            level: Level.INFO.value);
+        developer.log("Alarm $alarmId ($snoozeAlarmId) auto-snoozed",
+            level: Level.CONFIG.value);
+        if (alarmId != idAlarmTest) {
+          var alarm = await preferences.currentAlarm(alarmId);
+          if (alarm != null) {
+            if (!_stopIsExecuting) {
+              // update alarm status
+              alarm.snoozeAlarm();
+              await preferences.storeChangedAlarm(alarmId);
+            }
+          }
         }
+        if (!_stopIsExecuting) {
+          await snoozeCallback(alarmId);
+        }
+      } catch (e) {
+        developer.log("ERROR: Alarm auto-snooze ($snoozeAlarmId: $alarmId): $e",
+            level: Level.SEVERE.value);
       }
     }
   }
@@ -231,78 +258,40 @@ class BackgroundEntry {
 //=======================================================================
 
   @pragma('vm:entry-point')
-  static Future<void> stopcallback(int alarmId) async {
-    developer.log('Alarm required to stop', level: Level.FINE.value);
+  static Future<void> stopCallback(int alarmId) async {
+    _stopIsExecuting = true;
     try {
-      final cancelResult = await AndroidAlarmManager.cancel(alarmId);
-      developer.log('Alarm $alarmId stoped! ($cancelResult)',
-          level: Level.CONFIG.value);
-      final cancelSnoozeResult =
-          await AndroidAlarmManager.cancel(alarmId + snoozeId);
-      developer.log(
-          'Snooze alarm ${alarmId + snoozeId} stoped! ($cancelSnoozeResult)',
+      bool alarmFound = true;
+      developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+          level: Level.INFO.value);
+      developer.log('Alarm $alarmId required to stop',
           level: Level.CONFIG.value);
       if (alarmId != idAlarmTest) {
-        var alarm = await preferences.currentAlarm(alarmId);
+        final alarm = await preferences.currentAlarm(alarmId);
+        await FlutterRingtonePlayer.stop();
         if (alarm != null) {
-          // Next shoot
-          var alarmNextShoot = alarm.nextShoot(preferences.weeklyTimeTable);
-          Duration alarmNextShootTime = Duration(
-              hours: alarmNextShoot.hour, minutes: alarmNextShoot.minute);
-          DateTime now = DateTime.now();
-          DateTime dateTime = DateUtils.dateOnly(now);
-          if (now.hour < alarmNextShoot.hour ||
-              (now.hour == alarmNextShoot.hour &&
-                  now.minute < alarmNextShoot.minute)) {
-            dateTime.add(Duration(days: 1));
-          }
-          dateTime.add(alarmNextShootTime);
-          await BackgroundAlarmHelper.fireAlarm(
-            dateTime,
-            alarmId,
-            preferences.alarmSettings.alarmDurationSeconds,
-            callback,
-            autoSnoozeCallback,
-          );
-          developer.log(
-              "Next shoot at "
-              "${dateTime.month}-${dateTime.day} "
-              "${alarmNextShoot.hour}:${alarmNextShoot.minute}",
-              level: Level.INFO.value);
-          await FlutterRingtonePlayer.stop();
-          if (alarm.isSnoozed &&
-              alarm.actualReplay > preferences.alarmSettings.alarmRepeatTimes) {
-            // REVIEW -  TODO: Alarm lost (importance of log)
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            // init the port and send alarmLost message
-            await Future.delayed(const Duration(milliseconds: 50), () async {
-              final SendPort? uiSendInfoPort =
-                  IsolateNameServer.lookupPortByName(uiAlarmPortName);
-              if (uiSendInfoPort != null) {
-                uiSendInfoPort.send(json.encode(<String, dynamic>{
-                  alarmStatusMessageKey: alarmStatusLostKey
-                }));
-                developer.log(
-                    'Sent "$alarmStatusMessageKey": '
-                    '"$alarmStatusLostKey" '
-                    'to App by uiSendInfoPort',
-                    level: Level.FINE.value);
-              } else {
-                developer.log('Alarm lost, but uiSendInfoPort IS null',
-                    level: Level.FINE.value);
-              }
-            });
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-          }
+          // update alarm status
           alarm.stopAlarm();
           await preferences.storeChangedAlarm(alarmId);
+          //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          await _fireNextShoot(alarm);
+          //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         } else {
-          developer.log("Required to stop innexistent alarm $alarmId",
+          alarmFound = false;
+          developer.log("Required to stop nonexistent alarm $alarmId",
               level: Level.WARNING.value);
         }
+      } else {
+        await _cancelAlarm(alarmId);
       }
+      //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      if (alarmFound) {
+        await _sendStatusMessage(alarmStatusStoppedMessage);
+      }
+      //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       // TODO check?? no other alarms are firing
-      // It is a must simultaneus alarms joined in single alarm
+      //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // Stop foregroundTask (full-screen notification)
       while (await FlutterForegroundTask.isRunningService) {
         developer.log('Stop foreground service', level: Level.FINE.value);
         ServiceRequestResult result = await ForegroundEntryHelper.stopService();
@@ -314,10 +303,94 @@ class BackgroundEntry {
           });
         }
       }
+      // little wait time for everybody to stop...
+      await Future.delayed(const Duration(milliseconds: 150), () => null);
     } catch (e) {
-      developer.log('ERROR!');
+      developer.log("ERROR: Alarm stop ($alarmId): $e",
+          level: Level.SEVERE.value);
     }
-    // little wait time for everybody to stop...
-    await Future.delayed(const Duration(milliseconds: 150), () => null);
+    _stopIsExecuting = false;
   }
+
+//=======================================================================
+
+  @pragma('vm:entry-point')
+  static Future<void> cancelCallback(int alarmId) async {
+    await _cancelAlarm(alarmId);
+  }
+
+//=======================================================================
+//                      PRIVATE
+//=======================================================================
+  static Future<bool> _cancelAlarm(int alarmId) async {
+    // stop the alarm & it's auto-snooze
+    // cancel the alarm... usually should be already finished
+    final cancelResult = await AndroidAlarmManager.cancel(alarmId);
+    developer.log('Cancel alarm $alarmId ($cancelResult)',
+        level: Level.CONFIG.value);
+    // cancel the auto-snoze
+    final cancelSnoozeResult =
+        await AndroidAlarmManager.cancel(alarmId + snoozeId);
+    developer.log(
+        'Cancel snooze alarm ${alarmId + snoozeId} ($cancelSnoozeResult)',
+        level: Level.CONFIG.value);
+    return cancelResult && cancelSnoozeResult;
+  }
+
+//=======================================================================
+  static Future<void> _sendStatusMessage(String message) async {
+    await Future.delayed(const Duration(milliseconds: 50), () async {
+      final SendPort? uiSendInfoPort =
+          IsolateNameServer.lookupPortByName(uiAlarmPortName);
+      if (uiSendInfoPort != null) {
+        uiSendInfoPort.send(
+            json.encode(<String, dynamic>{alarmStatusMessageKey: message}));
+        developer.log(
+            'Sent "$alarmStatusMessageKey": '
+            '"$message" '
+            'to App by uiSendInfoPort',
+            level: Level.FINE.value);
+      } else {
+        developer.log(
+            'No alarm status sent ($message): ' 'uiSendInfoPort IS null',
+            level: Level.FINE.value);
+      }
+    });
+  }
+
+//=======================================================================
+  static Future<void> _fireNextShoot(Alarm alarm) async {
+    await _cancelAlarm(alarm.id);
+    // Compute next shoot
+    DateTime dateTime;
+    {
+      final DateTime now = DateTime.now();
+      final TimeOfDay alarmNextShoot =
+          alarm.nextShoot(preferences.weeklyTimeTable);
+      final Duration alarmNextShootTime =
+          Duration(hours: alarmNextShoot.hour, minutes: alarmNextShoot.minute);
+      dateTime = DateUtils.dateOnly(now);
+      if (now.hour < alarmNextShoot.hour ||
+          (now.hour == alarmNextShoot.hour &&
+              now.minute < alarmNextShoot.minute)) {
+        dateTime.add(Duration(days: 1));
+      }
+      dateTime.add(alarmNextShootTime);
+      developer.log(
+          "Next shoot at "
+          "${dateTime.month}-${dateTime.day} "
+          "${alarmNextShoot.hour}:${alarmNextShoot.minute}",
+          level: Level.INFO.value);
+    }
+    // Fire next shoot
+    await BackgroundAlarmHelper.fireAlarm(
+      dateTime,
+      alarm.id,
+      preferences.alarmSettings.alarmDurationSeconds,
+      callback,
+      autoSnoozeCallback,
+    );
+  }
+
+//=======================================================================
 }

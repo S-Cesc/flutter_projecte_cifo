@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   android_alarm_manager_plus: ^4.0.4
+  confirm_dialog: ^1.0.4
   day_picker: ^2.3.0
   flutter:
     sdk: flutter

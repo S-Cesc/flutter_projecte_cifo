@@ -15,8 +15,12 @@
   "failedPermissions": "No se han concedido los permisos necesarios",
   "informationLoaded": "Listo!",
 
-  "saveChanges": "Salvar cambios",
-  "endApplication": "Salir de la App de config",
+  "saveChanges": "Salvar",
+  "undoChanges": "Deshacer",
+  "cancel": "Cancelar",
+  "yes": "Sí",
+  "no": "No",
+  "endApplication": "Salir",
 
   "alarmRepeatTimes": "Número de repeticiones de la alarma",
   "alarmDurationSeconds": "Duración de la alarma en segundos",
@@ -29,13 +33,21 @@
   "highTea": "merienda",
   "dinner": "cena",
   "supper": "resopón",
+ 
+  "longBefore": "mucho antes",
+  "before": "antes",
+  "at": "durante",
+  "after": "después",
+  "longAfter": "mucho después",
   
   "alarms": "Alarmas",
   "weeklyTimetable": "Horario semanal",
   "weeklyDefaultTimetable": "Usual",
   "weeklyAltTimetable": "Resto",
   "defaultWeeklyTimetable": "Comidas que realiza habitualmente y a qué hora",
-  "specialWeeklyTimetable": "Comidas en los días determinados y a qué hora",
+  "specialWeeklyTimetable": "Comidas y su hora en los días determinados",
+
+  "createNewAlarm": "Crear nueva alarma",
 
   "pillsLongBeforeBreakfast": "pastillas de la mañana",
   "pillsBeforeBreakfast": "pastillas de antes de desayunar",
