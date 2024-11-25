@@ -60,6 +60,22 @@
    "@cancel": {
       "description": "Cancel operation"
    },
+   "missedAlarm": "Missed alarm",
+   "@missedAlarm": {
+      "description": "Alarm status: Missed, because it automaticaly snoozed too many times"
+   },
+   "stoppedAlarm": "Alarm stopped",
+   "@stoppedAlarm": {
+      "description": "Alarm status: Stopped by the user"
+   },
+   "snoozedAlarm": "Alarm snoozed",
+   "@snoozedAlarm": {
+      "description": "Alarm status: Snoozed (user requeriment or after a long ring)"
+   },
+   "snooze": "Snooze",
+   "@snooze": {
+      "description": "Snooze alarm operation"
+   },
    "yes": "Yes",
    "@yes": {
       "description": "Answer question"

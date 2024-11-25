@@ -60,7 +60,6 @@ class WeeklyTimeTable {
   final Map<Meal, TimeOfDay> _defaultDaysMeals;
   final Set<DayOfWeek> _specialWeekDays;
   final Map<Meal, TimeOfDay> _specialDaysMeals;
-  //Set<String> specialYearDates = {}; // Per a festius de l'any: Nadal...
 
   WeeklyTimeTable.empty()
       : _defaultDaysMeals = {},
@@ -152,7 +151,7 @@ class WeeklyTimeTable {
   List<MapEntry<Meal, TimeOfDay>> _sortedDefaultMeals() {
     final defaultMealsLst = _defaultDaysMeals.entries.toList();
     defaultMealsLst.sort((x, y) => _compareTimeOfDay(x.value, y.value));
-    developer.log("Els elements correctament ordenats: "
+    developer.log("Els elements per defecte correctament ordenats: "
         "${_sortOrderIsCorrect(defaultMealsLst)}");
     return defaultMealsLst;
   }
@@ -160,7 +159,7 @@ class WeeklyTimeTable {
   List<MapEntry<Meal, TimeOfDay>> _sortedSpecialDaysMeals() {
     final specialDaysMealsLst = _specialDaysMeals.entries.toList();
     specialDaysMealsLst.sort((x, y) => _compareTimeOfDay(x.value, y.value));
-    developer.log("Els elements correctament ordenats: "
+    developer.log("Els elements especificats correctament ordenats: "
         "${_sortOrderIsCorrect(specialDaysMealsLst)}");
     return specialDaysMealsLst;
   }

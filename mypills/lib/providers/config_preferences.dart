@@ -21,7 +21,7 @@ class ConfigPreferences with ChangeNotifier {
 
   ConfigPreferences() {
     _alarmSettings = AlarmSettings(_shPrefs, callback);
-    _alarmCollection = AlarmCollection(_shPrefs, callback);
+    _alarmCollection = AlarmCollection(_shPrefs, this, callback);
   }
 
   //-----------------------class special members--------------------------------

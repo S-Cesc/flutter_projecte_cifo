@@ -43,13 +43,15 @@ class BackgroundAlarmHelper {
     DateTime time,
     int alarmId,
     int alarmDurationSeconds,
-    Future<void> Function(int) callback,
-    Future<void> Function(int) autoSnoozeCallback,
   ) async {
+    developer.log(
+        "Helper: Fire alarm: $time"
+        " until ${time.add(Duration(seconds: alarmDurationSeconds))}",
+        level: Level.INFO.value);
     await AndroidAlarmManager.oneShotAt(
       time,
       alarmId,
-      callback,
+      BackgroundEntry.callback,
       alarmClock: true,
       allowWhileIdle: true,
       exact: true,
@@ -57,10 +59,10 @@ class BackgroundAlarmHelper {
       rescheduleOnReboot: true,
     );
     // Snooze the alarm after alarmDurationSeconds
-    await AndroidAlarmManager.oneShot(
-      Duration(seconds: alarmDurationSeconds),
+    await AndroidAlarmManager.oneShotAt(
+      time.add(Duration(seconds: alarmDurationSeconds)),
       alarmId + BackgroundEntry.snoozeId,
-      autoSnoozeCallback,
+      BackgroundEntry.autoSnoozeCallback,
       alarmClock: true,
       allowWhileIdle: true,
       exact: true,
@@ -78,14 +80,13 @@ class BackgroundAlarmHelper {
   static Future<void> repeatAlarm(
     int alarmId,
     int alarmSnoozeSeconds,
-    int alarmDurationSeconds,
-    Future<void> Function(int) callback,
-    Future<void> Function(int) autoSnoozeCallback,
+    int alarmDurationSeconds
   ) async {
+    developer.log("Helper: Repeat alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
       Duration(seconds: alarmSnoozeSeconds),
       alarmId,
-      callback,
+      BackgroundEntry.callback,
       alarmClock: true,
       allowWhileIdle: true,
       exact: true,
@@ -96,7 +97,7 @@ class BackgroundAlarmHelper {
     await AndroidAlarmManager.oneShot(
       Duration(seconds: alarmSnoozeSeconds + alarmDurationSeconds + 30),
       alarmId + BackgroundEntry.snoozeId,
-      autoSnoozeCallback,
+      BackgroundEntry.autoSnoozeCallback,
       alarmClock: true,
       allowWhileIdle: true,
       exact: true,
@@ -111,15 +112,12 @@ class BackgroundAlarmHelper {
 
 //=======================================================================
 
-  static Future<void> snoozeAlarm(
-    int alarmId,
-    Future<void> Function(int) snoozeCallback,
-  ) async {
-    developer.log("Snooze alarm", level: Level.INFO.value);
+  static Future<void> snoozeAlarm(int alarmId) async {
+    developer.log("Helper: Snooze alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
       const Duration(microseconds: 0),
       alarmId,
-      snoozeCallback,
+      BackgroundEntry.snoozeCallback,
       alarmClock: true,
       allowWhileIdle: true,
       rescheduleOnReboot: true,
@@ -133,7 +131,7 @@ class BackgroundAlarmHelper {
   // StopAlarm is espected to be called always from UI
   // It must be the only place to call BackgroundEntry.stopCallback
   static Future<void> stopAlarm(int alarmId) async {
-    developer.log("Stop alarm", level: Level.INFO.value);
+    developer.log("Helper: Stop alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
       const Duration(microseconds: 0),
       alarmId,
@@ -150,7 +148,7 @@ class BackgroundAlarmHelper {
 
   // Always from UI, usually reprogramming the alarm
   static Future<void> cancelAlarm(int alarmId) async {
-    developer.log("Cancel alarm", level: Level.INFO.value);
+    developer.log("Helper: Cancel alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
       const Duration(microseconds: 0),
       alarmId,

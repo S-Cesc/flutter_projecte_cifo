@@ -165,62 +165,48 @@ class BackgroundEntry {
 
   @pragma('vm:entry-point')
   static Future<void> snoozeCallback(int alarmId) async {
-    if (!_stopIsExecuting) {
-      try {
-        // NOTE Manual-snoozed have no limit of repetitions, no alarm state changed
-        // auto-snooze calls here to implement snooze
-        // but auto-snooze adds more logic to update the alarm state
-        bool repeat = true;
-        developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
-            level: Level.INFO.value);
-        developer.log("Alarm $alarmId snoozed", level: Level.CONFIG.value);
-        if (alarmId != idAlarmTest) {
-          var alarm = await preferences.currentAlarm(alarmId);
-          if (alarm == null) {
-            // Don't repeat erroneous alarms
-            repeat = false;
-          } else if (alarm.actualReplay >=
-              preferences.alarmSettings.alarmRepeatTimes) {
-            if (!_stopIsExecuting) {
-              // LOST ALARM
-              // REVIEW -  TODO: Alarm lost (importance of log)
-              repeat = false;
-              // update alarm status
-              alarm.stopAlarm();
-              await preferences.storeChangedAlarm(alarmId);
-              // inform status
-              if (!_stopIsExecuting) {
-                await _sendStatusMessage(alarmStatusLostMessage);
-              }
-              // next shoot
-              // warning: it's not a replay, replays are exhausted
-              if (!_stopIsExecuting) {
-                await _fireNextShoot(alarm);
-              }
-            }
-          }
-          await FlutterRingtonePlayer.stop();
+    try {
+      // NOTE Manual-snoozed have no limit of repetitions, no alarm state changed
+      // auto-snooze calls here to implement snooze
+      // but auto-snooze adds more logic to update the alarm state
+      bool repeat = true;
+      developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+          level: Level.INFO.value);
+      developer.log("Alarm $alarmId snoozed", level: Level.CONFIG.value);
+      if (alarmId != idAlarmTest) {
+        var alarm = await preferences.currentAlarm(alarmId);
+        if (alarm == null || alarm.isStopped) {
+          // Don't repeat erroneous alarms nor stopped alarms
+          repeat = false;
+        } else if (alarm.actualReplay >=
+            preferences.alarmSettings.alarmRepeatTimes) {
+          // LOST ALARM
+          // REVIEW -  TODO: Alarm lost (importance of log)
+          repeat = false;
+          // update alarm status
+          alarm.stopAlarm();
+          await preferences.storeChangedAlarm(alarmId);
+          // inform status
+          await _sendStatusMessage(alarmStatusLostMessage);
+          // next shoot
+          // warning: it's not a replay, replays are exhausted
+          await _fireNextShoot(alarm);
         }
-        // Actions for all snoozed alarms, except lost alarms
-        if (repeat) {
-          await _cancelAlarm(alarmId);
-          if (!_stopIsExecuting) {
-            await _sendStatusMessage(alarmStatusSnoozedMessage);
-            if (!_stopIsExecuting) {
-              await BackgroundAlarmHelper.repeatAlarm(
-                alarmId,
-                preferences.alarmSettings.alarmSnoozeSeconds,
-                preferences.alarmSettings.alarmDurationSeconds,
-                callback,
-                autoSnoozeCallback,
-              );
-            }
-          }
-        }
-      } catch (e) {
-        developer.log("ERROR: Alarm snooze ($alarmId): $e",
-            level: Level.SEVERE.value);
+        unawaited(FlutterRingtonePlayer.stop());
       }
+      // Actions for all snoozed alarms, except lost alarms
+      if (repeat) {
+        await _cancelAlarm(alarmId);
+        await _sendStatusMessage(alarmStatusSnoozedMessage);
+        await BackgroundAlarmHelper.repeatAlarm(
+          alarmId,
+          preferences.alarmSettings.alarmSnoozeSeconds,
+          preferences.alarmSettings.alarmDurationSeconds,
+        );
+      }
+    } catch (e) {
+      developer.log("ERROR: Alarm snooze ($alarmId): $e",
+          level: Level.SEVERE.value);
     }
   }
 
@@ -228,30 +214,24 @@ class BackgroundEntry {
 
   @pragma('vm:entry-point')
   static Future<void> autoSnoozeCallback(int snoozeAlarmId) async {
-    if (!_stopIsExecuting) {
-      final alarmId = snoozeAlarmId - snoozeId;
-      try {
-        developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
-            level: Level.INFO.value);
-        developer.log("Alarm $alarmId ($snoozeAlarmId) auto-snoozed",
-            level: Level.CONFIG.value);
-        if (alarmId != idAlarmTest) {
-          var alarm = await preferences.currentAlarm(alarmId);
-          if (alarm != null) {
-            if (!_stopIsExecuting) {
-              // update alarm status
-              alarm.snoozeAlarm();
-              await preferences.storeChangedAlarm(alarmId);
-            }
-          }
+    final alarmId = snoozeAlarmId - snoozeId;
+    try {
+      developer.log('ISOLATE: $backgroundIsolateName, $isolateId',
+          level: Level.INFO.value);
+      developer.log("Alarm $alarmId ($snoozeAlarmId) auto-snoozed",
+          level: Level.CONFIG.value);
+      if (alarmId != idAlarmTest) {
+        var alarm = await preferences.currentAlarm(alarmId);
+        if (alarm != null && !alarm.isStopped) {
+          // update alarm status
+          alarm.snoozeAlarm();
+          await preferences.storeChangedAlarm(alarmId);
         }
-        if (!_stopIsExecuting) {
-          await snoozeCallback(alarmId);
-        }
-      } catch (e) {
-        developer.log("ERROR: Alarm auto-snooze ($snoozeAlarmId: $alarmId): $e",
-            level: Level.SEVERE.value);
       }
+      await snoozeCallback(alarmId);
+    } catch (e) {
+      developer.log("ERROR: Alarm auto-snooze ($snoozeAlarmId: $alarmId): $e",
+          level: Level.SEVERE.value);
     }
   }
 
@@ -268,19 +248,21 @@ class BackgroundEntry {
           level: Level.CONFIG.value);
       if (alarmId != idAlarmTest) {
         final alarm = await preferences.currentAlarm(alarmId);
-        await FlutterRingtonePlayer.stop();
         if (alarm != null) {
           // update alarm status
           alarm.stopAlarm();
           await preferences.storeChangedAlarm(alarmId);
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          developer.log("Fire next shoot", level: Level.FINE.value);
           await _fireNextShoot(alarm);
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         } else {
           alarmFound = false;
+          await _cancelAlarm(alarmId);
           developer.log("Required to stop nonexistent alarm $alarmId",
               level: Level.WARNING.value);
         }
+        await FlutterRingtonePlayer.stop();
       } else {
         await _cancelAlarm(alarmId);
       }
@@ -364,22 +346,17 @@ class BackgroundEntry {
     // Compute next shoot
     DateTime dateTime;
     {
-      final DateTime now = DateTime.now();
-      final TimeOfDay alarmNextShoot =
-          alarm.nextShoot(preferences.weeklyTimeTable);
-      final Duration alarmNextShootTime =
-          Duration(hours: alarmNextShoot.hour, minutes: alarmNextShoot.minute);
-      dateTime = DateUtils.dateOnly(now);
-      if (now.hour < alarmNextShoot.hour ||
-          (now.hour == alarmNextShoot.hour &&
-              now.minute < alarmNextShoot.minute)) {
-        dateTime.add(Duration(days: 1));
-      }
-      dateTime.add(alarmNextShootTime);
+      final TimeOfDay alarmTomorrowShoot =
+          alarm.tomorrowShoot(preferences.weeklyTimeTable);
+      final Duration alarmNextShootTime = Duration(
+          days: 1,
+          hours: alarmTomorrowShoot.hour,
+          minutes: alarmTomorrowShoot.minute);
+      dateTime = DateUtils.dateOnly(DateTime.now()).add(alarmNextShootTime);
       developer.log(
           "Next shoot at "
           "${dateTime.month}-${dateTime.day} "
-          "${alarmNextShoot.hour}:${alarmNextShoot.minute}",
+          "${dateTime.hour}:${dateTime.minute}",
           level: Level.INFO.value);
     }
     // Fire next shoot
@@ -387,8 +364,6 @@ class BackgroundEntry {
       dateTime,
       alarm.id,
       preferences.alarmSettings.alarmDurationSeconds,
-      callback,
-      autoSnoozeCallback,
     );
   }
 

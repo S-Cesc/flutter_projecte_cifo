@@ -83,10 +83,11 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                 developer.log(
                     'Alarm id=${_alarmId ?? "null"} message'
                     ' from ${main.uiAlarmPortName}'
-                    ' did not bind to an alarm object',
+                    ' is not binded to an alarm object',
                     level: Level.WARNING.value);
               }
             }
+            //TODO always include alarmId in the message
           } else if (jsonMessage
               .containsKey(BackgroundEntry.alarmStatusMessageKey)) {
             final String status =
@@ -140,10 +141,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   }
 
   Future<void> _snoozeAlarm(int alarmId) async {
-    await BackgroundAlarmHelper.snoozeAlarm(
-      alarmId,
-      BackgroundEntry.snoozeCallback,
-    );
+    await BackgroundAlarmHelper.snoozeAlarm(alarmId);
     setState(() {
       _alarmIsActivated = false;
       _alarmIsStopped = false;
@@ -153,6 +151,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context)!;
     final DateTime alarmDateTime = DateTime.now();
     return Scaffold(
       backgroundColor: AppStyles.colors.mantis,
@@ -187,9 +186,18 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                 shape: BoxShape.circle),
           ),
         ),
+        if (_alarmId != null) ...[
+          Padding(
+            padding: EdgeInsets.only(bottom: 15),
+            child: Text(
+              Alarm.getAlarmName(_alarmId!, t),
+              style: AppStyles.fonts.labelLarge(),
+              softWrap: true,
+            ),
+          ),
+        ],
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //TODO Localization
           children: [
             if (_alarmId != null) ...[
               if (_alarmIsActivated) ...[
@@ -208,8 +216,9 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                         await SystemNavigator.pop();
                       });
                     },
+                    // TODO: Next screen with the alarm paused
                     child: Text(
-                      'Cancel',
+                      t.cancel,
                       style: AppStyles.fonts.headline(),
                     ),
                   )),
@@ -230,7 +239,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                       });
                     },
                     child: Text(
-                      'Snooze',
+                      t.snooze,
                       style: AppStyles.fonts.headline(),
                     ),
                   )),
@@ -245,10 +254,10 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                       }));
                       return Text(
                         _alarmIsLost
-                            ? 'Alarm lost'
+                            ? t.missedAlarm
                             : _alarmIsStopped
-                                ? 'Alarm stopped'
-                                : 'Alarm snoozed',
+                                ? t.stoppedAlarm
+                                : t.snoozedAlarm,
                         style: AppStyles.fonts.headline(),
                       );
                     }),

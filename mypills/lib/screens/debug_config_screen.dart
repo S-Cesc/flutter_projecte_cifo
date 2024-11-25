@@ -110,8 +110,6 @@ class _DebugConfigScreenState extends State<DebugConfigScreen> {
       time,
       alarmId,
       20,
-      BackgroundEntry.callback,
-      BackgroundEntry.autoSnoozeCallback,
     );
   }
 

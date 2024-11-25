@@ -53,13 +53,18 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ConfigPreferences(),
-      child: MaterialApp(
+        create: (context) => ConfigPreferences(),
+        child: MaterialApp(
           theme: ThemeData(
               fontFamily: AppStyles.fonts.fontFamilyName,
               useMaterial3: true,
               scaffoldBackgroundColor: AppStyles.colors.mantis,
-              dialogBackgroundColor: AppStyles.colors.ochre,
+              dialogBackgroundColor: AppStyles.colors.ochre[700],
+              dialogTheme: DialogTheme(
+                iconColor: AppStyles.colors.mantis,
+                surfaceTintColor: AppStyles.colors.darkSpringGreen[200],
+                elevation: 4,
+              ),
               appBarTheme: AppBarTheme(
                 iconTheme: IconThemeData(color: AppStyles.colors.mantis),
                 color: AppStyles.colors.ochre,
@@ -76,8 +81,7 @@ class _MainAppState extends State<MainApp> {
             return AppLocalizations.of(context)!.appTitle;
           },
           //showPerformanceOverlay: true,
-        )
-    );
+        ));
   }
 }
 

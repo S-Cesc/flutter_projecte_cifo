@@ -130,7 +130,8 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
               if (currentRoute.settings.name == main.alarmScreenPath) {
                 currentRouteIsNewRoute = true;
               }
-              developer.log('popuntil: ${currentRoute.settings.name ?? "null"}',
+              developer.log(
+                  'popuntil; now in: ${currentRoute.settings.name ?? "null"}',
                   level: Level.FINEST.value);
               // Return true so popUntil() pops nothing.
               return true;

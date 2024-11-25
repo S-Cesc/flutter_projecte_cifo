@@ -1,7 +1,5 @@
 // logging and debugging
 import 'dart:developer' as developer;
-import 'package:flutter_projecte_cifo/model/enums.dart';
-import 'package:flutter_projecte_cifo/model/weekly_time_table.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:async';
@@ -35,6 +33,7 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppStyles.colors.mantis,
       appBar: AppBar(
         backgroundColor: AppStyles.colors.ochre[700],

@@ -25,6 +25,88 @@ enum PillMealTime {
   after(2),
   longAfter(5);
 
+  static String getPillTimeName(
+      Meal meal, PillMealTime pillMealTime, AppLocalizations t) {
+    switch (meal) {
+      case Meal.breakfast:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeBreakfast,
+            before => t.pillsBeforeBreakfast,
+            at => t.pillsAtBreakfast,
+            after => t.pillsAfterBreakfast,
+            longAfter =>
+              throw RangeError("'long after' only allowed at supper"),
+          };
+        }
+      case Meal.brunch:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeBrunch,
+            before => t.pillsBeforeBrunch,
+            at => t.pillsAtBrunch,
+            after => t.pillsAfterBrunch,
+            longAfter =>
+              throw RangeError("'long after' only allowed at supper"),
+          };
+        }
+      case Meal.lunch:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeLunch,
+            before => t.pillsBeforeLunch,
+            at => t.pillsAtLunch,
+            after => t.pillsAfterLunch,
+            longAfter =>
+              throw RangeError("'long after' only allowed at supper"),
+          };
+        }
+      case Meal.tea:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeTea,
+            before => t.pillsBeforeTea,
+            at => t.pillsAtTea,
+            after => t.pillsAfterTea,
+            longAfter =>
+              throw RangeError("'long after' only allowed at supper"),
+          };
+        }
+      case Meal.highTea:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeHighTea,
+            before => t.pillsBeforeHighTea,
+            at => t.pillsAtHighTea,
+            after => t.pillsAfterHighTea,
+            longAfter =>
+              throw RangeError("'long after' only allowed at supper"),
+          };
+        }
+      case Meal.dinner:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeDinner,
+            before => t.pillsBeforeDinner,
+            at => t.pillsAtDinner,
+            after => t.pillsAfterDinner,
+            longAfter =>
+              throw RangeError("'long after' only allowed at supper"),
+          };
+        }
+      case Meal.supper:
+        {
+          return switch (pillMealTime) {
+            longBefore => t.pillsLongBeforeSupper,
+            before => t.pillsBeforeSupper,
+            at => t.pillsAtSupper,
+            after => t.pillsAfterSupper,
+            longAfter => t.pillsLongAfterSupper,
+          };
+        }
+    }
+  }
+
   //-----------------class state members and constructors ----------------------
 
   final int id;
@@ -73,83 +155,6 @@ enum PillMealTime {
   }
 
   String pillTimeName(Meal meal, AppLocalizations t) {
-    switch (meal) {
-      case Meal.breakfast:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeBreakfast,
-            before => t.pillsBeforeBreakfast,
-            at => t.pillsAtBreakfast,
-            after => t.pillsAfterBreakfast,
-            longAfter =>
-              throw RangeError("'long after' only allowed at supper"),
-          };
-        }
-      case Meal.brunch:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeBrunch,
-            before => t.pillsBeforeBrunch,
-            at => t.pillsAtBrunch,
-            after => t.pillsAfterBrunch,
-            longAfter =>
-              throw RangeError("'long after' only allowed at supper"),
-          };
-        }
-      case Meal.lunch:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeLunch,
-            before => t.pillsBeforeLunch,
-            at => t.pillsAtLunch,
-            after => t.pillsAfterLunch,
-            longAfter =>
-              throw RangeError("'long after' only allowed at supper"),
-          };
-        }
-      case Meal.tea:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeTea,
-            before => t.pillsBeforeTea,
-            at => t.pillsAtTea,
-            after => t.pillsAfterTea,
-            longAfter =>
-              throw RangeError("'long after' only allowed at supper"),
-          };
-        }
-      case Meal.highTea:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeHighTea,
-            before => t.pillsBeforeHighTea,
-            at => t.pillsAtHighTea,
-            after => t.pillsAfterHighTea,
-            longAfter =>
-              throw RangeError("'long after' only allowed at supper"),
-          };
-        }
-      case Meal.dinner:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeDinner,
-            before => t.pillsBeforeDinner,
-            at => t.pillsAtDinner,
-            after => t.pillsAfterDinner,
-            longAfter =>
-              throw RangeError("'long after' only allowed at supper"),
-          };
-        }
-      case Meal.supper:
-        {
-          return switch (this) {
-            longBefore => t.pillsLongBeforeSupper,
-            before => t.pillsBeforeSupper,
-            at => t.pillsAtSupper,
-            after => t.pillsAfterSupper,
-            longAfter => t.pillsLongAfterSupper,
-          };
-        }
-    }
+    return getPillTimeName(meal, this, t);
   }
 }
