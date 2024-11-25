@@ -15,6 +15,7 @@ import 'weekly_time_table.dart';
 
 //==============================================================================
 
+/// Objects representing an alarm
 class Alarm implements Comparable<Alarm> {
   //-------------------------static/constant------------------------------------
 
@@ -27,14 +28,18 @@ class Alarm implements Comparable<Alarm> {
   static const _isSnoozedKey = 'isSnoozed';
   static const _actualReplayKey = 'nReplay';
 
+  /// Get the id from the key pair ([meal], [pillMealTime])
   static int getAlarmId(Meal meal, PillMealTime pillMealTime) {
     return meal.id + pillMealTime.id;
   }
 
+  /// Get the string key used to store the alarm
+  /// from its key pair ([meal], [pillMealTime])
   static String alarmKey(String key, Meal meal, PillMealTime pillMealTime) {
     return "$key${getAlarmId(meal, pillMealTime)}";
   }
 
+  /// Get the key pair ([meal], [pillMealTime]) from the id
   static (Meal, PillMealTime) getAlarmKeys(int id) {
     if (id == Alarm._midnightId) {
       return (Meal.supper, PillMealTime.longAfter);
@@ -50,7 +55,8 @@ class Alarm implements Comparable<Alarm> {
   //    await initializeDateFormatting("ca", null)
   // You can get the current locale from widget
   // locale = WidgetsBinding.instance!.window.locale
-  static String getAlarmName(int id, AppLocalizations t) {
+  /// Localized Alarm name from [id]
+  static String getAlarmNameFromId(int id, AppLocalizations t) {
     // idAlarmText not imported from BackgroundEntry to avoid circular reference
     if (kDebugMode) {
       final idAlarmText = 3;
@@ -61,6 +67,12 @@ class Alarm implements Comparable<Alarm> {
     Meal meal;
     PillMealTime pillMealTime;
     (meal, pillMealTime) = getAlarmKeys(id);
+    return PillMealTime.getPillTimeName(meal, pillMealTime, t);
+  }
+
+  /// Localized Alarm name from its key pair ([meal], [pillMealTime])
+  static String getAlarmName(
+      Meal meal, PillMealTime pillMealTime, AppLocalizations t) {
     return PillMealTime.getPillTimeName(meal, pillMealTime, t);
   }
 
@@ -75,18 +87,22 @@ class Alarm implements Comparable<Alarm> {
   bool _isSnoozed;
   int _actualReplay;
 
+  /// Alarm with empty (default) values.
+  /// The key inmutable values ([meal], [pillMealTime]) are needed
   Alarm.empty(this.meal, this.pillMealTime)
       : _isRunning = false,
         _isSnoozed = false,
         _actualReplay = 0;
 
   // prepare for future functionality, involving new fields (prescriptions)
+  /// Copy Alarm values into new Alarm with key values ([meal], [pillMealTime])
   Alarm.copyFrom(this.meal, this.pillMealTime, Alarm from)
       : _isRunning = false,
         _isSnoozed = false,
         _actualReplay = 0,
         _lastShoot = from._lastShoot;
 
+  /// Build Alarm fromJson decoded
   Alarm.fromJson(Map<String, dynamic> json)
       : meal = Meal.fromId(json[_mealKey] as int),
         pillMealTime = PillMealTime.fromId(json[_pillMealTimeKey] as int),
@@ -110,6 +126,7 @@ class Alarm implements Comparable<Alarm> {
     }
   }
 
+  /// Convert to a Json object which must be encoded to became a string
   Map<String, dynamic> toJson() {
     return {
       _mealKey: meal.id,
@@ -124,21 +141,30 @@ class Alarm implements Comparable<Alarm> {
 
   //-----------------------class rest of members--------------------------------
 
+  /// Compute the alarm unique id
   int get id => getAlarmId(meal, pillMealTime);
+
   bool get isRunning => _isRunning;
   bool get isSnoozed => _isSnoozed;
   bool get isActivated => _isRunning || _isSnoozed;
-  bool get isStopped =>
-      (_stopped ?? DateTime(1992)).isAfter(_lastShoot ?? DateTime(1992));
   int get actualReplay => _actualReplay;
+  DateTime? get stopped => _stopped;
+  DateTime? get lastShoot => _lastShoot;
+
+  /// When [stopped] is after [lastShoot]
+  bool get isStopped => _stopped != null && _stopped!.isAfter(_lastShoot!);
 
   // Remember localization must be initialized:
   //    await initializeDateFormatting("ca", null)
   // You can get the current locale from widget
   // locale = WidgetsBinding.instance!.window.locale
+  /// Localized name
   String name(AppLocalizations t) => pillMealTime.pillTimeName(meal, t);
 
-  void fireAlarm() {
+  /// mark the alarm as fired:
+  /// - set the [lastShoot] DateTime on first replay
+  /// - increment the [replay]
+  void markAlarmfired() {
     if (_actualReplay == 0) {
       final DateTime now = DateTime.now();
       _lastShoot = DateTime(now.year, now.month, now.day, now.hour, now.minute);
@@ -148,12 +174,16 @@ class Alarm implements Comparable<Alarm> {
     _isSnoozed = false;
   }
 
-  void snoozeAlarm() {
+  /// mark the alarm as snoozed
+  void markAlarmSnoozed() {
     _isRunning = false;
     _isSnoozed = true;
   }
 
-  void stopAlarm() {
+  /// mark the alarm as stopped
+  /// - register the [stopped] DateTime
+  /// - reset the [replay] to zero
+  void markAlarmStopped() {
     _isRunning = false;
     _isSnoozed = false;
     _actualReplay = 0;
@@ -162,6 +192,7 @@ class Alarm implements Comparable<Alarm> {
         now.year, now.month, now.day, now.hour, now.minute, now.second);
   }
 
+  /// Compute the TimeOfDay of the tomorrow shoot using weekly meal time
   TimeOfDay tomorrowShoot(WeeklyTimeTable wtt) {
     if (_lastShoot == null) {
       developer.log("Uninitialitzed 'lastShoot'; unexpected null value",

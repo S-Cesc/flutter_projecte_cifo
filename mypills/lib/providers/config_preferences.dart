@@ -8,6 +8,9 @@ import 'alarm_settings.dart';
 
 //==============================================================================
 
+/// The object used to set the configuration
+/// It is build from an [AlarmSettings] and an [AlarmCollection]
+/// and a [SharedPreferencesAsync] where data is stored
 class ConfigPreferences with ChangeNotifier {
   //-------------------------static/constant------------------------------------
 
@@ -26,10 +29,12 @@ class ConfigPreferences with ChangeNotifier {
 
   //-----------------------class special members--------------------------------
 
+  /// Child objects must call to notify changes done
   void callback() {
     notifyListeners();
   }
 
+  /// Initialization of the object
   Future<void> init() async {
     await _alarmSettings.init();
     await _alarmCollection.init();
@@ -38,6 +43,9 @@ class ConfigPreferences with ChangeNotifier {
 
   //-----------------------class rest of members--------------------------------
 
+  /// Access the depending [AlarmSettings] object
   AlarmSettings get alarmSettings => _alarmSettings;
+
+  /// Access the depending [AlarmCollection] object
   AlarmCollection get alarms => _alarmCollection;
 }

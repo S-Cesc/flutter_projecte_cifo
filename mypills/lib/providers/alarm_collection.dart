@@ -15,7 +15,6 @@ import '../model/enums.dart';
 import '../providers/config_preferences.dart';
 import '../services/background_alarm_helper.dart';
 import 'alarm_settings.dart';
-import '../background_entry.dart';
 
 //==============================================================================
 

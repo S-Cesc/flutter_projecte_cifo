@@ -190,7 +190,7 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
           Padding(
             padding: EdgeInsets.only(bottom: 15),
             child: Text(
-              Alarm.getAlarmName(_alarmId!, t),
+              Alarm.getAlarmNameFromId(_alarmId!, t),
               style: AppStyles.fonts.labelLarge(),
               softWrap: true,
             ),

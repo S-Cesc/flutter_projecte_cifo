@@ -31,6 +31,7 @@ enum DayOfWeek {
 
   const DayOfWeek(this.id);
 
+  /// Acording to ISO-8601 values in the range [1..7]
   factory DayOfWeek.fromId(int id) {
     return switch (id) {
       1 => monday,
@@ -44,12 +45,14 @@ enum DayOfWeek {
     };
   }
 
+  /// DayOfWeek of a date
   factory DayOfWeek.fromDate(DateTime d) {
     return DayOfWeek.fromId(d.weekday);
   }
 
   //-----------------------class special members--------------------------------
 
+  /// Next day of week (circular: sunday turns again into monday)
   DayOfWeek next() {
     return DayOfWeek.fromId((id % 7) + 1);
   }
@@ -57,4 +60,5 @@ enum DayOfWeek {
 
 //==============================================================================
 
+// Stil not in use
 enum PrescriptionFrequency { dayly, weekly, fortnightly, monthly }

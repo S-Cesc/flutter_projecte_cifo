@@ -9,6 +9,8 @@ import 'enums.dart';
 
 //==============================================================================
 
+/// Two sets of meals (which meals) with its times,
+/// and a set of DayOfWeek to diferenciate the set of meals for each day of week
 class WeeklyTimeTable {
   //-------------------------static/constant------------------------------------
 
@@ -67,6 +69,7 @@ class WeeklyTimeTable {
         _specialDaysMeals = {};
 
   // use Map<String, dynamic> parsedJson = jsonDecode(json);
+  /// constructor from Json object got from jsonDecode of a string
   WeeklyTimeTable.fromJson(Map<String, dynamic> parsedJson)
       : _defaultDaysMeals = _timeTableFromJson(
             parsedJson['defaultMeals'] as Map<String, dynamic>),
@@ -78,6 +81,7 @@ class WeeklyTimeTable {
   //-----------------------class special members--------------------------------
 
   // use String jsonEncode(value.toJson());
+  /// convert to Json object, which also must be encoded into a String
   Map<String, dynamic> toJson() {
     return {
       'defaultMeals': _timeTableToJson(_defaultDaysMeals),
@@ -86,6 +90,7 @@ class WeeklyTimeTable {
     };
   }
 
+  /// Require a minimum of 3 meals a day (needed for prescriptions)
   bool get isFullyDefined {
     return _defaultDaysMeals.length >= 3 &&
         (_specialWeekDays.isEmpty && _specialDaysMeals.isEmpty ||
@@ -100,6 +105,8 @@ class WeeklyTimeTable {
 
   bool isSpecialWeekDay(DayOfWeek dw) => _specialWeekDays.contains(dw);
 
+  /// At what time is the [meal]?
+  /// It can also ask for special days, using [isSpecialWeekDay]=true
   TimeOfDay? mealTime(Meal meal, [bool isSpecialWeekDay = false]) {
     if (isSpecialWeekDay) {
       return _specialDaysMeals[meal];
@@ -108,6 +115,7 @@ class WeeklyTimeTable {
     }
   }
 
+  /// At what time is the [meal] on [dw]
   TimeOfDay? dayMealTime(Meal meal, DayOfWeek dw) {
     if (isSpecialWeekDay(dw)) {
       return _specialDaysMeals[meal];
@@ -116,6 +124,7 @@ class WeeklyTimeTable {
     }
   }
 
+  /// Search tomorrow equivalent meal
   Meal tomorrowEquivalentMeal(Meal meal, DayOfWeek todayWD) {
     DayOfWeek tomorrow = todayWD.next();
     if (isSpecialWeekDay(todayWD) == isSpecialWeekDay(tomorrow)) {
@@ -183,6 +192,7 @@ class WeeklyTimeTable {
   //----------------------------------------------------------------------------
   //------------   UPDATE   ----------------------------------------------------
 
+  /// Define which days of week are "special"
   void defineSpecialWeekDays(Set<DayOfWeek> weekDays) {
     developer.log("- defineSpecialWeekDays", level: Level.FINER.value);
     if (weekDays.isEmpty) {
@@ -192,12 +202,15 @@ class WeeklyTimeTable {
     }
   }
 
+  /// Remove all special days
   void removeSpecialWeekDays() {
     developer.log("- removeSpecialWeekDays", level: Level.FINER.value);
     _specialWeekDays.removeAll(_specialWeekDays.toList());
-    _specialDaysMeals.removeWhere((_, __) => true);
+    // _specialDaysMeals.removeWhere((_, __) => true);
   }
 
+  /// Set the time for a meal
+  /// It can also be used for special days, using [isSpecialWeekDay]=true
   void defineMealTime(Meal meal, TimeOfDay time,
       [bool specialWeekDay = false]) {
     developer.log("- defineMealTime: $meal, $time", level: Level.FINER.value);

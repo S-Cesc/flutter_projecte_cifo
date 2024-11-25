@@ -91,7 +91,7 @@ class BackgroundEntry {
           );
         }
         // update alarm status
-        alarm.fireAlarm();
+        alarm.markAlarmfired();
         await preferences.storeChangedAlarm(alarm.id);
       }
       //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -184,7 +184,7 @@ class BackgroundEntry {
           // REVIEW -  TODO: Alarm lost (importance of log)
           repeat = false;
           // update alarm status
-          alarm.stopAlarm();
+          alarm.markAlarmStopped();
           await preferences.storeChangedAlarm(alarmId);
           // inform status
           await _sendStatusMessage(alarmStatusLostMessage);
@@ -224,7 +224,7 @@ class BackgroundEntry {
         var alarm = await preferences.currentAlarm(alarmId);
         if (alarm != null && !alarm.isStopped) {
           // update alarm status
-          alarm.snoozeAlarm();
+          alarm.markAlarmSnoozed();
           await preferences.storeChangedAlarm(alarmId);
         }
       }
@@ -250,7 +250,7 @@ class BackgroundEntry {
         final alarm = await preferences.currentAlarm(alarmId);
         if (alarm != null) {
           // update alarm status
-          alarm.stopAlarm();
+          alarm.markAlarmStopped();
           await preferences.storeChangedAlarm(alarmId);
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           developer.log("Fire next shoot", level: Level.FINE.value);

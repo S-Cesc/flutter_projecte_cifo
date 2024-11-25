@@ -4,12 +4,18 @@ import 'pill_meal_time.dart';
 
 //==============================================================================
 
+/// Iterate through the pair (Meal, PillMealTime)
 class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
   //-------------------------static/constant------------------------------------
 
+  /// Some additional static facilities provided by the class
+  /// - Whether the pair (Meal, PillMealTime) has a next value
+  /// or it is the last one
   static bool hasNext(Meal mealTime, PillMealTime pillMealTime) =>
       mealTime != Meal.supper || pillMealTime != PillMealTime.longAfter;
 
+  /// Some additional static facilities provided by the class:
+  /// - compute the next of a (Meal, PillMealTime) pair value
   static (Meal, PillMealTime) next(Meal mealTime, PillMealTime pillMealTime) {
     if (pillMealTime < PillMealTime.after) {
       return (mealTime, pillMealTime.next()!);

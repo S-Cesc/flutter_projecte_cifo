@@ -8,6 +8,7 @@
 /* writable derived class has access to private setters */
 import 'package:flutter/foundation.dart';
 
+/// Base class without setters
 base class ReadOnlyAlarmPreferences {
   //-----------------class state members and constructors ----------------------
   int _alarmDurationSeconds;
@@ -30,7 +31,7 @@ base class ReadOnlyAlarmPreferences {
 /* ====================================================================== */
 // Using same file for class extension allows to access private fields
 
-//writable for use in configuration
+/// Writable class for use in setting configuration
 final class AlarmPreferences extends ReadOnlyAlarmPreferences {
   //-------------------------static/constant------------------------------------
 
@@ -55,26 +56,28 @@ final class AlarmPreferences extends ReadOnlyAlarmPreferences {
 
   //-----------------------class special members--------------------------------
 
+  /// A readonly copy, without setters
   ReadOnlyAlarmPreferences get readOnlyValues =>
       this as ReadOnlyAlarmPreferences;
 
   //-----------------------class rest of members--------------------------------
 
-  // Check before set
+  /// Check before set
   bool isAlarmDurationSecondsInRange(int value) {
     return value >= minAlarmDurationSeconds && value <= maxAlarmDurationSeconds;
   }
 
-  // Check before set
+  /// Check before set
   bool isAlarmSnoozeSecondsInRange(int value) {
     return (value >= minAlarmSnoozeSeconds) && value <= maxAlarmSnoozeSeconds;
   }
 
-  // Check before set
+  /// Check before set
   bool isAlarmRepeatTimesInRange(int value) {
     return value >= minAlarmRepeatTimes && value <= maxAlarmRepeatTimes;
   }
 
+  /// Set configuration; [value] must [isAlarmDurationSecondsInRange]
   set alarmDurationSeconds(int value) {
     if (isAlarmDurationSecondsInRange(value)) {
       super._alarmDurationSeconds = value;
@@ -87,6 +90,7 @@ final class AlarmPreferences extends ReadOnlyAlarmPreferences {
     }
   }
 
+  /// Set configuration; [value] must [isAlarmSnoozeSecondsInRange]
   set alarmSnoozeSeconds(int value) {
     if (isAlarmSnoozeSecondsInRange(value)) {
       super._alarmSnoozeSeconds = value;
@@ -99,6 +103,7 @@ final class AlarmPreferences extends ReadOnlyAlarmPreferences {
     }
   }
 
+  /// Set configuration; [value] must [isAlarmRepeatTimesInRange]
   set alarmRepeatTimes(int value) {
     if (value >= minAlarmRepeatTimes && value <= maxAlarmRepeatTimes) {
       super._alarmRepeatTimes = value;

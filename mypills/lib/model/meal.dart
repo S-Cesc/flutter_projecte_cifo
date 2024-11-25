@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //=======================================================================
 
+/// Meals of the day; beleave that 7 are enough
 enum Meal {
   breakfast(10),
   brunch(20),
@@ -14,6 +15,8 @@ enum Meal {
   dinner(60),
   supper(70);
 
+  /// default meal times.
+  /// Arbitrary set, programmer can change them without affectations
   static TimeOfDay defaultMealTime(Meal meal) {
     return switch (meal) {
       Meal.breakfast => const TimeOfDay(hour: 8, minute: 0),
@@ -47,6 +50,7 @@ enum Meal {
     };
   }
 
+  /// Define ordinal; ordering
   factory Meal.fromOrdinal(int id) {
     return Meal.fromId(id * 10);
   }
@@ -57,6 +61,7 @@ enum Meal {
     return id < other.id;
   }
 
+  /// Next meal, not circular (supper is the last one, returning null)
   Meal? next() {
     return switch (this) {
       breakfast => brunch,
@@ -71,6 +76,7 @@ enum Meal {
 
   //-----------------------class rest of members--------------------------------
 
+  /// Define ordinal; ordering
   int get ordinal => id ~/ 10;
 
   //--------------------------------i18n----------------------------------------
@@ -79,6 +85,8 @@ enum Meal {
   //    await initializeDateFormatting("ca", null)
   // You can get the current locale from widget
   // locale = WidgetsBinding.instance!.window.locale
+  /// Localized name
+  /// they are only seven ordered meals, they don't need especific translation
   String mealName(AppLocalizations t) {
     return switch (this) {
       breakfast => t.breakfast,

@@ -18,6 +18,10 @@ import 'meal.dart';
 // Usually english have brunch or lunch, tea or high te, and dinner or supper,
 // but sometimes the duality stands because one of them is limited to
 // have a little bite
+/// Represents before/after option for taking the pills
+/// There is also a long before option when pills can't be taken at meal time
+/// There is also a long after, it is used only for long after supper,
+/// representing night pills
 enum PillMealTime {
   longBefore(-5),
   before(-2),
@@ -25,6 +29,8 @@ enum PillMealTime {
   after(2),
   longAfter(5);
 
+  /// static function to get localized [PillMealTime] name
+  /// To get a localized PillMealTime name the Meal is also needed
   static String getPillTimeName(
       Meal meal, PillMealTime pillMealTime, AppLocalizations t) {
     switch (meal) {
@@ -130,6 +136,7 @@ enum PillMealTime {
     return id < other.id;
   }
 
+  /// No circular next function; [longAfter].next() returns null
   PillMealTime? next() {
     return switch (this) {
       longBefore => before,
@@ -144,6 +151,7 @@ enum PillMealTime {
 
   //--------------------------------i18n----------------------------------------
 
+  /// Localized name of the items, to choice between them
   String simpleName(AppLocalizations t) {
     return switch (this) {
       longBefore => t.longBefore,
@@ -154,6 +162,7 @@ enum PillMealTime {
     };
   }
 
+  /// Full localized name, which needs the meal
   String pillTimeName(Meal meal, AppLocalizations t) {
     return getPillTimeName(meal, this, t);
   }
