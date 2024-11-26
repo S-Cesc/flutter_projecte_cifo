@@ -38,10 +38,10 @@ class ForegroundEntryHelper {
       ),
       foregroundTaskOptions: ForegroundTaskOptions(
         eventAction: ForegroundTaskEventAction.nothing(),
-        autoRunOnBoot: true,
-        autoRunOnMyPackageReplaced: true,
+        autoRunOnBoot: false,
+        autoRunOnMyPackageReplaced: false,
         allowWakeLock: true,
-        allowWifiLock: true,
+        allowWifiLock: false,
       ),
     );
   }

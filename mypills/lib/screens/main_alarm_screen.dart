@@ -156,11 +156,11 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
     return Scaffold(
       backgroundColor: AppStyles.colors.mantis,
       appBar: AppBar(
-        title: const Text('Take the pills'),
+        title: Text(t.notificationTitle),
         elevation: 4,
       ),
       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text('Take the pills', style: AppStyles.fonts.display()),
+        Text(t.notificationTitle, style: AppStyles.fonts.display()),
         DigitalClock(
           showSeconds: true,
           datetime: alarmDateTime,

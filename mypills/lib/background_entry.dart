@@ -84,11 +84,11 @@ class BackgroundEntry {
       if (alarm != null) {
         // RING -- _soundAlarm bool to avoid night debugging sound
         if (_soundAlarm) {
-          await FlutterRingtonePlayer.playAlarm(
+          unawaited(FlutterRingtonePlayer.playAlarm(
             looping: true,
             asAlarm: true,
             volume: 1.0,
-          );
+          ));
         }
         // update alarm status
         alarm.markAlarmfired();
@@ -174,6 +174,7 @@ class BackgroundEntry {
           level: Level.INFO.value);
       developer.log("Alarm $alarmId snoozed", level: Level.CONFIG.value);
       if (alarmId != idAlarmTest) {
+        unawaited(FlutterRingtonePlayer.stop());
         var alarm = await preferences.currentAlarm(alarmId);
         if (alarm == null || alarm.isStopped) {
           // Don't repeat erroneous alarms nor stopped alarms
@@ -192,7 +193,6 @@ class BackgroundEntry {
           // warning: it's not a replay, replays are exhausted
           await _fireNextShoot(alarm);
         }
-        unawaited(FlutterRingtonePlayer.stop());
       }
       // Actions for all snoozed alarms, except lost alarms
       if (repeat) {
@@ -247,6 +247,7 @@ class BackgroundEntry {
       developer.log('Alarm $alarmId required to stop',
           level: Level.CONFIG.value);
       if (alarmId != idAlarmTest) {
+        unawaited(FlutterRingtonePlayer.stop());
         final alarm = await preferences.currentAlarm(alarmId);
         if (alarm != null) {
           // update alarm status
@@ -262,7 +263,6 @@ class BackgroundEntry {
           developer.log("Required to stop nonexistent alarm $alarmId",
               level: Level.WARNING.value);
         }
-        await FlutterRingtonePlayer.stop();
       } else {
         await _cancelAlarm(alarmId);
       }

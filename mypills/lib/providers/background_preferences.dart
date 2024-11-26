@@ -59,7 +59,7 @@ class BackgroundPreferences {
   /// Access the depending [AlarmPreferences] object (readonly)
   ReadOnlyAlarmPreferences get alarmSettings => _alarmSettings.data;
 
-  /// [WeeklyTimeTable] data
+  /// Access the depending [WeeklyTimeTable] data
   WeeklyTimeTable get weeklyTimeTable => _alarmSettings.wtt;
 
   /// The cached [Alarm]
@@ -85,9 +85,9 @@ class BackgroundPreferences {
   }
 
   /// Update the cached [Alarm]
-  /// The changes done by the background service are only state changes
+  /// The changes done by the background service are only state changes.
   /// State changes are not async operations;
-  /// just after the change the cached Alarm must be saved to disk
+  /// just after the change the cached Alarm must be saved to disk.
   Future<void> storeChangedAlarm(int alarmId) async {
     if (_currentAlarm != null && _currentAlarm!.id == alarmId) {
       final Map<String, dynamic> jsonStructured = _currentAlarm!.toJson();
