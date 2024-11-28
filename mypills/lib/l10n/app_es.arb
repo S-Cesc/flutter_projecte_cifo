@@ -19,6 +19,8 @@
   "undoChanges": "Deshacer",
   "cancel": "Cancelar",
   "snooze": "Retardar",
+  "confirm": "Confirmar",
+  "confirmDeletion": "¿Seguro que quiere eliminar{count, plural, =1{{gender, select, f{la} other {lo}}} other{{gender, select, f{las} other {los}}}}?",
   "missedAlarm": "Alarma perdida",
   "stoppedAlarm": "Alarma detenida",
   "snoozedAlarm": "Alarma retrasada",
@@ -30,6 +32,7 @@
   "alarmDurationSeconds": "Duración de la alarma en segundos",
   "alarmSnoozeSeconds": "Segundos hasta la repetición de la alarma",
 
+  "meal": "Comida",
   "breakfast": "desayuno",
   "brunch": "almuerzo",
   "lunch": "comida",
@@ -44,6 +47,7 @@
   "after": "después",
   "longAfter": "mucho después",
   
+  "alarmList": "Lista de alarmas",
   "alarms": "Alarmas",
   "weeklyTimetable": "Horario semanal",
   "weeklyDefaultTimetable": "Usual",

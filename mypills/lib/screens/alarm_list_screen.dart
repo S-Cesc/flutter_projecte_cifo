@@ -5,11 +5,14 @@ import 'package:logging/logging.dart' show Level;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+// Localizations
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Fitxers del projecte
 import '../model/alarm.dart';
 import '../providers/config_preferences.dart';
 import '../styles/app_styles.dart';
 import '../widgets/alarm_list.dart';
+import '../widgets/custom_back_button.dart';
 import 'dialog_add_alarm.dart';
 
 class AlarmListScreen extends StatefulWidget {
@@ -43,6 +46,7 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context)!;
     Future<bool> openDialogAddItem() async {
       Alarm? newAlarm =
           await Navigator.of(context).push(MaterialPageRoute<Alarm>(
@@ -66,10 +70,10 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
     Future<void> deleteAlarm(int alarmId) async {
       if (await confirm(
             context,
-            title: const Text('Confirm'),
-            content: const Text('Would you like to remove?'),
-            textOK: const Text('Yes'),
-            textCancel: const Text('No'),            
+            title: Text(t.confirm),
+            content: Text(t.confirmDeletion(1, "f")),
+            textOK: Text(t.yes),
+            textCancel: Text(t.no),            
           ) &&
           context.mounted) {
         setState(() {
@@ -97,19 +101,10 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
     return Scaffold(
       backgroundColor: AppStyles.colors.mantis,
       appBar: AppBar(
-          title: Text("Llista d'alarmes"),
+          title: Text(t.alarmList),
           backgroundColor: AppStyles.colors.ochre[700],
           elevation: 4,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppStyles.colors.forestGreen,
-            ),
-            onPressed: () {
-              // Navigate back to the previous screen by popping the current route
-              Navigator.of(context).pop();
-            },
-          ),
+          leading: CustomBackButton(),
           actions: <Widget>[
             TextButton(
               onPressed: () async {

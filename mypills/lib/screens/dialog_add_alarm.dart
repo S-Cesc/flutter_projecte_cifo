@@ -7,6 +7,7 @@ import '../styles/app_styles.dart';
 import '../model/alarm.dart';
 import '../model/meal.dart';
 import '../model/pill_meal_time.dart';
+import '../widgets/custom_back_button.dart';
 
 class DialogAddAlarm extends StatefulWidget {
   const DialogAddAlarm({super.key});
@@ -60,16 +61,7 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
           ),
           backgroundColor: AppStyles.colors.ochre[700],
           elevation: 4,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppStyles.colors.forestGreen,
-            ),
-            onPressed: () {
-              // Navigate back to the previous screen by popping the current route
-              Navigator.of(context).pop();
-            },
-          ),
+          leading: CustomBackButton(),
           actions: <Widget>[
             TextButton(
               onPressed: _canSave
@@ -108,7 +100,7 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
                     width: double.infinity,
                     initialSelection: initialMeal,
                     controller: null,
-                    label: const Text('Meal'),
+                    label: Text(t.meal),
                     onSelected: (Meal? meal) {
                       setState(() {
                         _setMeal(meal);
@@ -118,7 +110,7 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
                         Meal.values.map<DropdownMenuEntry<Meal>>((Meal meal) {
                       return DropdownMenuEntry<Meal>(
                         value: meal,
-                        label: meal.name, // meal.mealName(t),
+                        label: meal.mealName(t),
                       );
                     }).toList(),
                   ),
@@ -143,7 +135,7 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
                             (PillMealTime pillMealTime) {
                       return DropdownMenuEntry<PillMealTime>(
                         value: pillMealTime,
-                        label: pillMealTime.name, // pillMealTime.simpleName(t),
+                        label: pillMealTime.simpleName(t),
                       );
                     }).toList(),
                   ),

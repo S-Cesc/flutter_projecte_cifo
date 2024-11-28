@@ -17,6 +17,7 @@ import '../model/meal.dart';
 import '../model/pill_meal_time.dart';
 import '../services/background_alarm_helper.dart';
 import '../background_entry.dart';
+import '../widgets/custom_back_button.dart';
 
 class DebugConfigScreen extends StatefulWidget {
   const DebugConfigScreen({super.key});
@@ -40,6 +41,7 @@ class _DebugConfigScreenState extends State<DebugConfigScreen> {
       backgroundColor: AppStyles.colors.mantis,
       appBar: AppBar(
         backgroundColor: AppStyles.colors.ochre[700],
+        leading: CustomBackButton(),
         title: Center(
           child: Text(
             "proves",

@@ -76,6 +76,23 @@
    "@snooze": {
       "description": "Snooze alarm operation"
    },
+   "confirm": "Confirm",
+   "@confirm": {
+      "description": "Ask for confirmation to perform the operation"
+   },
+   "confirmDeletion": "{count, plural, other{ {gender, select, other{Would you like to remove?}}}}",
+   "@confirmDeletion": {
+      "description": "Ask for confirmation to remove item",
+      "placeholders": {
+         "count": {
+           "type": "num",
+           "format": "compact"
+         },
+         "gender": {
+            "type": "String"
+          }
+      }
+   },
    "yes": "Yes",
    "@yes": {
       "description": "Answer question"
@@ -102,6 +119,10 @@
       "description": "Ask for alarm snooze seconds value"
    },
 
+   "meal": "Meal",
+   "@meal": {
+      "description": "Meal selection title"
+   },
    "breakfast": "breakfast",
    "@breakfast": {
       "description": "Meal time"
@@ -157,6 +178,10 @@
       "description": "Pill meal time, for using alone to pick one option"
    },
 
+   "alarmList": "Alarm list",
+   "@alarmList": {
+      "description": "Alarm list screen title"
+   },
    "alarms": "Alarms",
    "@alarms": {
       "description": "Button & title Alarms"

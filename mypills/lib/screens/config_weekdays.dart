@@ -10,6 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../styles/app_styles.dart';
 import '../model/weekly_time_table.dart';
 import '../providers/config_preferences.dart';
+import '../widgets/custom_back_button.dart';
 import '../widgets/meals_table.dart';
 import '../widgets/meals_table_special_days.dart';
 
@@ -32,6 +33,7 @@ class ConfigWeekdays extends StatelessWidget {
         backgroundColor: AppStyles.colors.mantis,
         appBar: AppBar(
           backgroundColor: AppStyles.colors.ochre[700],
+          leading: CustomBackButton(),
           bottom: TabBar(tabs: [
             Center(
               child: Text(
@@ -47,16 +49,6 @@ class ConfigWeekdays extends StatelessWidget {
             ),
           ]),
           elevation: 4,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppStyles.colors.forestGreen,
-            ),
-            onPressed: () {
-              // Navigate back to the previous screen by popping the current route
-              Navigator.of(context).pop();
-            },
-          ),
         ),
         body: TabBarView(
           children: [
