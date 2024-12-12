@@ -1,13 +1,14 @@
 // logging and debugging
 import 'dart:developer' as developer;
-import 'dart:isolate';
 import 'package:logging/logging.dart' show Level;
 // Dart base
+import 'dart:isolate';
 import 'dart:async' show StreamSubscription, unawaited;
 import 'dart:io' show exit;
 // Flutter
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,7 +23,10 @@ import './main_config_screen.dart';
 
 //=======================================================================
 
+/// Splash screen for [main_config_screen] data initialitzation
 class SplashConfigScreen extends StatefulWidget {
+
+  /// const [SplashConfigScreen] ctor
   const SplashConfigScreen({super.key});
 
   @override
@@ -44,53 +48,55 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppStyles.colors.mantis,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.medication,
-              size: 100,
-              color: Colors.green,
-            ),
-            Text(status),
-            if (permissionStatus != PermissionStatus.granted)
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                // TODO Localization!
-                Row(
-                  children: [
-                    Spacer(),
-                    if (kDebugMode) ...[
-                      OutlinedButton(
-                        style: AppStyles.warningButtonStyle,
-                        // REVIEW - exit (kDebugMode)
-                        onPressed: () => exit(0),
-                        child: const Text('Close application'),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.colors.mantis,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.medication,
+                size: 100,
+                color: Colors.green,
+              ),
+              Text(status),
+              if (permissionStatus != PermissionStatus.granted)
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  // TODO Localization!
+                  Row(
+                    children: [
+                      Spacer(),
+                      if (kDebugMode) ...[
+                        OutlinedButton(
+                          style: AppStyles.warningButtonStyle,
+                          // REVIEW - exit (kDebugMode)
+                          onPressed: () => exit(0),
+                          child: const Text('Close application'),
+                        ),
+                      ],
+                      ElevatedButton(
+                        style: AppStyles.customButtonStyle,
+                        onPressed: () => _init(),
+                        child: const Text('Restart app'),
+                      ),
+                      Spacer(),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                        style: AppStyles.customButtonStyle,
+                        onPressed: () => unawaited(openAppSettings()),
+                        child:
+                            const Text('Change alarm permission configuration'),
                       ),
                     ],
-                    ElevatedButton(
-                      style: AppStyles.customButtonStyle,
-                      onPressed: () => _init(),
-                      child: const Text('Restart app'),
-                    ),
-                    Spacer(),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      style: AppStyles.customButtonStyle,
-                      onPressed: () => unawaited(openAppSettings()),
-                      child:
-                          const Text('Change alarm permission configuration'),
-                    ),
-                  ],
-                )
-              ])
-          ],
+                  )
+                ])
+            ],
+          ),
         ),
       ),
     );
@@ -243,7 +249,8 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       developer.log("Non mounted context. Widget end",
           level: Level.SEVERE.value);
       developer.debugger();
-      exit(1);
+      await SystemNavigator.pop();
+      if (kDebugMode) exit(1); // App error
     }
   }
 }

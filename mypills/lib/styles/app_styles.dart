@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 
 //=======================================================================
 
+/// Application styles
 class AppStyles {
+
+  /// A custom style for buttons
   static final customButtonStyle = ButtonStyle(
+    shape: WidgetStatePropertyAll<OutlinedBorder>(ContinuousRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+            left: const Radius.elliptical(40, 20),
+            right: const Radius.elliptical(40, 20)))),
     backgroundColor:
         WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
@@ -15,19 +22,8 @@ class AppStyles {
       }
     }),
   );
-  static final customHorizontalButtonStyle = ButtonStyle(
-    shape: WidgetStatePropertyAll<OutlinedBorder>(ContinuousRectangleBorder()),
-    backgroundColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return Colors.red;
-      } else if (states.contains(WidgetState.pressed)) {
-        return AppStyles.colors.mantis[300];
-      } else {
-        return AppStyles.colors.mantis[700];
-      }
-    }),
-  );
+
+  /// A custom style for buttons
   static final warningButtonStyle = ButtonStyle(
     backgroundColor:
         WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
@@ -40,6 +36,8 @@ class AppStyles {
       }
     }),
   );
+
+  /// A custom style for buttons (alarm screen)
   static final alarmButtonStyle = ButtonStyle(
       backgroundColor: WidgetStatePropertyAll(AppStyles.colors.mantis));
 
@@ -47,6 +45,14 @@ class AppStyles {
   static const _white = Colors.white;
   static const _mantis = Color(0xFF81c14b);
   static const _ochre = Color(0xFFc36f09);
+
+  /// predefined font styles
+  /// Available sizes:
+  /// bigTitle: display
+  /// middleTitle: headline
+  /// distance: labelLarge, labelInverseLarge
+  /// activityType: labelSmall
+  /// body
   static final fonts = (
     fontFamilyName: 'Montserrat',
     display /*bigTitle*/ : ({
@@ -54,9 +60,10 @@ class AppStyles {
       FontStyle fontStyle = FontStyle.normal,
       FontWeight fontWeight = FontWeight.normal,
       TextDecoration decoration = TextDecoration.none,
+      bool inherit = false,
     }) =>
         TextStyle(
-          inherit: false,
+          inherit: inherit,
           fontSize: 40,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
@@ -68,9 +75,10 @@ class AppStyles {
       FontStyle fontStyle = FontStyle.normal,
       FontWeight fontWeight = FontWeight.bold,
       TextDecoration decoration = TextDecoration.none,
+      bool inherit = false,
     }) =>
         TextStyle(
-          inherit: false,
+          inherit: inherit,
           fontSize: 24,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
@@ -82,9 +90,10 @@ class AppStyles {
       FontStyle fontStyle = FontStyle.normal,
       FontWeight fontWeight = FontWeight.normal,
       TextDecoration decoration = TextDecoration.none,
+      bool inherit = false,
     }) =>
         TextStyle(
-          inherit: false,
+          inherit: inherit,
           fontSize: 24,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
@@ -97,9 +106,10 @@ class AppStyles {
       FontStyle fontStyle = FontStyle.normal,
       FontWeight fontWeight = FontWeight.normal,
       TextDecoration decoration = TextDecoration.none,
+      bool inherit = false,
     }) =>
         TextStyle(
-          inherit: false,
+          inherit: inherit,
           fontSize: 24,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
@@ -112,9 +122,10 @@ class AppStyles {
       FontStyle fontStyle = FontStyle.normal,
       FontWeight fontWeight = FontWeight.bold,
       TextDecoration decoration = TextDecoration.none,
+      bool inherit = false,
     }) =>
         TextStyle(
-          inherit: false,
+          inherit: inherit,
           fontSize: 18,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
@@ -126,9 +137,10 @@ class AppStyles {
       FontStyle fontStyle = FontStyle.normal,
       FontWeight fontWeight = FontWeight.normal,
       TextDecoration decoration = TextDecoration.none,
+      bool inherit = false,
     }) =>
         TextStyle(
-          inherit: false,
+          inherit: inherit,
           fontSize: 14,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
@@ -149,6 +161,8 @@ https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
 }
 */
 
+  /// Predefined colors
+  /// https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
   static const colors = (
     black: _black,
     white: _white,
@@ -214,38 +228,38 @@ https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
     }),
   );
 
-  // Invert color index for Brightness.dark mode
-  // Caution: do not use when index is not invertible
-  // pre: isIndexColorInvertible(i)
+  /// Invert color index for Brightness.dark mode
+  /// Caution: do not use when index is not invertible
+  /// pre: isIndexColorInvertible(i)
   static int colorIndex(Brightness mode, int i) {
     assert(isIndexColorInvertible(i));
     return mode == Brightness.light ? i : invertColorIndex(i);
   }
 
-  // Used to compute colorIndex from Brightness Mode
-  // Can also be used to obtain a valid contrast tone
-  // Caution: index can't be out of range
-  // pre: i >=0 && i <= 1000
+  /// Used to compute colorIndex from Brightness Mode
+  /// Can also be used to obtain a valid contrast tone
+  /// Caution: index can't be out of range
+  /// pre: i >=0 && i <= 1000
   static int invertColorIndex(int i) {
     assert(i >= 0 && i <= 1000);
     return 1000 - i;
   }
 
-  // It's only a valid tone when invertColorIndex will make an
-  // enough contrast tone with actual tone; use:
-  // light values between 0..300, but allows not normalized values up to 349
-  // dark values bettween 700..1000, but allows not normalized values from 650
-  // also note that zero and 1000 are not normalized values.
+  /// It's only a valid tone when invertColorIndex will make an
+  /// enough contrast tone with actual tone; use:
+  /// light values between 0..300, but allows not normalized values up to 349
+  /// dark values bettween 700..1000, but allows not normalized values from 650
+  /// also note that zero and 1000 are not normalized values.
   static bool isIndexColorInvertible(int i) {
     return i >= 0 && i < 350 || i >= 650 && i <= 1000;
   }
 
-  // Allow normalization of a computed color index
-  // negative values are not allowed
-  // post: return in {100, 200, 300, 400, 500, 600, 700, 800, 900}
+  /// Allow normalization of a computed color index
+  /// negative values are not allowed
+  /// post: return in {100, 200, 300, 400, 500, 600, 700, 800, 900}
   static int normalizeIndexColor(int i) {
     return switch (i) {
-      < 0 => throw RangeError('Index out of range: $i'),
+      < 0 => throw RangeError.range(i, 0, null),
       < 150 => 100,
       >= 850 => 900,
       _ => ((100 + 50) ~/ 100) * 100

@@ -2,10 +2,10 @@
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Dart base
-import 'dart:async';
-import 'dart:convert';
+import 'dart:async' show StreamSubscription, unawaited;
+import 'dart:ui' show IsolateNameServer;
 import 'dart:isolate';
-import 'dart:ui';
+import 'dart:convert';
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,7 +23,9 @@ import '../services/background_alarm_helper.dart';
 
 //=======================================================================
 
+/// Alarm main screen
 class MainAlarmScreen extends StatefulWidget {
+  /// const ctor
   const MainAlarmScreen({super.key});
 
   @override
@@ -149,125 +151,197 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
     });
   }
 
+  Widget _takeThePills(AppLocalizations t) {
+    return Center(
+        child: Text(t.notificationTitle, style: AppStyles.fonts.display()));
+  }
+
+  Widget _digitalClock(bool isLive, DateTime alarmDateTime) {
+    return DigitalClock(
+      showSeconds: true,
+      datetime: alarmDateTime,
+      textScaleFactor: 2,
+      isLive: isLive,
+    );
+  }
+
+  Widget _analogClock() {
+    return AnalogClock(
+      isLive: true,
+      showDigitalClock: false,
+      width: 180,
+      height: 180,
+      showNumbers: true,
+      showAllNumbers: false,
+      showTicks: true,
+      tickColor: AppStyles.colors.darkSlateGray[700]!,
+      hourHandColor: AppStyles.colors.darkSlateGray[800]!,
+      minuteHandColor: AppStyles.colors.darkSlateGray[800]!,
+      numberColor: AppStyles.colors.darkSlateGray[900]!,
+      decoration: BoxDecoration(
+          color: AppStyles.colors.forestGreen[200], shape: BoxShape.circle),
+    );
+  }
+
+  Widget _alarmName(AppLocalizations t, int alarmId) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 15),
+      child: Text(
+        Alarm.getAlarmNameFromId(alarmId, t),
+        style: AppStyles.fonts.labelLarge(),
+        softWrap: true,
+      ),
+    );
+  }
+
+  List<Widget> _actions(
+      AppLocalizations t, int? alarmId, bool alarmIsActivated) {
+    return [
+      if (alarmId != null) ...[
+        if (alarmIsActivated) ...[
+          Expanded(
+            child: Center(
+                child: ElevatedButton(
+              style: AppStyles.alarmButtonStyle,
+              onPressed: () async {
+                developer.log("Cancel alarm button clicked!",
+                    level: Level.FINER.value);
+                await _cancelAlarm(alarmId);
+                await Future.delayed(const Duration(milliseconds: 1500),
+                    () async {
+                  developer.log("Pop screen: " "Cancel button",
+                      level: Level.INFO.value);
+                  await SystemNavigator.pop();
+                });
+              },
+              // TODO: Next screen with the alarm paused
+              child: Text(
+                t.cancel,
+                style: AppStyles.fonts.headline(),
+              ),
+            )),
+          ),
+          Expanded(
+            child: Center(
+                child: ElevatedButton(
+              style: AppStyles.alarmButtonStyle,
+              onPressed: () async {
+                developer.log("Snooze alarm button clicked!",
+                    level: Level.FINER.value);
+                await _snoozeAlarm(alarmId);
+                await Future.delayed(const Duration(milliseconds: 1500),
+                    () async {
+                  developer.log("Pop screen: " "Snooze button",
+                      level: Level.INFO.value);
+                  await SystemNavigator.pop();
+                });
+              },
+              child: Text(
+                t.snooze,
+                style: AppStyles.fonts.headline(),
+              ),
+            )),
+          )
+        ] else ...[
+          Expanded(
+            child: Center(
+              child: Builder(builder: (context) {
+                // little trick
+                unawaited(Future.delayed(const Duration(seconds: 7), () {
+                  SystemNavigator.pop();
+                }));
+                return Text(
+                  _alarmIsLost
+                      ? t.missedAlarm
+                      : _alarmIsStopped
+                          ? t.stoppedAlarm
+                          : t.snoozedAlarm,
+                  style: AppStyles.fonts.headline(),
+                );
+              }),
+            ),
+          )
+        ]
+      ]
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
-    final DateTime alarmDateTime = DateTime.now();
-    return Scaffold(
-      backgroundColor: AppStyles.colors.mantis,
-      appBar: AppBar(
-        title: Text(t.notificationTitle),
-        elevation: 4,
-      ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(t.notificationTitle, style: AppStyles.fonts.display()),
-        DigitalClock(
-          showSeconds: true,
-          datetime: alarmDateTime,
-          textScaleFactor: 2,
-          isLive: false,
+    final DateTime alarmDateTime = _alarm?.lastShot ?? DateTime.now();
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.colors.mantis,
+        appBar: AppBar(
+          title: Text(t.notificationTitle),
+          elevation: 4,
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 50),
-          child: AnalogClock(
-            isLive: true,
-            showDigitalClock: false,
-            width: 180,
-            height: 180,
-            showNumbers: true,
-            showAllNumbers: false,
-            showTicks: true,
-            tickColor: AppStyles.colors.darkSlateGray[700]!,
-            hourHandColor: AppStyles.colors.darkSlateGray[800]!,
-            minuteHandColor: AppStyles.colors.darkSlateGray[800]!,
-            numberColor: AppStyles.colors.darkSlateGray[900]!,
-            decoration: BoxDecoration(
-                color: AppStyles.colors.forestGreen[200],
-                shape: BoxShape.circle),
-          ),
-        ),
-        if (_alarmId != null) ...[
-          Padding(
-            padding: EdgeInsets.only(bottom: 15),
-            child: Text(
-              Alarm.getAlarmNameFromId(_alarmId!, t),
-              style: AppStyles.fonts.labelLarge(),
-              softWrap: true,
-            ),
-          ),
-        ],
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            if (_alarmId != null) ...[
-              if (_alarmIsActivated) ...[
-                Expanded(
-                  child: Center(
-                      child: ElevatedButton(
-                    style: AppStyles.alarmButtonStyle,
-                    onPressed: () async {
-                      developer.log("Cancel alarm button clicked!",
-                          level: Level.FINER.value);
-                      await _cancelAlarm(_alarmId!);
-                      await Future.delayed(const Duration(milliseconds: 1500),
-                          () async {
-                        developer.log("Pop screen: " "Cancel button",
-                            level: Level.INFO.value);
-                        await SystemNavigator.pop();
-                      });
-                    },
-                    // TODO: Next screen with the alarm paused
-                    child: Text(
-                      t.cancel,
-                      style: AppStyles.fonts.headline(),
+        body: OrientationBuilder(builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _takeThePills(t),
+                  if (_alarmId != null) ...[
+                    _digitalClock(_alarm == null, alarmDateTime),
+                  ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 50),
+                    child: _analogClock(),
+                  ),
+                  if (_alarmId != null) ...[
+                    _alarmName(t, _alarmId!),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ..._actions(t, _alarmId, _alarmIsActivated),
+                      ],
                     ),
-                  )),
+                  ],
+                ]);
+          } else {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        if (_alarmId != null) ...[
+                          _digitalClock(_alarm == null, alarmDateTime),
+                          _alarmName(t, _alarmId!),
+                          ..._actions(t, _alarmId, _alarmIsActivated),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: Center(
-                      child: ElevatedButton(
-                    style: AppStyles.alarmButtonStyle,
-                    onPressed: () async {
-                      developer.log("Snooze alarm button clicked!",
-                          level: Level.FINER.value);
-                      await _snoozeAlarm(_alarmId!);
-                      await Future.delayed(const Duration(milliseconds: 1500),
-                          () async {
-                        developer.log("Pop screen: " "Snooze button",
-                            level: Level.INFO.value);
-                        await SystemNavigator.pop();
-                      });
-                    },
-                    child: Text(
-                      t.snooze,
-                      style: AppStyles.fonts.headline(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: _takeThePills(t),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 20),
+                          child: _analogClock(),
+                        ),
+                      ],
                     ),
-                  )),
-                )
-              ] else ...[
-                Expanded(
-                  child: Center(
-                    child: Builder(builder: (context) {
-                      // little trick
-                      unawaited(Future.delayed(const Duration(seconds: 7), () {
-                        SystemNavigator.pop();
-                      }));
-                      return Text(
-                        _alarmIsLost
-                            ? t.missedAlarm
-                            : _alarmIsStopped
-                                ? t.stoppedAlarm
-                                : t.snoozedAlarm,
-                        style: AppStyles.fonts.headline(),
-                      );
-                    }),
                   ),
-                )
-              ]
-            ]
-          ],
-        ),
-      ]),
+                ),
+              ],
+            );
+          }
+        }),
+      ),
     );
   }
 

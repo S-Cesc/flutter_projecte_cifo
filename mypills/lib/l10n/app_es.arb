@@ -1,7 +1,7 @@
 {
   "@@locale": "es",
 
-  "appTitle": "Las Pastis",
+  "appTitle": "Mis Pastis",
 
   "notificationTitle": "Tómate las pastillas!",
   "notificationText1": "Te has de tomar las pastillas.",
@@ -15,22 +15,32 @@
   "failedPermissions": "No se han concedido los permisos necesarios",
   "informationLoaded": "Listo!",
 
+  "yes": "Sí",
+  "no": "No",
   "saveChanges": "Salvar",
   "undoChanges": "Deshacer",
   "cancel": "Cancelar",
-  "snooze": "Retardar",
+  "saved": "Datos guardados",
   "confirm": "Confirmar",
   "confirmDeletion": "¿Seguro que quiere eliminar{count, plural, =1{{gender, select, f{la} other {lo}}} other{{gender, select, f{las} other {los}}}}?",
+  "exitApplication": "Salir",
+  "askExitApplication": "¿Salir de la aplicación?",
+
+  "snooze": "Retardar",
   "missedAlarm": "Alarma perdida",
   "stoppedAlarm": "Alarma detenida",
   "snoozedAlarm": "Alarma retrasada",
-  "yes": "Sí",
-  "no": "No",
-  "endApplication": "Salir",
 
-  "alarmRepeatTimes": "Número de repeticiones de la alarma",
-  "alarmDurationSeconds": "Duración de la alarma en segundos",
-  "alarmSnoozeSeconds": "Segundos hasta la repetición de la alarma",
+  "alarmSettings": "Configuración de las alarmas",
+  "alarmRepeatTimes": "Repeticiones",
+  "alarmDurationSeconds": "Duración en segundos",
+  "alarmSnoozeSeconds": "Segundos hasta la repetición",
+  "minutesToDealWithAlarm": "Atender la alarma",
+  "tooltipAlarmRepeatTimes": "Número de repeticiones hasta que la alarma se da por perdida",
+  "tooltipAlarmDurationSeconds": "Número de segundos que la alarma suena si no se detiene",
+  "tooltipMinutesToDealWithAlarm": "Máximo de minutos desde que se acepta la alarma hasta indicar que se han tomado las pastillas",
+
+  "timeSettings": "Minutos antes/después",
 
   "meal": "Comida",
   "breakfast": "desayuno",

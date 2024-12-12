@@ -76,18 +76,29 @@ class WeeklyTimeTable {
         _specialWeekDays =
             _setOfWeekdaysFromJson(parsedJson['specialWD'] as List<dynamic>),
         _specialDaysMeals = _timeTableFromJson(
-            parsedJson['specialDaysMeals'] as Map<String, dynamic>);
+            parsedJson['specialDaysMeals'] as Map<String, dynamic>) {
+    _ensureCoherence();
+  }
 
   //-----------------------class special members--------------------------------
 
   // use String jsonEncode(value.toJson());
   /// convert to Json object, which also must be encoded into a String
   Map<String, dynamic> toJson() {
+    _ensureCoherence();
     return {
       'defaultMeals': _timeTableToJson(_defaultDaysMeals),
       'specialWD': _setOfWeekdaysToJson(_specialWeekDays),
       'specialDaysMeals': _timeTableToJson(_specialDaysMeals)
     };
+  }
+
+  void _ensureCoherence() {
+    if (_specialWeekDays.isEmpty) {
+      if (_specialDaysMeals.isNotEmpty) {
+        _specialDaysMeals.removeWhere((m, t) => true);
+      }
+    }
   }
 
   /// Require a minimum of 3 meals a day (needed for prescriptions)
@@ -100,7 +111,7 @@ class WeeklyTimeTable {
   //-----------------------class rest of members--------------------------------
 
   Map<Meal, TimeOfDay> get defaultDaysMeals => _defaultDaysMeals;
-  Map<Meal, TimeOfDay> get spacialDaysMeals => _specialDaysMeals;
+  Map<Meal, TimeOfDay> get specialDaysMeals => _specialDaysMeals;
   Set<DayOfWeek> get specialWeekDays => _specialWeekDays;
 
   bool isSpecialWeekDay(DayOfWeek dw) => _specialWeekDays.contains(dw);

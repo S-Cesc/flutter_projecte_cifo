@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Days without time, and other extensions
 extension DateTimeExtensions on DateTime {
 
   /// DateTime.now() with hour, minute, second... set to zero
@@ -36,7 +37,7 @@ extension DateTimeExtensions on DateTime {
     return DateTime(year, month, day);
   }
 
-  // The data at a specific TimeOfDay
+  /// The data at a specific TimeOfDay
   DateTime at(TimeOfDay time) {
     return dateBeginning()
         .add(Duration(hours: time.hour, minutes: time.minute));

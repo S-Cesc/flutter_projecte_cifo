@@ -1,7 +1,7 @@
 {
   "@@locale": "ca",
 
-  "appTitle": "Les Pastis",
+  "appTitle": "Meues Pastis",
 
   "notificationTitle": "Pren-te les pastilles!",
   "notificationText1": "T'has de prendre les pastilles.",
@@ -15,22 +15,32 @@
   "failedPermissions": "No s'han concedit els permissos necessaris",
   "informationLoaded": "Preparat!",
 
+  "yes": "Sí",
+  "no": "No",
   "saveChanges": "Desa",
   "undoChanges": "Desfés",
   "cancel": "Cancel·la",
-  "snooze": "Retarda",
+  "saved": "S'ha desat",
   "confirm": "Confirmar",
   "confirmDeletion": "Segur que {count, plural, =1{{gender, select, f{la} other {el}}} other{{gender, select, f{les} other {els}}}} vols eliminar?",
+  "exitApplication": "Sortir",
+  "askExitApplication": "Sortir de l'aplicació?",
+
+  "snooze": "Retarda",
   "missedAlarm": "Alarma perduda",
   "stoppedAlarm": "Alarma detinguda",
   "snoozedAlarm": "Alarma retardada",
-  "yes": "Sí",
-  "no": "No",
-  "endApplication": "Sortir",
 
-  "alarmRepeatTimes": "Nombre de repeticions de l'alarma",
-  "alarmDurationSeconds": "Durada de l'alarma en segons",
-  "alarmSnoozeSeconds": "Segons fins a la repetició de l'alarma",
+  "alarmSettings": "Configuració d'alarmes",
+  "alarmRepeatTimes": "Repeticions",
+  "alarmDurationSeconds": "Durada en segons",
+  "alarmSnoozeSeconds": "Segons fins a la repetició",
+  "minutesToDealWithAlarm": "Atendre l'alarma",
+  "tooltipAlarmRepeatTimes": "Nombre de repeticions fins que l'alarma es considera perduda",
+  "tooltipAlarmDurationSeconds": "Nombre de segons que l'alarma està sonant si no s'atura",
+  "tooltipMinutesToDealWithAlarm": "Màxim nombre de minuts des de que s'accepta l'alarma fins a indicar que s'han pres les pastilles",
+
+  "timeSettings": "Minuts abans/després",
 
   "meal": "Menjar",
   "breakfast": "desdejuni",

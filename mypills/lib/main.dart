@@ -24,17 +24,30 @@ import 'screens/splash_alarm_screen.dart';
 
 /// The name associated with the UI isolate's [SendPort].
 const String mainIsolateName = 'myPills';
+
+/// listen to "wakeup" message
 const String uiWakeupPortName = "$mainIsolateName/isolateComPort";
+
+/// listen to background status changes
 const String uiAlarmPortName = "$mainIsolateName/alarmComPort";
+
+/// the Alarm Screen path
 const alarmScreenPath = '/alarm';
+
+/// Settings Screen (default) path
 const configScreenPath = '/config';
 
+/// Main isolate id
 final int isolateId = Isolate.current.hashCode;
+
+/// Navigator GlobalKey (used on wakeup)
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// A port used to communicate from a background isolate to the UI isolate.
 ReceivePort? wakeupPort; // warning! there is a late intialization
-// the stream listened on RecivePort
+
+/// the stream listened on the [wakeupPort] [ReceivePort]
+/// with name [uiWakeupPortName]
 StreamSubscription<dynamic>? subscription;
 
 Future<void> main() async {
@@ -42,7 +55,9 @@ Future<void> main() async {
   runApp(const MainApp());
 }
 
+/// Class for the application (MyPills)
 class MainApp extends StatefulWidget {
+  /// const ctor
   const MainApp({super.key});
 
   @override
@@ -77,6 +92,25 @@ class _MainAppState extends State<MainApp> {
           initialRoute: configScreenPath,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
+          localeListResolutionCallback: (locales, supportedLocales) {
+            if (locales != null) {
+              for (final locale in locales) {
+                for (final supportedLocale in supportedLocales) {
+                  if (supportedLocale.languageCode == locale.languageCode) {
+                    return supportedLocale;
+                  }
+                }
+              }
+              // Per si un despistat té definit el basc però no el castellà
+              for (final locale in locales) {
+                if (locale.countryCode == 'ES') {
+                  return supportedLocales
+                      .firstWhere((l) => l.languageCode == 'es');
+                }
+              }
+            }
+            return supportedLocales.first; // per defecte, anglès
+          },
           onGenerateTitle: (context) {
             return AppLocalizations.of(context)!.appTitle;
           },
@@ -85,6 +119,7 @@ class _MainAppState extends State<MainApp> {
   }
 }
 
+/// Dispose main
 @override
 void dispose() {
   developer.log('DISPOSE', level: Level.CONFIG.value);

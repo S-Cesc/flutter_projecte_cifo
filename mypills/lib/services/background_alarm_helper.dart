@@ -19,11 +19,13 @@ import '../background_entry.dart';
 //
 
 // ONLY STATIC MEMBERS
+/// Class helper static facilities to use [BackgroundEntry] entry points
 class BackgroundAlarmHelper {
   static const _initialitzationAlarmId = 0;
 
 //=======================================================================
 
+  /// Initialize the [BackgroundEntry] isolate data
   static Future<void> initialize() async {
     await AndroidAlarmManager.oneShot(
       Duration(microseconds: 0),
@@ -39,6 +41,7 @@ class BackgroundAlarmHelper {
 
 //=======================================================================
 
+  /// program alarm [alarmId] to fire at [time]
   static Future<void> fireAlarm(
     DateTime time,
     int alarmId,
@@ -77,41 +80,7 @@ class BackgroundAlarmHelper {
 
 //=======================================================================
 
-  static Future<void> repeatAlarm(
-    int alarmId,
-    int alarmSnoozeSeconds,
-    int alarmDurationSeconds
-  ) async {
-    developer.log("Helper: Repeat alarm", level: Level.INFO.value);
-    await AndroidAlarmManager.oneShot(
-      Duration(seconds: alarmSnoozeSeconds),
-      alarmId,
-      BackgroundEntry.callback,
-      alarmClock: true,
-      allowWhileIdle: true,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-    );
-    // Snooze the alarm after alarmDurationSeconds
-    await AndroidAlarmManager.oneShot(
-      Duration(seconds: alarmSnoozeSeconds + alarmDurationSeconds + 30),
-      alarmId + BackgroundEntry.snoozeId,
-      BackgroundEntry.autoSnoozeCallback,
-      alarmClock: true,
-      allowWhileIdle: true,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-    );
-    developer.log(
-        'Alarm $alarmId progammed'
-        ' with ${alarmId + BackgroundEntry.snoozeId} autosnooze programmed, ',
-        level: Level.INFO.value);
-  }
-
-//=======================================================================
-
+  /// sooze the alarm [alarmId] while it's firing
   static Future<void> snoozeAlarm(int alarmId) async {
     developer.log("Helper: Snooze alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
@@ -128,8 +97,9 @@ class BackgroundAlarmHelper {
 
 //=======================================================================
 
-  // StopAlarm is espected to be called always from UI
-  // It must be the only place to call BackgroundEntry.stopCallback
+  /// User stops the alarm
+  /// StopAlarm is espected to be called always from UI
+  /// It must be the only place to call [BackgroundEntry.stopCallback]
   static Future<void> stopAlarm(int alarmId) async {
     developer.log("Helper: Stop alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(
@@ -146,7 +116,7 @@ class BackgroundAlarmHelper {
 
 //=======================================================================
 
-  // Always from UI, usually reprogramming the alarm
+  /// Cancel an alarm [alarmId], usually to reprogram it
   static Future<void> cancelAlarm(int alarmId) async {
     developer.log("Helper: Cancel alarm", level: Level.INFO.value);
     await AndroidAlarmManager.oneShot(

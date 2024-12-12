@@ -48,6 +48,14 @@
       "description": "Last progress message"
    },
 
+   "yes": "Yes",
+   "@yes": {
+      "description": "Answer question"
+   },
+   "no": "No",
+   "@no": {
+      "description": "Answer question"
+   },
    "saveChanges": "Save",
    "@saveChanges": {
       "description": "Save pending changes"
@@ -60,21 +68,9 @@
    "@cancel": {
       "description": "Cancel operation"
    },
-   "missedAlarm": "Missed alarm",
-   "@missedAlarm": {
-      "description": "Alarm status: Missed, because it automaticaly snoozed too many times"
-   },
-   "stoppedAlarm": "Alarm stopped",
-   "@stoppedAlarm": {
-      "description": "Alarm status: Stopped by the user"
-   },
-   "snoozedAlarm": "Alarm snoozed",
-   "@snoozedAlarm": {
-      "description": "Alarm status: Snoozed (user requeriment or after a long ring)"
-   },
-   "snooze": "Snooze",
-   "@snooze": {
-      "description": "Snooze alarm operation"
+   "saved": "Saved",
+   "@saved": {
+      "description": "data saved message"
    },
    "confirm": "Confirm",
    "@confirm": {
@@ -93,30 +89,68 @@
           }
       }
    },
-   "yes": "Yes",
-   "@yes": {
-      "description": "Answer question"
-   },
-   "no": "No",
-   "@no": {
-      "description": "Answer question"
-   },
-   "endApplication": "End",
-   "@endApplication": {
+   "exitApplication": "Exit",
+   "@exitApplication": {
       "description": "button end application"
    },
+   "askExitApplication": "Exit application?",
+   "@askExitApplication": {
+      "description": "Exit application question"
+   },
 
-   "alarmRepeatTimes": "Alarm repeat times",
+   "snooze": "Snooze",
+   "@snooze": {
+      "description": "Snooze alarm operation"
+   },
+   "missedAlarm": "Missed alarm",
+   "@missedAlarm": {
+      "description": "Alarm status: Missed, because it automaticaly snoozed too many times"
+   },
+   "stoppedAlarm": "Alarm stopped",
+   "@stoppedAlarm": {
+      "description": "Alarm status: Stopped by the user"
+   },
+   "snoozedAlarm": "Alarm snoozed",
+   "@snoozedAlarm": {
+      "description": "Alarm status: Snoozed (user requeriment or after a long ring)"
+   },
+
+   "alarmSettings": "Alarm settings",
+   "@alarmSettings": {
+      "description": "Alarm settings title"
+   },
+   "alarmRepeatTimes": "Repeat times",
    "@alarmRepeatTimes": {
       "description": "Ask for alarm repeat times value"
    },
-   "alarmDurationSeconds": "Alarm duration seconds",
+   "alarmDurationSeconds": "Duration seconds",
    "@alarmDurationSeconds": {
       "description": "Ask for alarm duration seconds value"
    },
-   "alarmSnoozeSeconds": "Alarm snooze seconds",
+   "alarmSnoozeSeconds": "Snooze time in seconds",
    "@alarmSnoozeSeconds": {
       "description": "Ask for alarm snooze seconds value"
+   },
+   "minutesToDealWithAlarm": "Deal with alarm",
+   "@minutesToDealWithAlarm": {
+      "description": "Ask how many minutes do you need to deal with alarm"
+   },
+   "tooltipAlarmRepeatTimes": "Number of alarm repetitions before the alarm is given as lost",
+   "@tooltipAlarmRepeatTimes": {
+      "description": "Explain the question about repeating the alarm"
+   },
+   "tooltipAlarmDurationSeconds": "Number of seconds the alarm sounds if it is not stopped",
+   "@tooltipAlarmDurationSeconds": {
+      "description": "Explain the question about alarm duration"
+   },
+   "tooltipMinutesToDealWithAlarm": "Maximum number of minutes from the time the alarm is acknowledged until the pills have been taken",
+   "@tooltipMinutesToDealWithAlarm": {
+      "description": "Explain the question about minutes to deal with alarm"
+   },
+
+   "timeSettings": "Before/after minutes",
+   "@timeSettings": {
+      "description": "Before/after time settings title"
    },
 
    "meal": "Meal",

@@ -18,18 +18,23 @@ import 'alarm_settings.dart';
 
 //==============================================================================
 
+/// Collection of existing defined alarms
 final class AlarmCollection {
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs;
-  final ConfigPreferences owner;
-  final void Function() callbackOnUpdate;
+  final ConfigPreferences _owner;
+  final void Function() _callbackOnUpdate;
   final Map<int, Alarm> _alarms = <int, Alarm>{};
 
-  AlarmCollection(this._shPrefs, this.owner, this.callbackOnUpdate);
+  /// Ctor
+  /// [_owner] allows access to other settings (alarmSettings)
+  /// [_callbackOnUpdate] allows to [notifyListeners]
+  AlarmCollection(this._shPrefs, this._owner, this._callbackOnUpdate);
 
   //-----------------------class special members--------------------------------
 
+  /// Initialize the alarm collection: read it from [SharedPreferencesAsync]
   Future<void> init() async {
     developer.log("LOAD ALARMS for editing pourposes");
     var it = AlarmKeyIterator();
@@ -56,11 +61,16 @@ final class AlarmCollection {
 
   //-----------------------class rest of members--------------------------------
 
+  /// In memory Alarm collection
   Iterable<Alarm> get currentAlarms {
     return _alarms.values;
   }
 
-  Future<(List<int> removedIds, List<int> insertedIds)> setCurrentAlarms(
+  /// Persist [value] the list of Alarms
+  /// Existing alarms which are also in [value] are not affected
+  /// Add new alarms from [value]
+  /// and remove non existing alarms in [value]
+  Future<void> setCurrentAlarms(
     List<Alarm> value,
   ) async {
     final inserted = <int>[], removed = <int>[];
@@ -92,11 +102,12 @@ final class AlarmCollection {
         return a;
       });
     }
-    return (removed, inserted);
   }
 
+  /// Get a defined Alarm
   Alarm? getAlarm(int alarmId) => _alarms[alarmId];
 
+  /// Persist & program an alarm
   Future<void> setAlarm(Alarm a) async {
     final int alarmId = a.id;
     _alarms[alarmId] = a;
@@ -113,7 +124,7 @@ final class AlarmCollection {
         // alarm.meal alarm.pillMealTime
         final today = DateTimeExtensions.today();
         DateTime? dateTimeToFire;
-        TimeOfDay? mealTime = owner.alarmSettings.wtt
+        TimeOfDay? mealTime = _owner.alarmSettings.wtt
             .dayMealTime(alarm.meal, DayOfWeek.fromDate(today));
         if (mealTime != null && DateTimeExtensions.isToday(mealTime)) {
           dateTimeToFire = DateTimeExtensions.todayAt(mealTime);
@@ -121,7 +132,7 @@ final class AlarmCollection {
           // Hoy no... mañana
           developer.log("L'alarma hoy no, ...mañana");
           final tomorrow = DateTimeExtensions.tomorrow();
-          mealTime = owner.alarmSettings.wtt
+          mealTime = _owner.alarmSettings.wtt
               .dayMealTime(alarm.meal, DayOfWeek.fromDate(tomorrow));
           if (mealTime != null) {
             dateTimeToFire = DateTimeExtensions.tomorrowAt(mealTime);
@@ -132,7 +143,7 @@ final class AlarmCollection {
           await BackgroundAlarmHelper.fireAlarm(
             dateTimeToFire,
             alarmId,
-            owner.alarmSettings.data.alarmDurationSeconds,
+            _owner.alarmSettings.data.alarmDurationSeconds,
           );
         }
         developer.log(
@@ -146,7 +157,7 @@ final class AlarmCollection {
     await _shPrefs.setString(
         AlarmSettings.alarmJsonKey(a.id), jsonEncode(jsonStructured));
     await addFireAlarmProgramming(a.id);
-    callbackOnUpdate();
+    _callbackOnUpdate();
   }
 
   Future<bool> _removeAlarm(int alarmId, {bool force = false}) async {
@@ -167,7 +178,7 @@ final class AlarmCollection {
         _alarms.remove(alarmId);
         await _shPrefs.remove(AlarmSettings.alarmJsonKey(alarmId));
         await removeFireAlarmProgramming(alarmId);
-        callbackOnUpdate();
+        _callbackOnUpdate();
         developer.log("Remove: $alarmId");
         return true;
       }

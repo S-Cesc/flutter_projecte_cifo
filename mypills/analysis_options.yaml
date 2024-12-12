@@ -7,3 +7,4 @@ analyzer:
 linter:
   rules:
     - unawaited_futures
+    - public_member_api_docs

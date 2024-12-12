@@ -11,8 +11,13 @@ import '../main.dart';
 
 //=======================================================================
 
+/// TaskHandler which defines foreground service functionalities
 class ForegroundTaskHandler extends TaskHandler {
+
+  /// Foreground service isolate name
   static const String foregroundIsolateName = 'myPillsForegroundService';
+
+  /// Foreground service isolate id
   static final int isolateId = Isolate.current.hashCode;
 
   // Launch d'App at alarmScreenPath point

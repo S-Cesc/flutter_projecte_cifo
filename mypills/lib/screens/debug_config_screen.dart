@@ -37,70 +37,74 @@ class _DebugConfigScreenState extends State<DebugConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppStyles.colors.mantis,
-      appBar: AppBar(
-        backgroundColor: AppStyles.colors.ochre[700],
-        leading: CustomBackButton(),
-        title: Center(
-          child: Text(
-            "proves",
-            style: AppStyles.fonts.display(),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.colors.mantis,
+        appBar: AppBar(
+          backgroundColor: AppStyles.colors.ochre[700],
+          leading: CustomBackButton(),
+          title: Center(
+            child: Text(
+              "proves",
+              style: AppStyles.fonts.display(),
+            ),
+          ),
+          elevation: 4,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(padding: EdgeInsets.only(top: 60)),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
+                        level: Level.INFO.value);
+                    developer.log("Fire alarm button clicked!",
+                        level: Level.FINER.value);
+                    await _fireAlarm(BackgroundEntry.idAlarmTest);
+                  },
+                  child: const Text('Fire an alarm'),
+                ),
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
+                        level: Level.INFO.value);
+                    developer.log("Cancel alarm button clicked!",
+                        level: Level.FINER.value);
+                    await _cancelAlarm(BackgroundEntry.idAlarmTest);
+                  },
+                  child: const Text('Cancel the alarm'),
+                ),
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    developer.log("Back button clicked!", level: Level.FINER.value);
+                    if (context.mounted) Navigator.pop(context);
+                  },
+                  child: const Text('Back'),
+                ),
+              ),
+              if (kDebugMode)
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
+                          level: Level.INFO.value);
+                      developer.log("End application (debug screen) button clicked",
+                          level: Level.FINER.value);
+                      await _endApplication(BackgroundEntry.idAlarmTest);
+                    },
+                    child: Text('End the application'),
+                  ),
+                ),
+              Padding(padding: EdgeInsets.only(bottom: 40))
+            ],
           ),
         ),
-        elevation: 4,
-      ),
-      body: Column(
-        children: [
-          Padding(padding: EdgeInsets.only(top: 60)),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
-                    level: Level.INFO.value);
-                developer.log("Fire alarm button clicked!",
-                    level: Level.FINER.value);
-                await _fireAlarm(BackgroundEntry.idAlarmTest);
-              },
-              child: const Text('Fire an alarm'),
-            ),
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
-                    level: Level.INFO.value);
-                developer.log("Cancel alarm button clicked!",
-                    level: Level.FINER.value);
-                await _cancelAlarm(BackgroundEntry.idAlarmTest);
-              },
-              child: const Text('Cancel the alarm'),
-            ),
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                developer.log("Back button clicked!", level: Level.FINER.value);
-                if (context.mounted) Navigator.pop(context);
-              },
-              child: const Text('Back'),
-            ),
-          ),
-          if (kDebugMode)
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  developer.log('ISOLATE: ${main.mainIsolateName}, $isolateId',
-                      level: Level.INFO.value);
-                  developer.log("End application (debug screen) button clicked",
-                      level: Level.FINER.value);
-                  await _endApplication(BackgroundEntry.idAlarmTest);
-                },
-                child: Text('End the application'),
-              ),
-            ),
-          Padding(padding: EdgeInsets.only(bottom: 40))
-        ],
       ),
     );
   }

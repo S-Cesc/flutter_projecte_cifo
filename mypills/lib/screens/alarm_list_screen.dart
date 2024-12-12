@@ -47,6 +47,7 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
+
     Future<bool> openDialogAddItem() async {
       Alarm? newAlarm =
           await Navigator.of(context).push(MaterialPageRoute<Alarm>(
@@ -98,47 +99,49 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
       });
     }
 
-    return Scaffold(
-      backgroundColor: AppStyles.colors.mantis,
-      appBar: AppBar(
-          title: Text(t.alarmList),
-          backgroundColor: AppStyles.colors.ochre[700],
-          elevation: 4,
-          leading: CustomBackButton(),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                developer.log("Add alarm button clicked! ",
-                    level: Level.FINER.value);
-                await openDialogAddItem();
-              },
-              style: ButtonStyle(
-                shape: WidgetStateProperty.all<CircleBorder>(
-                  CircleBorder(
-                    side: BorderSide(
-                      color: AppStyles.colors.forestGreen[700]!,
-                      width: 1.0,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.colors.mantis,
+        appBar: AppBar(
+            title: Text(t.alarmList),
+            backgroundColor: AppStyles.colors.ochre[700],
+            elevation: 4,
+            leading: CustomBackButton(),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  developer.log("Add alarm button clicked! ",
+                      level: Level.FINER.value);
+                  await openDialogAddItem();
+                },
+                style: ButtonStyle(
+                  shape: WidgetStateProperty.all<CircleBorder>(
+                    CircleBorder(
+                      side: BorderSide(
+                        color: AppStyles.colors.forestGreen[700]!,
+                        width: 1.0,
+                      ),
                     ),
                   ),
+                  backgroundColor:
+                      WidgetStateProperty.all(AppStyles.colors.forestGreen),
+                  foregroundColor:
+                      WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
                 ),
-                backgroundColor:
-                    WidgetStateProperty.all(AppStyles.colors.forestGreen),
-                foregroundColor:
-                    WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
+                child: const Icon(Icons.add_alarm), // Text('ADD'),
               ),
-              child: const Icon(Icons.add_alarm), // Text('ADD'),
-            ),
-          ]),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25),
-        child: AlarmList(
-          alarms: _lstAlarms,
-          deleteAlarm: deleteAlarm,
-          restoreAlarms: restoreAlarms,
-          saveAlarms: saveAlarms,
+            ]),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 25),
+          child: AlarmList(
+            alarms: _lstAlarms,
+            deleteAlarm: deleteAlarm,
+            restoreAlarms: restoreAlarms,
+            saveAlarms: saveAlarms,
+          ),
+          // insertAlarmCallback: _addFireAlarmProgramming,
+          // removeAlarmCallback: _removeFireAlarmProgramming,
         ),
-        // insertAlarmCallback: _addFireAlarmProgramming,
-        // removeAlarmCallback: _removeFireAlarmProgramming,
       ),
     );
   }

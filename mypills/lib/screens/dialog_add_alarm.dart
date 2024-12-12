@@ -54,41 +54,41 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-          title: Text(
-            t.createNewAlarm,
-          ),
-          backgroundColor: AppStyles.colors.ochre[700],
-          elevation: 4,
-          leading: CustomBackButton(),
-          actions: <Widget>[
-            TextButton(
-              onPressed: _canSave
-                  ? () {
-                      Navigator.of(context).pop(
-                          Alarm.empty(_selectedMeal!, _selectedPillMealTime!));
-                    }
-                  : null,
-              style: ButtonStyle(
-                shape: WidgetStateProperty.all<CircleBorder>(
-                  CircleBorder(
-                    side: BorderSide(
-                      color: AppStyles.colors.forestGreen[700]!,
-                      width: 1.0,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+            title: Text(
+              t.createNewAlarm,
+            ),
+            backgroundColor: AppStyles.colors.ochre[700],
+            elevation: 4,
+            leading: CustomBackButton(),
+            actions: <Widget>[
+              TextButton(
+                onPressed: _canSave
+                    ? () {
+                        Navigator.of(context).pop(
+                            Alarm.empty(_selectedMeal!, _selectedPillMealTime!));
+                      }
+                    : null,
+                style: ButtonStyle(
+                  shape: WidgetStateProperty.all<CircleBorder>(
+                    CircleBorder(
+                      side: BorderSide(
+                        color: AppStyles.colors.forestGreen[700]!,
+                        width: 1.0,
+                      ),
                     ),
                   ),
+                  backgroundColor:
+                      WidgetStateProperty.all(AppStyles.colors.forestGreen),
+                  foregroundColor:
+                      WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
                 ),
-                backgroundColor:
-                    WidgetStateProperty.all(AppStyles.colors.forestGreen),
-                foregroundColor:
-                    WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
+                child: Icon(Icons.add_alarm), // Text('ADD'),
               ),
-              child: Icon(Icons.add_alarm), // Text('ADD'),
-            ),
-          ]),
-      body: SafeArea(
-        child: Form(
+            ]),
+        body: Form(
           child: ListView(
             padding:
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),

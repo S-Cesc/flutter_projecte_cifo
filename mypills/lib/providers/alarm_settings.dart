@@ -18,6 +18,13 @@ class AlarmSettings {
   static const alarmDurationSecondsKey = 'aDuration';
   static const alarmSnoozeSecondsKey = 'aSnooze';
   static const alarmRepeatTimesKey = 'aRepeat';
+  static const minutesToDealWithAlarmKey = 'aDeal';
+
+  static const mealLongBeforeKey = 'mLBefore';
+  static const mealBeforeKey = 'mBefore';
+  static const mealAfterKey = 'mAfter';
+  static const mealLongAfterKey = 'mLAfter';
+
   static const weeklyTimeTableKey = 'wTimeTable';
 
   static String alarmJsonKey(int alarmId) => 'a$alarmId';
@@ -41,11 +48,21 @@ class AlarmSettings {
         _shPrefs.getInt(alarmDurationSecondsKey),
         _shPrefs.getInt(alarmSnoozeSecondsKey),
         _shPrefs.getInt(alarmRepeatTimesKey),
+        _shPrefs.getInt(minutesToDealWithAlarmKey),
+        _shPrefs.getInt(mealLongBeforeKey),
+        _shPrefs.getInt(mealBeforeKey),
+        _shPrefs.getInt(mealAfterKey),
+        _shPrefs.getInt(mealLongAfterKey),
       ]).then((results) {
         _data = AlarmPreferences(
           results[0] ?? AlarmPreferences.defaultAlarmDurationSeconds,
           results[1] ?? AlarmPreferences.defaultAlarmSnoozeSeconds,
           results[2] ?? AlarmPreferences.defaultAlarmRepeatTimes,
+          results[3] ?? AlarmPreferences.defaultMinutesToDealWithAlarm,
+          results[4] ?? AlarmPreferences.defaultMinutesLongBefore,
+          results[5] ?? AlarmPreferences.defaultMinutesBefore,
+          results[6] ?? AlarmPreferences.defaultMinutesAfter,
+          results[7] ?? AlarmPreferences.defaultMinutesLongAfter,
         );
       });
       try {
@@ -80,22 +97,6 @@ class AlarmSettings {
 
   //-----------------------class rest of members--------------------------------
 
-  /// wrapper of AlarmPreferences procedure
-  bool isAlarmDurationSecondsInRange(int value) {
-    return _data.isAlarmDurationSecondsInRange(value);
-  }
-
-  /// wrapper of AlarmPreferences procedure
-  bool isAlarmSnoozeSecondsInRange(int value) {
-    return _data.isAlarmSnoozeSecondsInRange(value);
-  }
-
-  /// wrapper of AlarmPreferences procedure
-  bool isAlarmRepeatTimesInRange(int value) {
-    return _data.isAlarmRepeatTimesInRange(value);
-  }
-
-
   /// sets AlarmPreferences value and writes it to disk
   Future<void> setAlarmDurationSeconds(int value) async {
     _data.alarmDurationSeconds = value;
@@ -114,6 +115,41 @@ class AlarmSettings {
   Future<void> setAlarmRepeatTimes(int value) async {
     _data.alarmRepeatTimes = value;
     await _shPrefs.setInt(alarmRepeatTimesKey, value);
+    callbackOnUpdate!();
+  }
+
+  /// sets AlarmPreferences value and writes it to disk
+  Future<void> setMinutesToDealWithAlarm(int value) async {
+    _data.minutesToDealWithAlarm = value;
+    await _shPrefs.setInt(minutesToDealWithAlarmKey, value);
+    callbackOnUpdate!();
+  }
+
+  /// sets AlarmPreferences value and writes it to disk
+  Future<void> setMinutesLongBeforeMeal(int value) async {
+    _data.minutesLongBefore = value;
+    await _shPrefs.setInt(mealLongBeforeKey, value);
+    callbackOnUpdate!();
+  }
+
+  /// sets AlarmPreferences value and writes it to disk
+  Future<void> setMinutesBeforeMeal(int value) async {
+    _data.minutesBefore = value;
+    await _shPrefs.setInt(mealBeforeKey, value);
+    callbackOnUpdate!();
+  }
+
+  /// sets AlarmPreferences value and writes it to disk
+  Future<void> setMinutesAfterMeal(int value) async {
+    _data.minutesAfter = value;
+    await _shPrefs.setInt(mealAfterKey, value);
+    callbackOnUpdate!();
+  }
+
+  /// sets AlarmPreferences value and writes it to disk
+  Future<void> setMinutesLongAfterMeal(int value) async {
+    _data.minutesLongAfter = value;
+    await _shPrefs.setInt(mealLongAfterKey, value);
     callbackOnUpdate!();
   }
 

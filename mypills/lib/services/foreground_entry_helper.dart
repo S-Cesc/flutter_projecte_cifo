@@ -15,11 +15,14 @@ import './foreground_task_handler.dart';
 //=======================================================================
 
 /* ONLY static MEMBERS */
+/// static members class helper for Foreground Service functionality
 class ForegroundEntryHelper {
-  // Constants from ForegroundService
-  static const String kPortName = 'flutter_foreground_task/isolateComPort';
-  static const String _kNamePrefix = 'com.pravera.flutter_foreground_task';
+  // static const String kPortName = 'flutter_foreground_task/isolateComPort';
 
+  // from Foreground Service plugin
+  // static const String _kNamePrefix = 'com.pravera.flutter_foreground_task';
+
+  /// Init the Foreground Service; then it must be started
   static void initService() {
     FlutterForegroundTask.initCommunicationPort();
     FlutterForegroundTask.init(
@@ -46,6 +49,7 @@ class ForegroundEntryHelper {
     );
   }
 
+  /// Start the Foreground Service
   static Future<ServiceRequestResult> startService() async {
     const myForegroundTaskId =
         257; // only one instance launched, so it's unmeaningfully
@@ -72,11 +76,9 @@ class ForegroundEntryHelper {
         notificationTitle: t.notificationTitle,
         notificationText: '''${t.notificationText1}
 ${t.notificationText2}''',
-        notificationIcon: NotificationIconData(
-             resType: ResourceType.mipmap,
-             resPrefix: ResourcePrefix.ic,
-             name: "launcher",
-             backgroundColor: AppStyles.colors.ochre),
+        notificationIcon: NotificationIcon(
+            metaDataName: 'cat.mypills.service.MEDICATION',
+            backgroundColor: AppStyles.colors.ochre),
         // notificationButtons: [
         //   const NotificationButton(id: 'btn_hello', text: 'hello'),
         // ],
@@ -85,6 +87,7 @@ ${t.notificationText2}''',
     }
   }
 
+  /// Request to stop the foreground service
   static Future<ServiceRequestResult> stopService() async {
     return FlutterForegroundTask.stopService();
   }

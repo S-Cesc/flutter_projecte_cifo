@@ -16,6 +16,7 @@ class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
 
   /// Some additional static facilities provided by the class:
   /// - compute the next of a (Meal, PillMealTime) pair value
+  /// - returns self for last.next value
   static (Meal, PillMealTime) next(Meal mealTime, PillMealTime pillMealTime) {
     if (pillMealTime < PillMealTime.after) {
       return (mealTime, pillMealTime.next()!);
@@ -28,12 +29,14 @@ class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
 
   //-----------------class state members and constructors ----------------------
 
-  bool beforeBegin = true;
+  bool _beforeBegin;
   Meal _mealTime;
   PillMealTime _pillMealTime;
 
+  /// Iterator ctor
   AlarmKeyIterator()
-      : _mealTime = Meal.breakfast,
+      : _beforeBegin = true,
+        _mealTime = Meal.breakfast,
         _pillMealTime = PillMealTime.longBefore;
 
   //-----------------------class special members--------------------------------
@@ -43,8 +46,8 @@ class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
 
   @override
   bool moveNext() {
-    if (beforeBegin) {
-      beforeBegin = false;
+    if (_beforeBegin) {
+      _beforeBegin = false;
     } else if (_pillMealTime < PillMealTime.after) {
       _pillMealTime = _pillMealTime.next()!;
     } else if (_mealTime < Meal.supper) {

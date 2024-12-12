@@ -2,10 +2,12 @@
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Dart base
-import 'dart:io';
 import 'dart:async' show unawaited;
+import 'dart:io' show exit;
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
@@ -16,7 +18,9 @@ import './main_alarm_screen.dart';
 
 //=======================================================================
 
+/// Splash screen for [main_alarm_screen] data initialitzation
 class SplashAlarmScreen extends StatefulWidget {
+  /// const [SplashAlarmScreen] ctor
   const SplashAlarmScreen({super.key});
 
   @override
@@ -37,23 +41,21 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppStyles.colors.mantis,
-      appBar: AppBar(
-        title: const Text('Take the pills'),
-        elevation: 4,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.medication,
-              size: 100,
-              color: Colors.green,
-            ),
-            Text(status),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.colors.mantis,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.medication,
+                size: 100,
+                color: Colors.green,
+              ),
+              Text(status),
+            ],
+          ),
         ),
       ),
     );
@@ -93,8 +95,8 @@ class _SplashAlarmScreenState extends State<SplashAlarmScreen> {
       developer.log("Non mounted context. Widget end",
           level: Level.SEVERE.value);
       developer.debugger();
-      //REVIEW - exit(1) (App error)
-      exit(1);
+      await SystemNavigator.pop();
+      if (kDebugMode) exit(1); // App error
     }
   }
 

@@ -22,7 +22,7 @@ class Alarm implements Comparable<Alarm> {
   static const _midnightId = 75;
   static const _mealKey = 'meal';
   static const _pillMealTimeKey = 'pillMealTime';
-  static const _lastShootKey = 'lastShoot';
+  static const _lastShotKey = 'lastShot';
   static const _stoppedKey = 'stopped';
   static const _isRunningKey = 'isRunning';
   static const _isSnoozedKey = 'isSnoozed';
@@ -78,11 +78,15 @@ class Alarm implements Comparable<Alarm> {
 
   //-----------------class state members and constructors ----------------------
 
+  /// Alarm binded meal
   final Meal meal;
+
+  /// Alarm binded pill meal time (long before, before, at, after, long after)
   final PillMealTime pillMealTime;
 
-  DateTime? _lastShoot;
+  DateTime? _lastShot;
   DateTime? _stopped;
+  DateTime? _dealingWith;
   bool _isRunning;
   bool _isSnoozed;
   int _actualReplay;
@@ -100,13 +104,14 @@ class Alarm implements Comparable<Alarm> {
       : _isRunning = false,
         _isSnoozed = false,
         _actualReplay = 0,
-        _lastShoot = from._lastShoot;
+        _lastShot = from._lastShot,
+        _stopped = from._stopped;
 
   /// Build Alarm fromJson decoded
   Alarm.fromJson(Map<String, dynamic> json)
       : meal = Meal.fromId(json[_mealKey] as int),
         pillMealTime = PillMealTime.fromId(json[_pillMealTimeKey] as int),
-        _lastShoot = DateTime.tryParse(json[_lastShootKey].toString()),
+        _lastShot = DateTime.tryParse(json[_lastShotKey].toString()),
         _stopped = DateTime.tryParse(json[_stoppedKey].toString()),
         _isRunning = json[_isRunningKey] as bool,
         _isSnoozed = json[_isSnoozedKey] as bool,
@@ -131,7 +136,7 @@ class Alarm implements Comparable<Alarm> {
     return {
       _mealKey: meal.id,
       _pillMealTimeKey: pillMealTime.id,
-      _lastShootKey: _lastShoot?.toIso8601String(),
+      _lastShotKey: _lastShot?.toIso8601String(),
       _stoppedKey: _stopped?.toIso8601String(),
       _isRunningKey: isRunning,
       _isSnoozedKey: isSnoozed,
@@ -144,15 +149,35 @@ class Alarm implements Comparable<Alarm> {
   /// Compute the alarm unique id
   int get id => getAlarmId(meal, pillMealTime);
 
+  /// Alarm is just firing
+  /// But note it also can be dealing with, which is a substate of firing
   bool get isRunning => _isRunning;
-  bool get isSnoozed => _isSnoozed;
-  bool get isActivated => _isRunning || _isSnoozed;
-  int get actualReplay => _actualReplay;
-  DateTime? get stopped => _stopped;
-  DateTime? get lastShoot => _lastShoot;
 
-  /// When [stopped] is after [lastShoot]
-  bool get isStopped => _stopped != null && _stopped!.isAfter(_lastShoot!);
+  /// User is dealing with the alarm
+  bool get isDealingWith => _dealingWith != null;
+
+  /// Alarm snoozed
+  bool get isSnoozed => _isSnoozed;
+
+  /// Firing or snoozed
+  bool get isActivated => _isRunning || _isSnoozed;
+
+  /// Replays
+  int get actualReplay => _actualReplay;
+
+  /// When has been stopped?
+  DateTime? get stopped => _stopped;
+
+  /// When were the last shot
+  DateTime? get lastShot => _lastShot;
+
+  /// Whether [stopped] is after [lastShot]
+  bool get isStopped => _stopped != null && _stopped!.isAfter(_lastShot!);
+
+  DateTime? get DealingWith => _dealingWith;
+
+  /// For how long is been edited?
+  Duration? get dealingWithTime => _dealingWith?.difference(_lastShot!);
 
   // Remember localization must be initialized:
   //    await initializeDateFormatting("ca", null)
@@ -162,16 +187,21 @@ class Alarm implements Comparable<Alarm> {
   String name(AppLocalizations t) => pillMealTime.pillTimeName(meal, t);
 
   /// mark the alarm as fired:
-  /// - set the [lastShoot] DateTime on first replay
+  /// - set the [lastShot] DateTime on first replay
   /// - increment the [replay]
   void markAlarmfired() {
     if (_actualReplay == 0) {
       final DateTime now = DateTime.now();
-      _lastShoot = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+      _lastShot = DateTime(now.year, now.month, now.day, now.hour, now.minute);
     }
     _actualReplay++;
     _isRunning = true;
     _isSnoozed = false;
+  }
+
+  void markAlarmDealingWith() {
+    final DateTime now = DateTime.now();
+    _dealingWith = DateTime(now.year, now.month, now.day, now.hour, now.minute);
   }
 
   /// mark the alarm as snoozed
@@ -186,20 +216,21 @@ class Alarm implements Comparable<Alarm> {
   void markAlarmStopped() {
     _isRunning = false;
     _isSnoozed = false;
+    _dealingWith = null;
     _actualReplay = 0;
     final DateTime now = DateTime.now();
     _stopped = DateTime(
         now.year, now.month, now.day, now.hour, now.minute, now.second);
   }
 
-  /// Compute the TimeOfDay of the tomorrow shoot using weekly meal time
-  TimeOfDay tomorrowShoot(WeeklyTimeTable wtt) {
-    if (_lastShoot == null) {
-      developer.log("Uninitialitzed 'lastShoot'; unexpected null value",
+  /// Compute the TimeOfDay of the tomorrow shot using weekly meal time
+  TimeOfDay tomorrowShot(WeeklyTimeTable wtt) {
+    if (_lastShot == null) {
+      developer.log("Uninitialitzed 'lastShot'; unexpected null value",
           level: Level.SEVERE.value);
       throw TypeError();
     } else {
-      final DayOfWeek todayWD = DayOfWeek.fromId(_lastShoot!.weekday);
+      final DayOfWeek todayWD = DayOfWeek.fromId(_lastShot!.weekday);
       final DayOfWeek tomorrowWD = todayWD.next();
       final Meal tomorrowMeal = wtt.tomorrowEquivalentMeal(meal, todayWD);
       final tomorrowMealTime = wtt.dayMealTime(tomorrowMeal, tomorrowWD);

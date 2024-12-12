@@ -9,6 +9,8 @@ import 'services/foreground_task_handler.dart';
 
 //=======================================================================
 
+/// Bind a the [ForegroundTaskHandler] TaskHandler to the Foreground Service
+/// It is called by [ForegroundEntryHelper.startService]
 @pragma('vm:entry-point')
 void startCallback() {
   // The setTaskHandler function must be called to handle the task in the background.

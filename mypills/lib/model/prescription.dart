@@ -3,6 +3,8 @@ import 'enums.dart';
 import 'pill_meal_time.dart';
 
 //=======================================================================
+// Stil not in use
+enum PrescriptionFrequency { dayly, weekly, fortnightly, monthly }
 
 
 class Prescription {

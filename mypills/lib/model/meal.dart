@@ -7,12 +7,19 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Meals of the day; beleave that 7 are enough
 enum Meal {
+  /// breakfast
   breakfast(10),
+  /// brunch
   brunch(20),
+  /// lunch
   lunch(30),
+  /// afternoon tea
   tea(40),
+  /// highTea is used here as an early evening tea
   highTea(50),
+  /// evening meal
   dinner(60),
+  /// supper is used here as later than dinner
   supper(70);
 
   /// default meal times.
@@ -29,8 +36,24 @@ enum Meal {
     };
   }
 
+  /// default duration of meals
+  static Duration defaultMealDuration(Meal meal) {
+    return switch (meal) {
+      Meal.breakfast => const Duration(minutes: 35),
+      Meal.brunch => const Duration(minutes: 45),
+      Meal.lunch => const Duration(minutes: 50),
+      Meal.tea => const Duration(minutes: 30),
+      Meal.highTea => const Duration(minutes: 30),
+      Meal.dinner => const Duration(minutes: 45),
+      Meal.supper => const Duration(minutes: 35),
+    };
+  }
+
   //-----------------class state members and constructors ----------------------
 
+  /// Identifier is defined from 10 to 70, leaving room for
+  /// the increment or decrement of the forms ‘before’ and ‘after’.
+  /// Also note that id=0 is used for testing purposes
   final int id;
 
   const Meal(this.id);
@@ -57,6 +80,7 @@ enum Meal {
 
   //-----------------------class special members--------------------------------
 
+  /// Definition of natural time ordering, using the id
   bool operator <(covariant Meal other) {
     return id < other.id;
   }
