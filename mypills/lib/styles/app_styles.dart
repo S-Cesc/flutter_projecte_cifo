@@ -6,6 +6,20 @@ import 'package:flutter/material.dart';
 class AppStyles {
 
   /// A custom style for buttons
+  static final ButtonStyle textButtonstyle = TextButton.styleFrom(
+    shape: CircleBorder(
+      side: BorderSide(color: AppStyles.colors.forestGreen[700]!, width: 1.0),
+    ),
+    backgroundColor: AppStyles.colors.forestGreen,
+    disabledBackgroundColor: AppStyles.colors.darkSlateGray[600],
+    foregroundColor: AppStyles.colors.darkSlateGray,
+    iconColor: AppStyles.colors.darkSlateGray,
+    disabledForegroundColor: AppStyles.colors.darkSlateGray[700],
+    disabledIconColor: AppStyles.colors.darkSlateGray[700],
+    shadowColor: AppStyles.colors.darkSlateGray[800],
+  );
+
+  /// A custom style for buttons
   static final customButtonStyle = ButtonStyle(
     shape: WidgetStatePropertyAll<OutlinedBorder>(ContinuousRectangleBorder(
         borderRadius: BorderRadius.horizontal(
@@ -23,7 +37,7 @@ class AppStyles {
     }),
   );
 
-  /// A custom style for buttons
+  /// A custom style for warning buttons
   static final warningButtonStyle = ButtonStyle(
     backgroundColor:
         WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
@@ -64,7 +78,7 @@ class AppStyles {
     }) =>
         TextStyle(
           inherit: inherit,
-          fontSize: 40,
+          fontSize: 36,
           fontStyle: fontStyle,
           fontWeight: fontWeight,
           decoration: decoration,

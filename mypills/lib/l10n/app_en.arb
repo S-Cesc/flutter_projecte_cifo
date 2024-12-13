@@ -131,19 +131,23 @@
    "@alarmSnoozeSeconds": {
       "description": "Ask for alarm snooze seconds value"
    },
-   "minutesToDealWithAlarm": "Deal with alarm",
+   "minutesToDealWithAlarm": "Minutes to deal with alarm",
    "@minutesToDealWithAlarm": {
       "description": "Ask how many minutes do you need to deal with alarm"
    },
-   "tooltipAlarmRepeatTimes": "Number of alarm repetitions before the alarm is given as lost",
+   "tooltipAlarmRepeatTimes": "Number of times the alarm sounds until it is given up as lost",
    "@tooltipAlarmRepeatTimes": {
-      "description": "Explain the question about repeating the alarm"
+      "description": "Explain the alarm repeating field"
    },
-   "tooltipAlarmDurationSeconds": "Number of seconds the alarm sounds if it is not stopped",
+   "tooltipSnoozeSeconds": "Seconds from the end of the alarm sounding without stopping it until it automatically repeats itself",
+   "@tooltipSnoozeSeconds": {
+      "description": "Explain the alarm snooze duration field"
+   },
+   "tooltipAlarmDurationSeconds": "Seconds the alarm sounds if not stopped",
    "@tooltipAlarmDurationSeconds": {
-      "description": "Explain the question about alarm duration"
+      "description": "Explain the alarm duration field"
    },
-   "tooltipMinutesToDealWithAlarm": "Maximum number of minutes from the time the alarm is acknowledged until the pills have been taken",
+   "tooltipMinutesToDealWithAlarm": "Maximum number of minutes from the time the alarm is acknowledged until the pills are taken",
    "@tooltipMinutesToDealWithAlarm": {
       "description": "Explain the question about minutes to deal with alarm"
    },
@@ -152,7 +156,43 @@
    "@timeSettings": {
       "description": "Before/after time settings title"
    },
-
+   "minutesLongBefore": "Minutes long before meal",
+   "@minutesLongBefore":
+   {
+      "description": "Minutes long before meal"
+   },
+   "minutesBefore": "Minutes before meal",
+   "@minutesBefore":
+   {
+      "description": "Minutes before meal"
+   },
+   "minutesAfter": "Minutes after meal",
+   "@minutesAfter":
+   {
+      "description": "Minutes after meal"
+   },
+   "minutesLongAfter": "Minutes long after supper",
+   "@minutesLongAfter":
+   {
+      "description": "Minutes long after supper"
+   },
+   "tooltipLongBefore": "Minutes for taking pills well before meals, if you take pills well before meals",
+   "@tooltipLongBefore": {
+      "description": "Explain the minutes long before meals field"
+   },
+   "tooltipBefore": "Minutes to take pills before meals, if you take pills before meals",
+   "@tooltipBefore": {
+      "description": "Explain the minutes before meals field"
+   },
+   "tooltipAfter": "Minutes to take pills after finishing meals, if you take pills after finishing meals",
+   "@tooltipAfter": {
+      "description": "Explain the minutes after meals field"
+   },
+   "tooltipLongAfter": "Minutes to take pills long after finishing dinner, if you take pills long after finishing supper",
+   "@tooltipLongAfter": {
+      "description": "Explain the minutes long after meals field"
+   },
+ 
    "meal": "Meal",
    "@meal": {
       "description": "Meal selection title"

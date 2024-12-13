@@ -9,102 +9,116 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../providers/config_preferences.dart';
+import '../providers/edit_providers/edit_provider_alarm_preferences.dart';
 import '../styles/app_styles.dart';
 import '../widgets/alarm_preferences_editor.dart';
 import '../widgets/custom_back_button.dart';
 
 /// Set Alarm Preferences:  Alarm seconds, Snooze seconds, Repeat times
-class AlarmPreferencesScreen extends StatelessWidget {
-
+class AlarmPreferencesScreen extends StatefulWidget {
   /// Ctor AlarmPreferencesScreen
   const AlarmPreferencesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var t = AppLocalizations.of(context)!;
+  State<AlarmPreferencesScreen> createState() => _AlarmPreferencesScreenState();
+}
 
-    Future<void> saveValues() async {
-      final pref = context.read<ConfigPreferences>();
-      // await pref.alarmSettings.
-      if (context.mounted) Navigator.pop(context);
+class _AlarmPreferencesScreenState extends State<AlarmPreferencesScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final EditProviderAlarmPreferences alarmPreferencesProvider =
+        EditProviderAlarmPreferences(
+            context.read<ConfigPreferences>().alarmSettings);
+    final t = AppLocalizations.of(context)!;
+    Key editorKey = GlobalKey();
+
+    Widget discardChangesButton() {
+      return ValueListenableBuilder(
+          valueListenable: alarmPreferencesProvider.notifyChanges(),
+          builder: (context, value, child) {
+            return IconButton(
+              onPressed: value
+                  ? () {
+                      developer.log("Undo button clicked! ",
+                          level: Level.FINER.value);
+                      FocusScope.of(context).unfocus();
+                      alarmPreferencesProvider.discardChanges();
+                      setState(() {
+                        editorKey = GlobalKey();
+                      });
+                    }
+                  : null,
+              style: AppStyles.textButtonstyle,
+              icon: const Icon(Icons.undo),
+            );
+          });
     }
 
-    Future<void> requery() async {
-      final pref = context.read<ConfigPreferences>();
-      await pref.alarmSettings.requery();
+    Widget saveValuesButton() {
+      return ValueListenableBuilder(
+          valueListenable: alarmPreferencesProvider.notifyValidChanges(),
+          builder: (context, value, child) {
+            return IconButton(
+              onPressed: value
+                  ? () async {
+                      developer.log("Save button clicked! ",
+                          level: Level.FINER.value);
+                      FocusScope.of(context).unfocus();
+                      await alarmPreferencesProvider.saveValues();
+                      if (context.mounted) {
+                        developer.log("Show snackbar", level: Level.FINE.value);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(t.saved),
+                          ),
+                        );
+                      }
+                      setState(() {
+                        editorKey = GlobalKey();
+                      });
+                    }
+                  : null,
+              style: AppStyles.textButtonstyle,
+              icon: const Icon(Icons.archive),
+            );
+          });
     }
 
     return SafeArea(
         child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppStyles.colors.mantis,
-        appBar: AppBar(
-          backgroundColor: AppStyles.colors.ochre[700],
-          title: Center(
-            child: Text(
-              t.appTitle,
-              style: AppStyles.fonts.display(),
-            ),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: AppStyles.colors.mantis,
+      appBar: AppBar(
+        backgroundColor: AppStyles.colors.ochre[700],
+        title: Center(
+          child: Text(
+            t.appTitle,
+            style: AppStyles.fonts.display(),
           ),
-          elevation: 4,
-          leading: CustomBackButton(),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () async {
-                  developer.log("Undo button clicked! ",
-                      level: Level.FINER.value);
-                  await requery();
-                },
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all<CircleBorder>(
-                    CircleBorder(
-                      side: BorderSide(
-                        color: AppStyles.colors.forestGreen[700]!,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  backgroundColor:
-                      WidgetStateProperty.all(AppStyles.colors.forestGreen),
-                  foregroundColor:
-                      WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
-                ),
-                child: const Icon(Icons.undo),
-              ),
-              TextButton(
-                onPressed: () async {
-                  developer.log("Save button clicked! ",
-                      level: Level.FINER.value);
-                  await saveValues();
-                },
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all<CircleBorder>(
-                    CircleBorder(
-                      side: BorderSide(
-                        color: AppStyles.colors.forestGreen[700]!,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  backgroundColor:
-                      WidgetStateProperty.all(AppStyles.colors.forestGreen),
-                  foregroundColor:
-                      WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
-                ),
-                child: const Icon(Icons.archive),
-              ),
-            ],
         ),
+        elevation: 4,
+        leading: CustomBackButton(),
+        actions: <Widget>[
+          discardChangesButton(),
+          saveValuesButton(),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(top:10, left: 10, right: 10),
+          padding: EdgeInsets.only(top: 10, left: 10, right: 10),
           child: Column(
             children: [
-              Text(t.alarmSettings, style: AppStyles.fonts.headline(),),
-              AlarmPreferencesEditor(),
+              Text(
+                t.alarmSettings,
+                style: AppStyles.fonts.headline(),
+              ),
+              AlarmPreferencesEditor(
+                provider: alarmPreferencesProvider,
+                key: editorKey,
+              ),
             ],
           ),
-          ),
+        ),
       ),
     ));
   }

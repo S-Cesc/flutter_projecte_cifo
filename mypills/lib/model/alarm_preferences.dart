@@ -21,6 +21,7 @@ base class ReadOnlyAlarmPreferences {
   int _minutesAfter;
   int _minutesLongAfter;
 
+  /// Ctor
   ReadOnlyAlarmPreferences(
     this._alarmDurationSeconds,
     this._alarmSnoozeSeconds,
@@ -34,14 +35,77 @@ base class ReadOnlyAlarmPreferences {
 
   //-----------------------class rest of members--------------------------------
 
-  int get alarmDurationSeconds => _alarmDurationSeconds;
-  int get alarmSnoozeSeconds => _alarmSnoozeSeconds;
-  int get alarmRepeatTimes => _alarmRepeatTimes;
-  int get minutesToDealWithAlarm => _minutesToDealWithAlarm;
-  int get minutesLongBefore => _minutesLongBefore;
-  int get minutesBefore => _minutesBefore;
-  int get minutesAfter => _minutesAfter;
-  int get minutesLongAfter => _minutesLongAfter;
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get alarmDurationSeconds =>
+      (_alarmDurationSeconds > AlarmPreferences.maxAlarmDurationSeconds ||
+              _alarmDurationSeconds < AlarmPreferences.minAlarmDurationSeconds)
+          ? AlarmPreferences.defaultAlarmDurationSeconds
+          : _alarmDurationSeconds;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get alarmSnoozeSeconds =>
+      (_alarmSnoozeSeconds > AlarmPreferences.maxAlarmSnoozeSeconds ||
+              _alarmSnoozeSeconds < AlarmPreferences.minAlarmSnoozeSeconds)
+          ? AlarmPreferences.defaultAlarmSnoozeSeconds
+          : _alarmSnoozeSeconds;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get alarmRepeatTimes =>
+      (_alarmRepeatTimes > AlarmPreferences.maxAlarmRepeatTimes ||
+              _alarmRepeatTimes < AlarmPreferences.minAlarmRepeatTimes)
+          ? AlarmPreferences.defaultAlarmRepeatTimes
+          : _alarmRepeatTimes;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get minutesToDealWithAlarm => (_minutesToDealWithAlarm >
+              AlarmPreferences.maxMinutesToDealWithAlarm ||
+          _minutesToDealWithAlarm < AlarmPreferences.minMinutesToDealWithAlarm)
+      ? AlarmPreferences.defaultMinutesToDealWithAlarm
+      : _minutesToDealWithAlarm;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get minutesLongBefore =>
+      (_minutesLongBefore > AlarmPreferences.maxMinutesLongAfterBefore ||
+              _minutesLongBefore < AlarmPreferences.minMinutesLongAfterBefore)
+          ? AlarmPreferences.defaultMinutesLongBefore
+          : _minutesLongBefore;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get minutesBefore =>
+      (_minutesBefore > AlarmPreferences.maxMinutesAfterBefore ||
+              _minutesBefore < AlarmPreferences.minMinutesAfterBefore)
+          ? AlarmPreferences.defaultMinutesBefore
+          : _minutesBefore;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get minutesAfter =>
+      (_minutesAfter > AlarmPreferences.maxMinutesAfterBefore ||
+              _minutesAfter < AlarmPreferences.minMinutesAfterBefore)
+          ? AlarmPreferences.defaultMinutesAfter
+          : _minutesAfter;
+
+  /// returns default value when actual value is invalid
+  /// actual value can be invalid,
+  /// because valid range in debug mode and release mode are different
+  int get minutesLongAfter => 
+      (_minutesLongAfter > AlarmPreferences.maxMinutesLongAfterBefore ||
+              _minutesLongAfter < AlarmPreferences.minMinutesLongAfterBefore)
+          ? AlarmPreferences.defaultMinutesLongAfter
+          : _minutesLongAfter;
 }
 
 /* ====================================================================== */
@@ -51,32 +115,77 @@ base class ReadOnlyAlarmPreferences {
 final class AlarmPreferences extends ReadOnlyAlarmPreferences {
   //-------------------------static/constant------------------------------------
 
+  //-- Alarm settings --//
+
+  /// min value alarm duration
   static const minAlarmDurationSeconds = kDebugMode ? 15 : 60;
+
+  /// max value alarm duration
   static const maxAlarmDurationSeconds = kDebugMode ? 90 : 600;
+
+  /// min value alarm snooze
   static const minAlarmSnoozeSeconds = maxAlarmDurationSeconds ~/ 2;
+
+  /// max value alarm snooze
   static const maxAlarmSnoozeSeconds = maxAlarmDurationSeconds * 2;
+
+  /// min value alarm repeat times
   static const minAlarmRepeatTimes = 1;
+
+  /// max value alarm repeat times
   static const maxAlarmRepeatTimes = 5;
+
+  /// min time to deal with alarm
   static const minMinutesToDealWithAlarm = 10;
+
+  /// max time to deal with alarm
   static const maxMinutesToDealWithAlarm = 40;
 
+  // defaults //
+
+  /// default value alarm duration
   static const defaultAlarmDurationSeconds = kDebugMode ? 15 : 300;
+
+  /// default value alarm snooze
   static const defaultAlarmSnoozeSeconds = kDebugMode ? 90 : 900;
+
+  /// default value alarm repeat times
   static const defaultAlarmRepeatTimes = 3;
+
+  /// default time to deal with alarm
   static const defaultMinutesToDealWithAlarm = 15;
 
+  //-- After/Before time settings --//
+
+  /// min value
   static const minMinutesLongAfterBefore = 90;
+
+  /// max value
   static const maxMinutesLongAfterBefore = 150;
+
+  /// min value
   static const minMinutesAfterBefore = 5;
+
+  /// max value
   static const maxMinutesAfterBefore = 15;
 
+  // defaults //
+
+  /// default value
   static const defaultMinutesLongBefore = 90;
+
+  /// default value
   static const defaultMinutesBefore = 7;
+
+  /// default value
   static const defaultMinutesAfter = 5;
+
+  /// default value
   static const defaultMinutesLongAfter = 90;
 
   //-----------------class state members and constructors ----------------------
 
+  /// Ctor AlarmPreferences editable
   AlarmPreferences(
     super._alarmDurationSeconds,
     super._alarmSnoozeSeconds,
