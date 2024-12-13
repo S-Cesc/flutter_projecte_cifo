@@ -37,25 +37,25 @@ class EditProviderTimePreferences {
 
   set minutesLongBeforeMeals(int? value) {
     _longBefore = value;
-    _hasChanges.value = (value != _settings.data.alarmDurationSeconds);
+    _hasChanges.value = (value != _settings.data.minutesLongBefore);
     _hasValidChanges.value = _hasChanges.value && hasValidValues;
   }
 
   set minutesBeforeMeals(int? value) {
     _before = value;
-    _hasChanges.value = (value != _settings.data.alarmSnoozeSeconds);
+    _hasChanges.value = (value != _settings.data.minutesBefore);
     _hasValidChanges.value = _hasChanges.value && hasValidValues;
   }
 
   set minutesAfterMeals(int? value) {
     _after = value;
-    _hasChanges.value = (value != _settings.data.alarmRepeatTimes);
+    _hasChanges.value = (value != _settings.data.minutesAfter);
     _hasValidChanges.value = _hasChanges.value && hasValidValues;
   }
 
   set minutesLongAfterMeals(int? value) {
     _longAfter = value;
-    _hasChanges.value = (value != _settings.data.minutesToDealWithAlarm);
+    _hasChanges.value = (value != _settings.data.minutesLongAfter);
     _hasValidChanges.value = _hasChanges.value && hasValidValues;
   }
 
