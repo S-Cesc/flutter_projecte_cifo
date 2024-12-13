@@ -1,7 +1,7 @@
 // logging and debugging
 // Dart base
-// Flutter
 import 'dart:convert';
+// Flutter
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/alarm_preferences.dart';
@@ -15,18 +15,28 @@ import '../model/weekly_time_table.dart';
 class AlarmSettings {
   //-------------------------static/constant------------------------------------
 
+  /// JSON key for alarmDurationSeconds
   static const alarmDurationSecondsKey = 'aDuration';
+  /// JSON key for alarmSnoozeSeconds
   static const alarmSnoozeSecondsKey = 'aSnooze';
+  /// JSON key for alarmRepeatTimes
   static const alarmRepeatTimesKey = 'aRepeat';
+  /// JSON key for minutesToDealWithAlarm
   static const minutesToDealWithAlarmKey = 'aDeal';
 
-  static const mealLongBeforeKey = 'mLBefore';
-  static const mealBeforeKey = 'mBefore';
-  static const mealAfterKey = 'mAfter';
-  static const mealLongAfterKey = 'mLAfter';
+  /// JSON key for longBeforeMeal
+  static const longBeforeMealKey = 'mLBefore';
+  /// JSON key for beforeMeal
+  static const beforeMealKey = 'mBefore';
+  /// JSON key for afterMeal
+  static const afterMealKey = 'mAfter';
+  /// JSON key for longAfterMeal
+  static const longAfterMealKey = 'mLAfter';
 
+  /// JSON key for weeklyTimeTable
   static const weeklyTimeTableKey = 'wTimeTable';
 
+  /// JSON key for alarm objects, using its id
   static String alarmJsonKey(int alarmId) => 'a$alarmId';
 
   //-----------------class state members and constructors ----------------------
@@ -49,10 +59,10 @@ class AlarmSettings {
         _shPrefs.getInt(alarmSnoozeSecondsKey),
         _shPrefs.getInt(alarmRepeatTimesKey),
         _shPrefs.getInt(minutesToDealWithAlarmKey),
-        _shPrefs.getInt(mealLongBeforeKey),
-        _shPrefs.getInt(mealBeforeKey),
-        _shPrefs.getInt(mealAfterKey),
-        _shPrefs.getInt(mealLongAfterKey),
+        _shPrefs.getInt(longBeforeMealKey),
+        _shPrefs.getInt(beforeMealKey),
+        _shPrefs.getInt(afterMealKey),
+        _shPrefs.getInt(longAfterMealKey),
       ]).then((results) {
         _data = AlarmPreferences(
           results[0] ?? AlarmPreferences.defaultAlarmDurationSeconds,
@@ -128,28 +138,28 @@ class AlarmSettings {
   /// sets AlarmPreferences value and writes it to disk
   Future<void> setMinutesLongBeforeMeal(int value) async {
     _data.minutesLongBefore = value;
-    await _shPrefs.setInt(mealLongBeforeKey, value);
+    await _shPrefs.setInt(longBeforeMealKey, value);
     callbackOnUpdate!();
   }
 
   /// sets AlarmPreferences value and writes it to disk
   Future<void> setMinutesBeforeMeal(int value) async {
     _data.minutesBefore = value;
-    await _shPrefs.setInt(mealBeforeKey, value);
+    await _shPrefs.setInt(beforeMealKey, value);
     callbackOnUpdate!();
   }
 
   /// sets AlarmPreferences value and writes it to disk
   Future<void> setMinutesAfterMeal(int value) async {
     _data.minutesAfter = value;
-    await _shPrefs.setInt(mealAfterKey, value);
+    await _shPrefs.setInt(afterMealKey, value);
     callbackOnUpdate!();
   }
 
   /// sets AlarmPreferences value and writes it to disk
   Future<void> setMinutesLongAfterMeal(int value) async {
     _data.minutesLongAfter = value;
-    await _shPrefs.setInt(mealLongAfterKey, value);
+    await _shPrefs.setInt(longAfterMealKey, value);
     callbackOnUpdate!();
   }
 

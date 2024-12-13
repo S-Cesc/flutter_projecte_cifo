@@ -5,7 +5,7 @@ import 'package:logging/logging.dart' show Level;
 import 'package:flutter/material.dart';
 // projecte
 import 'meal.dart';
-import 'enums.dart';
+import 'day_of_week.dart';
 
 //==============================================================================
 
@@ -63,6 +63,7 @@ class WeeklyTimeTable {
   final Set<DayOfWeek> _specialWeekDays;
   final Map<Meal, TimeOfDay> _specialDaysMeals;
 
+  /// Create an empty weekly time table
   WeeklyTimeTable.empty()
       : _defaultDaysMeals = {},
         _specialWeekDays = {},

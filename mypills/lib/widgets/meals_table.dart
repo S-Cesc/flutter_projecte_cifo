@@ -7,7 +7,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../model/meal.dart';
-import '../model/weekly_time_table.dart';
 import '../providers/config_preferences.dart';
 
 class MealsTable extends StatefulWidget {

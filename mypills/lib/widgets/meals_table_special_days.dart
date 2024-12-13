@@ -12,7 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import 'meals_table.dart';
-import '../model/enums.dart';
+import '../model/day_of_week.dart';
 import '../providers/config_preferences.dart';
 
 /// Meals time table for specific days

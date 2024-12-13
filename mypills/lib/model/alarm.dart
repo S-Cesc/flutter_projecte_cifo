@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import 'meal.dart';
-import 'enums.dart';
+import 'day_of_week.dart';
 import 'pill_meal_time.dart';
 import 'weekly_time_table.dart';
 //import '../background_entry.dart' show BackgroundEntry;

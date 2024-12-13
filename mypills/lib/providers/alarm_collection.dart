@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../extensions/date_time_extensions.dart';
 import '../model/alarm.dart';
 import '../model/alarm_key_iterator.dart';
-import '../model/enums.dart';
+import '../model/day_of_week.dart';
 import '../providers/config_preferences.dart';
 import '../services/background_alarm_helper.dart';
 import 'alarm_settings.dart';
