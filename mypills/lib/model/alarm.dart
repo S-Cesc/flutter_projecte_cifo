@@ -1,5 +1,6 @@
 // logging and debugging
 import 'dart:developer' as developer;
+import 'package:flutter_projecte_cifo/extensions/date_time_extensions.dart';
 import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'meal.dart';
 import 'day_of_week.dart';
 import 'pill_meal_time.dart';
 import 'weekly_time_table.dart';
-//import '../background_entry.dart' show BackgroundEntry;
 
 //==============================================================================
 
@@ -24,6 +24,7 @@ class Alarm implements Comparable<Alarm> {
   static const _pillMealTimeKey = 'pillMealTime';
   static const _lastShotKey = 'lastShot';
   static const _stoppedKey = 'stopped';
+  static const _dealingWithKey = 'dealingWith';
   static const _isRunningKey = 'isRunning';
   static const _isSnoozedKey = 'isSnoozed';
   static const _actualReplayKey = 'nReplay';
@@ -105,7 +106,8 @@ class Alarm implements Comparable<Alarm> {
         _isSnoozed = false,
         _actualReplay = 0,
         _lastShot = from._lastShot,
-        _stopped = from._stopped;
+        _stopped = from._stopped,
+        _dealingWith = from._dealingWith;
 
   /// Build Alarm fromJson decoded
   Alarm.fromJson(Map<String, dynamic> json)
@@ -113,6 +115,7 @@ class Alarm implements Comparable<Alarm> {
         pillMealTime = PillMealTime.fromId(json[_pillMealTimeKey] as int),
         _lastShot = DateTime.tryParse(json[_lastShotKey].toString()),
         _stopped = DateTime.tryParse(json[_stoppedKey].toString()),
+        _dealingWith = DateTime.tryParse(json[_dealingWithKey].toString()),
         _isRunning = json[_isRunningKey] as bool,
         _isSnoozed = json[_isSnoozedKey] as bool,
         _actualReplay = json[_actualReplayKey] as int;
@@ -138,6 +141,7 @@ class Alarm implements Comparable<Alarm> {
       _pillMealTimeKey: pillMealTime.id,
       _lastShotKey: _lastShot?.toIso8601String(),
       _stoppedKey: _stopped?.toIso8601String(),
+      _dealingWithKey: _dealingWith?.toIso8601String(),
       _isRunningKey: isRunning,
       _isSnoozedKey: isSnoozed,
       _actualReplayKey: _actualReplay
@@ -166,15 +170,17 @@ class Alarm implements Comparable<Alarm> {
   int get actualReplay => _actualReplay;
 
   /// When has been stopped?
-  DateTime? get stopped => _stopped;
+  DateTime? get whenWasStopped => _stopped;
 
   /// When were the last shot
   DateTime? get lastShot => _lastShot;
 
-  /// Whether [stopped] is after [lastShot]
+  /// Whether last time [whenWasStopped] is after [lastShot]
   bool get isStopped => _stopped != null && _stopped!.isAfter(_lastShot!);
 
-  DateTime? get DealingWith => _dealingWith;
+  /// Not null when user is dealing with the alarm (taking the pills)
+  /// DateTime when user began to deal with the alarm
+  DateTime? get dealingWith => _dealingWith;
 
   /// For how long is been edited?
   Duration? get dealingWithTime => _dealingWith?.difference(_lastShot!);
@@ -191,17 +197,18 @@ class Alarm implements Comparable<Alarm> {
   /// - increment the [replay]
   void markAlarmfired() {
     if (_actualReplay == 0) {
-      final DateTime now = DateTime.now();
-      _lastShot = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+      _lastShot = DateTime.now().round();
     }
     _actualReplay++;
     _isRunning = true;
     _isSnoozed = false;
   }
 
+  /// Begin to deal with the alarm (take the pills)
   void markAlarmDealingWith() {
-    final DateTime now = DateTime.now();
-    _dealingWith = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    _dealingWith = DateTime.now().round();
+    _isRunning = true;
+    _isSnoozed = false;
   }
 
   /// mark the alarm as snoozed
@@ -211,16 +218,14 @@ class Alarm implements Comparable<Alarm> {
   }
 
   /// mark the alarm as stopped
-  /// - register the [stopped] DateTime
+  /// - register the [whenWasStopped] DateTime
   /// - reset the [replay] to zero
   void markAlarmStopped() {
     _isRunning = false;
     _isSnoozed = false;
     _dealingWith = null;
     _actualReplay = 0;
-    final DateTime now = DateTime.now();
-    _stopped = DateTime(
-        now.year, now.month, now.day, now.hour, now.minute, now.second);
+    _stopped =  DateTime.now().round(RoundTimeTo.second);
   }
 
   /// Compute the TimeOfDay of the tomorrow shot using weekly meal time

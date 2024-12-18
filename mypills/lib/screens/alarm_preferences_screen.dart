@@ -28,7 +28,7 @@ class _AlarmPreferencesScreenState extends State<AlarmPreferencesScreen> {
   Widget build(BuildContext context) {
     final EditProviderAlarmPreferences alarmPreferencesProvider =
         EditProviderAlarmPreferences(
-            context.read<ConfigPreferences>().alarmSettings);
+            context.read<ConfigPreferences>().generalSettings);
     final t = AppLocalizations.of(context)!;
     Key editorKey = GlobalKey();
 
@@ -64,12 +64,14 @@ class _AlarmPreferencesScreenState extends State<AlarmPreferencesScreen> {
                       developer.log("Save button clicked! ",
                           level: Level.FINER.value);
                       FocusScope.of(context).unfocus();
-                      await alarmPreferencesProvider.saveValues();
+                      bool saved = await alarmPreferencesProvider.saveValues();
                       if (context.mounted) {
                         developer.log("Show snackbar", level: Level.FINE.value);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(t.saved),
+                            content:
+                                Text(saved ? t.saved : t.notSavedCauseOfError),
+                            backgroundColor: saved? null : Colors.red,
                           ),
                         );
                       }

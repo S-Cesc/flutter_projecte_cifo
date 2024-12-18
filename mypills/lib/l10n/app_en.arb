@@ -70,7 +70,19 @@
    },
    "saved": "Saved",
    "@saved": {
-      "description": "data saved message"
+      "description": "Data saved message"
+   },
+   "added": "Item added",
+   "@added": {
+      "description": "Item added message"
+   },
+   "notSavedCauseOfError": "Error. Not saved",
+   "@notSavedCauseOfError": {
+      "description": "Data not saved because of an error"
+   },
+   "notAddedExisting": "Not added: it already exists",
+   "@notAddedExisting": {
+      "description": "Item not added because the item already exists message"
    },
    "confirm": "Confirm",
    "@confirm": {
@@ -192,7 +204,40 @@
    "@tooltipLongAfter": {
       "description": "Explain the minutes long after meals field"
    },
- 
+
+   "timeEating": "Time spent eating",
+   "@timeEating": {
+      "description": "Time spent eating"
+   },
+   "bkfDuration": "breakfast duration, in minutes",
+   "@bkfDuration": {
+      "description": "breakfast duration"
+   },
+   "brunchDuration": "brunch duration, in minutes",
+   "@brunchDuration": {
+      "description": "brunch duration"
+   },
+   "lunchDuration": "lunch duration, in minutes",
+   "@lunchDuration": {
+      "description": "lunch duration"
+   },
+   "teaDuration": "tea duration, in minutes",
+   "@teaDuration": {
+      "description": "tea duration"
+   },
+   "highTeaDuration": "high tea duration, in minutes",
+   "@highTeaDuration": {
+      "description": "high tea duration"
+   },
+   "dinnerDuration": "dinner duration, in minutes",
+   "@dinnerDuration": {
+      "description": "dinner duration"
+   },
+   "supperDuration": "supper duration, in minutes",
+   "@supperDuration": {
+      "description": "supper duration"
+   },
+
    "meal": "Meal",
    "@meal": {
       "description": "Meal selection title"
@@ -260,7 +305,7 @@
    "@alarms": {
       "description": "Button & title Alarms"
    },
-   "weeklyTimetable": "Weekly timetable",
+   "weeklyTimetable": "Weekly routine",
    "@weeklyTimetable": {
       "description": "Button text for setting Weekly time for each meal"
    },

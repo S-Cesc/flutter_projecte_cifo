@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../alarm_settings.dart';
-import '../../model/alarm_preferences.dart';
+import '../general_settings.dart';
+import '../../model/general_preferences.dart';
 
 /// Class acts as a provider between sibling widgets
 class EditProviderAlarmPreferences {
-  final AlarmSettings _settings;
+  final GeneralSettings _settings;
   final ValueNotifier<bool> _hasChanges = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _hasValidChanges = ValueNotifier<bool>(false);
 
@@ -14,11 +14,12 @@ class EditProviderAlarmPreferences {
   int? _minutesToDealWithAlarm;
 
   /// Ctor
-  EditProviderAlarmPreferences(this._settings)
-      : _alarmDurationSeconds = _settings.data.alarmDurationSeconds,
-        _alarmSnoozeSeconds = _settings.data.alarmSnoozeSeconds,
-        _alarmRepeatTimes = _settings.data.alarmRepeatTimes,
-        _minutesToDealWithAlarm = _settings.data.minutesToDealWithAlarm;
+  EditProviderAlarmPreferences(GeneralSettings settings)
+      : _settings = settings,
+        _alarmDurationSeconds = settings.data.alarmDurationSeconds,
+        _alarmSnoozeSeconds = settings.data.alarmSnoozeSeconds,
+        _alarmRepeatTimes = settings.data.alarmRepeatTimes,
+        _minutesToDealWithAlarm = settings.data.minutesToDealWithAlarm;
 
   /// Alarm duration in seconds
   int? get alarmDurationSeconds => _alarmDurationSeconds;
@@ -67,16 +68,17 @@ class EditProviderAlarmPreferences {
         _alarmSnoozeSeconds != null &&
         _minutesToDealWithAlarm != null) {
       return _alarmDurationSeconds! <=
-              AlarmPreferences.maxAlarmDurationSeconds &&
-          _alarmDurationSeconds! >= AlarmPreferences.minAlarmDurationSeconds &&
-          _alarmSnoozeSeconds! <= AlarmPreferences.maxAlarmSnoozeSeconds &&
-          _alarmSnoozeSeconds! >= AlarmPreferences.minAlarmSnoozeSeconds &&
-          _alarmRepeatTimes! <= AlarmPreferences.maxAlarmRepeatTimes &&
-          _alarmRepeatTimes! >= AlarmPreferences.minAlarmRepeatTimes &&
+              GeneralPreferences.maxAlarmDurationSeconds &&
+          _alarmDurationSeconds! >=
+              GeneralPreferences.minAlarmDurationSeconds &&
+          _alarmSnoozeSeconds! <= GeneralPreferences.maxAlarmSnoozeSeconds &&
+          _alarmSnoozeSeconds! >= GeneralPreferences.minAlarmSnoozeSeconds &&
+          _alarmRepeatTimes! <= GeneralPreferences.maxAlarmRepeatTimes &&
+          _alarmRepeatTimes! >= GeneralPreferences.minAlarmRepeatTimes &&
           _minutesToDealWithAlarm! <=
-              AlarmPreferences.maxMinutesToDealWithAlarm &&
+              GeneralPreferences.maxMinutesToDealWithAlarm &&
           _minutesToDealWithAlarm! >=
-              AlarmPreferences.minMinutesToDealWithAlarm;
+              GeneralPreferences.minMinutesToDealWithAlarm;
     } else {
       return false;
     }

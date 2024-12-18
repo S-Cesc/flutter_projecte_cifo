@@ -24,13 +24,13 @@ class ConfigMealsScreen extends StatelessWidget {
 
     Future<void> saveValues() async {
       final pref = context.read<ConfigPreferences>();
-      await pref.alarmSettings.setWeeklyTimeTable(pref.alarmSettings.wtt);
+      await pref.generalSettings.setWeeklyTimeTable(pref.generalSettings.wtt);
       if (context.mounted) Navigator.pop(context);
     }
 
     Future<void> requery() async {
       final pref = context.read<ConfigPreferences>();
-      await pref.alarmSettings.requery();
+      await pref.generalSettings.requery();
     }
 
     List<Widget> buttons() {

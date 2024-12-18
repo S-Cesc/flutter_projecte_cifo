@@ -8,14 +8,14 @@ import 'package:flutter_projecte_cifo/model/weekly_time_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/alarm.dart';
-import '../model/alarm_preferences.dart';
-import 'alarm_settings.dart';
+import '../model/general_preferences.dart';
+import 'general_settings.dart';
 
 //==============================================================================
 
 /// Singleton to use as data provider
 /// It has a readonly AlarmSettings object
-/// with an [AlarmPreferences] and a [WeeklyTimeTable],
+/// with an [GeneralPreferences] and a [WeeklyTimeTable],
 /// and a cached [Alarm] object.
 /// State changes are registered in the cached [Alarm] (updated to disk)
 class BackgroundPreferences {
@@ -27,12 +27,12 @@ class BackgroundPreferences {
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs;
-  late AlarmSettings _alarmSettings;
+  late GeneralSettings _generalSettings;
 
   Alarm? _currentAlarm;
 
   BackgroundPreferences._() : _shPrefs = SharedPreferencesAsync() {
-    _alarmSettings = AlarmSettings(_shPrefs, null);
+    _generalSettings = GeneralSettings(_shPrefs, null);
   }
 
   factory BackgroundPreferences() => _backgroundPrefs;
@@ -41,12 +41,12 @@ class BackgroundPreferences {
 
   /// Initialize object
   Future<void> init() async {
-    await _alarmSettings.init();
+    await _generalSettings.init();
   }
 
   /// Requery values from disk
   Future<void> requery() async {
-    await _alarmSettings.requery();
+    await _generalSettings.requery();
   }
 
   /// Force requery from disk of the cached [Alarm]
@@ -56,18 +56,18 @@ class BackgroundPreferences {
 
   //-----------------------class rest of members--------------------------------
 
-  /// Access the depending [AlarmPreferences] object (readonly)
-  ReadOnlyAlarmPreferences get alarmSettings => _alarmSettings.data;
+  /// Access the depending [GeneralPreferences] object (readonly)
+  ReadOnlyGeneralPreferences get alarmSettings => _generalSettings.data;
 
   /// Access the depending [WeeklyTimeTable] data
-  WeeklyTimeTable get weeklyTimeTable => _alarmSettings.wtt;
+  WeeklyTimeTable get weeklyTimeTable => _generalSettings.wtt;
 
   /// The cached [Alarm]
   Future<Alarm?> currentAlarm(int alarmId) async {
     if (_currentAlarm?.id == alarmId) {
       return _currentAlarm;
     } else {
-      final String key = AlarmSettings.alarmJsonKey(alarmId);
+      final String key = GeneralSettings.alarmJsonKey(alarmId);
       final json = await _shPrefs.getString(key);
       if (json != null) {
         try {
@@ -92,7 +92,7 @@ class BackgroundPreferences {
     if (_currentAlarm != null && _currentAlarm!.id == alarmId) {
       final Map<String, dynamic> jsonStructured = _currentAlarm!.toJson();
       await _shPrefs.setString(
-          AlarmSettings.alarmJsonKey(alarmId), jsonEncode(jsonStructured));
+          GeneralSettings.alarmJsonKey(alarmId), jsonEncode(jsonStructured));
     } else {
       developer.log("Cached alarm $alarmId missed; state not updated!!",
           level: Level.WARNING.value);

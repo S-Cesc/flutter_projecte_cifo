@@ -1,7 +1,8 @@
+// ignore_for_file: public_member_api_docs
+
 // logging and debugging
 import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
-// Dart base
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,31 +11,31 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../providers/config_preferences.dart';
-import '../providers/edit_providers/edit_provider_time_preferences.dart';
-import '../widgets/time_preferences_editor.dart';
+import '../providers/edit_providers/edit_provider_meal_durations_adjustment.dart';
+import '../widgets/meal_durations_adjustment_editor.dart';
 import '../widgets/custom_back_button.dart';
 
-/// Set Time Preferences: Long before, Before, After, Long after
-class TimePreferencesScreen extends StatefulWidget {
-  /// Ctor TimePreferencesScreen
-  const TimePreferencesScreen({super.key});
+class MealDurationsAdjustmentScreen extends StatefulWidget {
+  const MealDurationsAdjustmentScreen({super.key});
 
   @override
-  State<TimePreferencesScreen> createState() => _TimePreferencesScreenState();
+  State<MealDurationsAdjustmentScreen> createState() =>
+      _MealDurationsAdjustmentScreenState();
 }
 
-class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
+class _MealDurationsAdjustmentScreenState
+    extends State<MealDurationsAdjustmentScreen> {
   @override
   Widget build(BuildContext context) {
-    final EditProviderTimePreferences timePreferencesProvider =
-        EditProviderTimePreferences(
+    final EditProviderMealDurationsAdjustment mealDurationsAdjustmentProvider =
+        EditProviderMealDurationsAdjustment(
             context.read<ConfigPreferences>().generalSettings);
     final t = AppLocalizations.of(context)!;
     Key editorKey = GlobalKey();
 
     Widget discardChangesButton() {
       return ValueListenableBuilder(
-          valueListenable: timePreferencesProvider.notifyChanges(),
+          valueListenable: mealDurationsAdjustmentProvider.notifyChanges(),
           builder: (context, value, child) {
             return IconButton(
               onPressed: value
@@ -42,7 +43,7 @@ class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
                       developer.log("Undo button clicked! ",
                           level: Level.FINER.value);
                       FocusScope.of(context).unfocus();
-                      timePreferencesProvider.discardChanges();
+                      mealDurationsAdjustmentProvider.discardChanges();
                       setState(() {
                         editorKey = GlobalKey();
                       });
@@ -56,7 +57,7 @@ class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
 
     Widget saveValuesButton() {
       return ValueListenableBuilder(
-          valueListenable: timePreferencesProvider.notifyValidChanges(),
+          valueListenable: mealDurationsAdjustmentProvider.notifyValidChanges(),
           builder: (context, value, child) {
             return IconButton(
               onPressed: value
@@ -64,14 +65,15 @@ class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
                       developer.log("Save button clicked! ",
                           level: Level.FINER.value);
                       FocusScope.of(context).unfocus();
-                      bool saved = await timePreferencesProvider.saveValues();
+                      bool saved =
+                          await mealDurationsAdjustmentProvider.saveValues();
                       if (context.mounted) {
                         developer.log("Show snackbar", level: Level.FINE.value);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content:
                                 Text(saved ? t.saved : t.notSavedCauseOfError),
-                            backgroundColor: saved ? null : Colors.red,
+                            backgroundColor: saved? null : Colors.red,
                           ),
                         );
                       }
@@ -111,11 +113,11 @@ class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
           child: Column(
             children: [
               Text(
-                t.timeSettings,
+                t.timeEating,
                 style: AppStyles.fonts.headline(),
               ),
-              TimePreferencesEditor(
-                provider: timePreferencesProvider,
+              MealDurationsAdjustmentEditor(
+                provider: mealDurationsAdjustmentProvider,
                 key: editorKey,
               ),
             ],

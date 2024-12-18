@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../alarm_settings.dart';
-import '../../model/alarm_preferences.dart';
+import '../general_settings.dart';
+import '../../model/general_preferences.dart';
 
 /// Class acts as a provider between sibling widgets
 class EditProviderTimePreferences {
-  final AlarmSettings _settings;
+  final GeneralSettings _settings;
   final ValueNotifier<bool> _hasChanges = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _hasValidChanges = ValueNotifier<bool>(false);
 
@@ -14,11 +14,12 @@ class EditProviderTimePreferences {
   int? _longAfter;
 
   /// Ctor
-  EditProviderTimePreferences(this._settings)
-      : _longBefore = _settings.data.minutesLongBefore,
-        _before = _settings.data.minutesBefore,
-        _after = _settings.data.minutesAfter,
-        _longAfter = _settings.data.minutesLongAfter;
+  EditProviderTimePreferences(GeneralSettings settings)
+      : _settings = settings,
+        _longBefore = settings.data.minutesLongBefore,
+        _before = settings.data.minutesBefore,
+        _after = settings.data.minutesAfter,
+        _longAfter = settings.data.minutesLongAfter;
 
   /// Minutes for taking pills well before meals
   int? get minutesLongBeforeMeals => _longBefore;
@@ -65,15 +66,16 @@ class EditProviderTimePreferences {
         _before != null &&
         _after != null &&
         _longAfter != null) {
-      return _longBefore! <= AlarmPreferences.maxMinutesLongAfterBefore &&
-          _longBefore! >= AlarmPreferences.minMinutesLongAfterBefore &&
-          _before! <= AlarmPreferences.maxMinutesAfterBefore &&
-          _before! >= AlarmPreferences.minMinutesAfterBefore &&
-          _after! <= AlarmPreferences.maxMinutesAfterBefore &&
-          _after! >= AlarmPreferences.minMinutesAfterBefore &&
-          _longAfter! <= AlarmPreferences.maxMinutesLongAfterBefore &&
-          _longAfter! >= AlarmPreferences.minMinutesLongAfterBefore &&
-          _longBefore! > _before! && _longAfter! > _after!;
+      return _longBefore! <= GeneralPreferences.maxMinutesLongAfterBefore &&
+          _longBefore! >= GeneralPreferences.minMinutesLongAfterBefore &&
+          _before! <= GeneralPreferences.maxMinutesAfterBefore &&
+          _before! >= GeneralPreferences.minMinutesAfterBefore &&
+          _after! <= GeneralPreferences.maxMinutesAfterBefore &&
+          _after! >= GeneralPreferences.minMinutesAfterBefore &&
+          _longAfter! <= GeneralPreferences.maxMinutesLongAfterBefore &&
+          _longAfter! >= GeneralPreferences.minMinutesLongAfterBefore &&
+          _longBefore! > _before! &&
+          _longAfter! > _after!;
     } else {
       return false;
     }

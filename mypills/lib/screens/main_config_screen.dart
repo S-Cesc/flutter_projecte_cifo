@@ -1,5 +1,6 @@
 // logging and debugging
 import 'dart:developer' as developer;
+import 'package:flutter_projecte_cifo/screens/meal_durations_adjustment_screen.dart';
 import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:io' show exit;
@@ -171,6 +172,20 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
                 label: Text(t.timeSettings),
                 iconAlignment: IconAlignment.start,
               ),
+              // meal durations
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<MealDurationsAdjustmentScreen>(
+                        builder: (context) => MealDurationsAdjustmentScreen()),
+                  );
+                },
+                style: AppStyles.customButtonStyle,
+                icon: const Icon(Icons.flatware),
+                label: Text(t.timeEating),
+                iconAlignment: IconAlignment.start,
+              ),
               // config weekdays
               ElevatedButton.icon(
                 onPressed: () {
@@ -196,7 +211,7 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
                   );
                 },
                 style: AppStyles.customButtonStyle,
-                icon: const Icon(Icons.circle_notifications),
+                icon: const Icon(Icons.notifications),
                 label: Text(t.alarms),
                 iconAlignment: IconAlignment.start,
               ),

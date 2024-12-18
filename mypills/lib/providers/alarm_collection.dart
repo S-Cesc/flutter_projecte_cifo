@@ -14,7 +14,7 @@ import '../model/alarm_key_iterator.dart';
 import '../model/day_of_week.dart';
 import '../providers/config_preferences.dart';
 import '../services/background_alarm_helper.dart';
-import 'alarm_settings.dart';
+import 'general_settings.dart';
 
 //==============================================================================
 
@@ -124,7 +124,7 @@ final class AlarmCollection {
         // alarm.meal alarm.pillMealTime
         final today = DateTimeExtensions.today();
         DateTime? dateTimeToFire;
-        TimeOfDay? mealTime = _owner.alarmSettings.wtt
+        TimeOfDay? mealTime = _owner.generalSettings.wtt
             .dayMealTime(alarm.meal, DayOfWeek.fromDate(today));
         if (mealTime != null && DateTimeExtensions.isToday(mealTime)) {
           dateTimeToFire = DateTimeExtensions.todayAt(mealTime);
@@ -132,7 +132,7 @@ final class AlarmCollection {
           // Hoy no... mañana
           developer.log("L'alarma hoy no, ...mañana");
           final tomorrow = DateTimeExtensions.tomorrow();
-          mealTime = _owner.alarmSettings.wtt
+          mealTime = _owner.generalSettings.wtt
               .dayMealTime(alarm.meal, DayOfWeek.fromDate(tomorrow));
           if (mealTime != null) {
             dateTimeToFire = DateTimeExtensions.tomorrowAt(mealTime);
@@ -143,7 +143,7 @@ final class AlarmCollection {
           await BackgroundAlarmHelper.fireAlarm(
             dateTimeToFire,
             alarmId,
-            _owner.alarmSettings.data.alarmDurationSeconds,
+            _owner.generalSettings.data.alarmDurationSeconds,
           );
         }
         developer.log(
@@ -155,7 +155,7 @@ final class AlarmCollection {
     }
 
     await _shPrefs.setString(
-        AlarmSettings.alarmJsonKey(a.id), jsonEncode(jsonStructured));
+        GeneralSettings.alarmJsonKey(a.id), jsonEncode(jsonStructured));
     await addFireAlarmProgramming(a.id);
     _callbackOnUpdate();
   }
@@ -176,7 +176,7 @@ final class AlarmCollection {
         return false;
       } else {
         _alarms.remove(alarmId);
-        await _shPrefs.remove(AlarmSettings.alarmJsonKey(alarmId));
+        await _shPrefs.remove(GeneralSettings.alarmJsonKey(alarmId));
         await removeFireAlarmProgramming(alarmId);
         _callbackOnUpdate();
         developer.log("Remove: $alarmId");

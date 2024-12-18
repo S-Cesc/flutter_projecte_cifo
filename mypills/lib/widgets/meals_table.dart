@@ -49,8 +49,8 @@ class _MealsTableState extends State<MealsTable> {
       builder: (context, prefs, child) {
         final f = NumberFormat("00");
         var meals = widget.defaultMeals
-            ? prefs.alarmSettings.wtt.defaultDaysMeals
-            : prefs.alarmSettings.wtt.specialDaysMeals;
+            ? prefs.generalSettings.wtt.defaultDaysMeals
+            : prefs.generalSettings.wtt.specialDaysMeals;
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -72,7 +72,7 @@ class _MealsTableState extends State<MealsTable> {
                 children: List.generate(Meal.values.length, (v) {
                   //if (v < Meal.values.length) {
                   final meal = Meal.fromOrdinal(v + 1);
-                  var mealTime = prefs.alarmSettings.wtt
+                  var mealTime = prefs.generalSettings.wtt
                           .mealTime(meal, !widget.defaultMeals) ??
                       Meal.defaultMealTime(meal);
                   return CheckboxListTile(
@@ -111,7 +111,7 @@ class _MealsTableState extends State<MealsTable> {
                           );
                           if (value != null) {
                             setState(() {
-                              prefs.alarmSettings.wtt.defineMealTime(
+                              prefs.generalSettings.wtt.defineMealTime(
                                   meal, value, !widget.defaultMeals);
                               meals[meal] = value;
                               mealTime = value;

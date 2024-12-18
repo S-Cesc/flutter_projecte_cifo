@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
-import '../model/alarm_preferences.dart';
+import '../model/general_preferences.dart';
 import '../providers/edit_providers/edit_provider_time_preferences.dart';
 import 'nat_number_text_field.dart';
 
@@ -56,96 +56,92 @@ class _TimePreferencesEditorState extends State<TimePreferencesEditor> {
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[0],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[0],
-                    labelText: t.minutesLongBefore,
-                    tooltipHelp: t.tooltipLongBefore,
-                    iconColor: AppStyles.colors.ochre,
-                    suffixText: "'",
-                    minValue: AlarmPreferences.minMinutesLongAfterBefore,
-                    maxValue: AlarmPreferences.maxMinutesLongAfterBefore,
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minMinutesLongAfterBefore}'
-                        '..${AlarmPreferences.maxMinutesLongAfterBefore}',
-                    onChanged: (int? value) {
-                          widget._provider.minutesLongBeforeMeals = value;
-                    },
-                  );
-                }
-              ),
+                  valueListenable: _controllers[0],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[0],
+                      labelText: t.minutesLongBefore,
+                      tooltipHelp: t.tooltipLongBefore,
+                      iconColor: AppStyles.colors.ochre,
+                      suffixText: "'",
+                      minValue: GeneralPreferences.minMinutesLongAfterBefore,
+                      maxValue: GeneralPreferences.maxMinutesLongAfterBefore,
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minMinutesLongAfterBefore}'
+                          '..${GeneralPreferences.maxMinutesLongAfterBefore}',
+                      onChanged: (int? value) {
+                        widget._provider.minutesLongBeforeMeals = value;
+                      },
+                    );
+                  }),
             ),
           ),
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[1],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[1],
-                    labelText: t.minutesBefore,
-                    tooltipHelp: t.tooltipBefore,
-                    iconColor: AppStyles.colors.ochre,
-                    suffixText: "'",
-                    minValue: AlarmPreferences.minMinutesAfterBefore,
-                    maxValue: AlarmPreferences.maxMinutesAfterBefore,
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minMinutesAfterBefore}'
-                        '..${AlarmPreferences.maxMinutesAfterBefore}',
-                    onChanged: (int? value) {
+                  valueListenable: _controllers[1],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[1],
+                      labelText: t.minutesBefore,
+                      tooltipHelp: t.tooltipBefore,
+                      iconColor: AppStyles.colors.ochre,
+                      suffixText: "'",
+                      minValue: GeneralPreferences.minMinutesAfterBefore,
+                      maxValue: GeneralPreferences.maxMinutesAfterBefore,
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minMinutesAfterBefore}'
+                          '..${GeneralPreferences.maxMinutesAfterBefore}',
+                      onChanged: (int? value) {
                         widget._provider.minutesBeforeMeals = value;
-                    },
-                  );
-                }
-              ),
+                      },
+                    );
+                  }),
             ),
           ),
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[2],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[2],
-                    labelText: t.minutesAfter,
-                    tooltipHelp: t.tooltipAfter,
-                    iconColor: AppStyles.colors.ochre,
-                    suffixText: "'",
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minMinutesAfterBefore}'
-                        '..${AlarmPreferences.maxMinutesAfterBefore}',
-                    onChanged: (int? value) {
+                  valueListenable: _controllers[2],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[2],
+                      labelText: t.minutesAfter,
+                      tooltipHelp: t.tooltipAfter,
+                      iconColor: AppStyles.colors.ochre,
+                      suffixText: "'",
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minMinutesAfterBefore}'
+                          '..${GeneralPreferences.maxMinutesAfterBefore}',
+                      onChanged: (int? value) {
                         widget._provider.minutesAfterMeals = value;
-                    },
-                  );
-                }
-              ),
+                      },
+                    );
+                  }),
             ),
           ),
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[3],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[3],
-                    labelText: t.minutesLongAfter,
-                    tooltipHelp: t.tooltipLongAfter,
-                    iconColor: AppStyles.colors.ochre,
-                    suffixText: "'",
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minMinutesLongAfterBefore}'
-                        '..${AlarmPreferences.maxMinutesLongAfterBefore}',
-                    onChanged: (int? value) {
+                  valueListenable: _controllers[3],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[3],
+                      labelText: t.minutesLongAfter,
+                      tooltipHelp: t.tooltipLongAfter,
+                      iconColor: AppStyles.colors.ochre,
+                      suffixText: "'",
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minMinutesLongAfterBefore}'
+                          '..${GeneralPreferences.maxMinutesLongAfterBefore}',
+                      onChanged: (int? value) {
                         widget._provider.minutesLongAfterMeals = value;
-                    },
-                  );
-                }
-              ),
+                      },
+                    );
+                  }),
             ),
           ),
         ],

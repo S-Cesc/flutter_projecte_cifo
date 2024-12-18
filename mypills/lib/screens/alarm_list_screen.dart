@@ -64,6 +64,14 @@ class _AlarmListScreenState extends State<AlarmListScreen> {
         });
         return true;
       } else {
+        if (context.mounted) {
+          developer.log("Show snackbar alarma no s'afegeix", level: Level.FINE.value);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(t.notAddedExisting),
+            ),
+          );
+        }
         return false;
       }
     }

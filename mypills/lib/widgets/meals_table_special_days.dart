@@ -54,7 +54,7 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
     if (!_isInitialized) _initialize();
     return Consumer<ConfigPreferences>(builder: (context, prefs, child) {
       final Set<DayOfWeek> selectedWeekDays =
-          prefs.alarmSettings.wtt.specialWeekDays;
+          prefs.generalSettings.wtt.specialWeekDays;
       // SelectWeekDays widget format for selectedWeekDays
       final List<DayInWeek> currentSelectedWeekdays = [
         DayInWeek(weekDayNames[1],

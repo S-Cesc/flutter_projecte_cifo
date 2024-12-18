@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
-import '../model/alarm_preferences.dart';
+import '../model/general_preferences.dart';
 import '../providers/edit_providers/edit_provider_alarm_preferences.dart';
 import 'nat_number_text_field.dart';
 
@@ -55,95 +55,91 @@ class _AlarmPreferencesEditorState extends State<AlarmPreferencesEditor> {
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[0],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[0],
-                    labelText: t.alarmDurationSeconds,
-                    tooltipHelp: t.tooltipAlarmDurationSeconds,
-                    iconColor: AppStyles.colors.ochre,
-                    suffixText: '"',
-                    minValue: AlarmPreferences.minAlarmDurationSeconds,
-                    maxValue: AlarmPreferences.maxAlarmDurationSeconds,
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minAlarmDurationSeconds}'
-                        '..${AlarmPreferences.maxAlarmDurationSeconds}',
-                    onChanged: (int? value) {
-                      widget._provider.alarmDurationSeconds = value;
-                    },
-                  );
-                }
-              ),
+                  valueListenable: _controllers[0],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[0],
+                      labelText: t.alarmDurationSeconds,
+                      tooltipHelp: t.tooltipAlarmDurationSeconds,
+                      iconColor: AppStyles.colors.ochre,
+                      suffixText: '"',
+                      minValue: GeneralPreferences.minAlarmDurationSeconds,
+                      maxValue: GeneralPreferences.maxAlarmDurationSeconds,
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minAlarmDurationSeconds}'
+                          '..${GeneralPreferences.maxAlarmDurationSeconds}',
+                      onChanged: (int? value) {
+                        widget._provider.alarmDurationSeconds = value;
+                      },
+                    );
+                  }),
             ),
           ),
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[1],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[1],
-                    labelText: t.alarmSnoozeSeconds,
-                    tooltipHelp: t.tooltipSnoozeSeconds,
-                    iconColor: AppStyles.colors.ochre,
-                    suffixText: '"',
-                    minValue: AlarmPreferences.minAlarmSnoozeSeconds,
-                    maxValue: AlarmPreferences.maxAlarmSnoozeSeconds,
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minAlarmSnoozeSeconds}'
-                        '..${AlarmPreferences.maxAlarmSnoozeSeconds}',
-                    onChanged: (int? value) {
-                      widget._provider.alarmSnoozeSeconds = value;
-                    },
-                  );
-                }
-              ),
+                  valueListenable: _controllers[1],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[1],
+                      labelText: t.alarmSnoozeSeconds,
+                      tooltipHelp: t.tooltipSnoozeSeconds,
+                      iconColor: AppStyles.colors.ochre,
+                      suffixText: '"',
+                      minValue: GeneralPreferences.minAlarmSnoozeSeconds,
+                      maxValue: GeneralPreferences.maxAlarmSnoozeSeconds,
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minAlarmSnoozeSeconds}'
+                          '..${GeneralPreferences.maxAlarmSnoozeSeconds}',
+                      onChanged: (int? value) {
+                        widget._provider.alarmSnoozeSeconds = value;
+                      },
+                    );
+                  }),
             ),
           ),
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[2],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[2],
-                    labelText: t.alarmRepeatTimes,
-                    tooltipHelp: t.tooltipAlarmRepeatTimes,
-                    iconColor: AppStyles.colors.ochre,
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minAlarmRepeatTimes}'
-                        '..${AlarmPreferences.maxAlarmRepeatTimes}',
-                    onChanged: (int? value) {
-                      widget._provider.alarmRepeatTimes = value;
-                    },
-                  );
-                }
-              ),
+                  valueListenable: _controllers[2],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[2],
+                      labelText: t.alarmRepeatTimes,
+                      tooltipHelp: t.tooltipAlarmRepeatTimes,
+                      iconColor: AppStyles.colors.ochre,
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minAlarmRepeatTimes}'
+                          '..${GeneralPreferences.maxAlarmRepeatTimes}',
+                      onChanged: (int? value) {
+                        widget._provider.alarmRepeatTimes = value;
+                      },
+                    );
+                  }),
             ),
           ),
           Center(
             child: Padding(
               padding: EdgeInsets.only(top: 30, left: 50, right: 50),
               child: ValueListenableBuilder(
-                valueListenable: _controllers[3],
-                builder: (context, TextEditingValue value, __) {
-                  return NatNumberTextField(
-                    controller: _controllers[3],
-                    labelText: t.minutesToDealWithAlarm,
-                    suffixText: "'",
-                    tooltipHelp: t.tooltipMinutesToDealWithAlarm,
-                    iconColor: AppStyles.colors.ochre,
-                    errorText: 'invalid value: '
-                        '${AlarmPreferences.minMinutesToDealWithAlarm}'
-                        '..${AlarmPreferences.maxMinutesToDealWithAlarm}',
-                    onChanged: (int? value) {
-                      widget._provider.minutesToDealWithAlarm = value;
-                    },
-                  );
-                }
-              ),
+                  valueListenable: _controllers[3],
+                  builder: (context, TextEditingValue value, __) {
+                    return NatNumberTextField(
+                      controller: _controllers[3],
+                      labelText: t.minutesToDealWithAlarm,
+                      suffixText: "'",
+                      tooltipHelp: t.tooltipMinutesToDealWithAlarm,
+                      iconColor: AppStyles.colors.ochre,
+                      errorText: 'invalid value: '
+                          '${GeneralPreferences.minMinutesToDealWithAlarm}'
+                          '..${GeneralPreferences.maxMinutesToDealWithAlarm}',
+                      onChanged: (int? value) {
+                        widget._provider.minutesToDealWithAlarm = value;
+                      },
+                    );
+                  }),
             ),
           ),
         ],
