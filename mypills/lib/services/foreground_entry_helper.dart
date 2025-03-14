@@ -6,7 +6,7 @@ import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 // Localizations
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../foreground_entry.dart';
@@ -27,8 +27,9 @@ class ForegroundEntryHelper {
     FlutterForegroundTask.initCommunicationPort();
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
-        channelId: ForegroundTaskHandler
-            .foregroundIsolateName, // 'foreground_service',
+        channelId:
+            ForegroundTaskHandler
+                .foregroundIsolateName, // 'foreground_service',
         channelName:
             'MyPills foreground service notification', // 'Foreground Service Notification',
         channelDescription: 'MyPills service foreground alarm',
@@ -64,10 +65,12 @@ class ForegroundEntryHelper {
       // simple version of basicLocaleListResolution(preferred, supported)
       // using only languageCode (as from Widgets.dart)
       final Locale locale = preferred.firstWhere(
-          (x) => supported
-              .where((sup) => sup.languageCode == x.languageCode)
-              .isNotEmpty,
-          orElse: () => supported.first);
+        (x) =>
+            supported
+                .where((sup) => sup.languageCode == x.languageCode)
+                .isNotEmpty,
+        orElse: () => supported.first,
+      );
       /*----------------------------------------------------------------------*/
       final t = await AppLocalizations.delegate.load(locale);
       developer.log('Start foreground service!', level: Level.FINE.value);
@@ -77,8 +80,9 @@ class ForegroundEntryHelper {
         notificationText: '''${t.notificationText1}
 ${t.notificationText2}''',
         notificationIcon: NotificationIcon(
-            metaDataName: 'cat.mypills.service.MEDICATION',
-            backgroundColor: AppStyles.colors.ochre),
+          metaDataName: 'cat.mypills.service.MEDICATION',
+          backgroundColor: AppStyles.colors.ochre,
+        ),
         // notificationButtons: [
         //   const NotificationButton(id: 'btn_hello', text: 'hello'),
         // ],

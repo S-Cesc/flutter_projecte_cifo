@@ -1,11 +1,13 @@
 // projecte
-import 'meal.dart';
-import 'pill_meal_time.dart';
+import 'enum/meal.dart';
+import 'enum/pill_meal_time.dart';
 
 //==============================================================================
 
 /// Iterate through the pair (Meal, PillMealTime)
 class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
+  //
+  //----------------------------------------------------------------------------
   //-------------------------static/constant------------------------------------
 
   /// Some additional static facilities provided by the class
@@ -27,6 +29,7 @@ class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
     }
   }
 
+  //----------------------------------------------------------------------------
   //-----------------class state members and constructors ----------------------
 
   bool _beforeBegin;
@@ -35,10 +38,11 @@ class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
 
   /// Iterator ctor
   AlarmKeyIterator()
-      : _beforeBegin = true,
-        _mealTime = Meal.breakfast,
-        _pillMealTime = PillMealTime.longBefore;
+    : _beforeBegin = true,
+      _mealTime = Meal.breakfast,
+      _pillMealTime = PillMealTime.longBefore;
 
+  //----------------------------------------------------------------------------
   //-----------------------class special members--------------------------------
 
   @override
@@ -61,4 +65,6 @@ class AlarmKeyIterator implements Iterator<(Meal, PillMealTime)> {
     }
     return true;
   }
+
+  //-------- end class ---------------------------------------------------------
 }

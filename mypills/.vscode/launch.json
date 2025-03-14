@@ -3,11 +3,17 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [        
+    "configurations": [
         {
             "name": "Flutter: Attach to Device",
             "type": "dart",
             "request": "attach"
+        },
+        {
+            "name": "Flutter debug test",
+            "request": "launch",
+            "type": "dart",
+            "program": "test/time_of_day_extensions_test.dart"
         },
         {
             "name": "mypills",

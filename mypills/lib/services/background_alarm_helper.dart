@@ -23,7 +23,7 @@ import '../background_entry.dart';
 class BackgroundAlarmHelper {
   static const _initialitzationAlarmId = 0;
 
-//=======================================================================
+  //=======================================================================
 
   /// Initialize the [BackgroundEntry] isolate data
   static Future<void> initialize() async {
@@ -39,7 +39,7 @@ class BackgroundAlarmHelper {
     );
   }
 
-//=======================================================================
+  //=======================================================================
 
   /// program alarm [alarmId] to fire at [time]
   static Future<void> fireAlarm(
@@ -48,9 +48,10 @@ class BackgroundAlarmHelper {
     int alarmDurationSeconds,
   ) async {
     developer.log(
-        "Helper: Fire alarm: $time"
-        " until ${time.add(Duration(seconds: alarmDurationSeconds))}",
-        level: Level.INFO.value);
+      "Helper: Fire alarm: $time"
+      " until ${time.add(Duration(seconds: alarmDurationSeconds))}",
+      level: Level.INFO.value,
+    );
     await AndroidAlarmManager.oneShotAt(
       time,
       alarmId,
@@ -73,12 +74,13 @@ class BackgroundAlarmHelper {
       rescheduleOnReboot: true,
     );
     developer.log(
-        'Alarm $alarmId progammed'
-        ' with ${alarmId + BackgroundEntry.snoozeId} autosnooze programmed, ',
-        level: Level.INFO.value);
+      'Alarm $alarmId progammed'
+      ' with ${alarmId + BackgroundEntry.snoozeId} autosnooze programmed, ',
+      level: Level.INFO.value,
+    );
   }
 
-//=======================================================================
+  //=======================================================================
 
   /// sooze the alarm [alarmId] while it's firing
   static Future<void> snoozeAlarm(int alarmId) async {
@@ -95,7 +97,7 @@ class BackgroundAlarmHelper {
     );
   }
 
-//=======================================================================
+  //=======================================================================
 
   /// User stops the alarm
   /// StopAlarm is espected to be called always from UI
@@ -114,7 +116,7 @@ class BackgroundAlarmHelper {
     );
   }
 
-//=======================================================================
+  //=======================================================================
 
   /// Cancel an alarm [alarmId], usually to reprogram it
   static Future<void> cancelAlarm(int alarmId) async {

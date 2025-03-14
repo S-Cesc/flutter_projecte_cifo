@@ -11,10 +11,11 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 // Project files
 import '../main.dart' as main;
+import '../model/global_constants.dart';
 import '../styles/app_styles.dart';
 import '../util/port_facilities.dart';
 import '../services/background_alarm_helper.dart';
@@ -25,7 +26,6 @@ import './main_config_screen.dart';
 
 /// Splash screen for [main_config_screen] data initialitzation
 class SplashConfigScreen extends StatefulWidget {
-
   /// const [SplashConfigScreen] ctor
   const SplashConfigScreen({super.key});
 
@@ -50,51 +50,56 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: AppStyles.colors.mantis,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.medication,
-                size: 100,
-                color: Colors.green,
-              ),
+              Icon(Icons.medication, size: 100, color: Colors.green),
               Text(status),
               if (permissionStatus != PermissionStatus.granted)
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  // TODO Localization!
-                  Row(
-                    children: [
-                      Spacer(),
-                      if (kDebugMode) ...[
-                        OutlinedButton(
-                          style: AppStyles.warningButtonStyle,
-                          // REVIEW - exit (kDebugMode)
-                          onPressed: () => exit(0),
-                          child: const Text('Close application'),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Spacer(),
+                        if (kDebugMode) ...[
+                          OutlinedButton(
+                            style: AppStyles.warningButtonStyle,
+                            onPressed: () => exit(0),
+                            child: Text(
+                              AppLocalizations.of(context)!.exitApplication,
+                            ),
+                          ),
+                        ],
+                        ElevatedButton(
+                          style: AppStyles.customButtonStyle,
+                          onPressed: () => _init(),
+                          child: Text(
+                            AppLocalizations.of(context)!.restartApplication,
+                          ),
+                        ),
+                        Spacer(),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          style: AppStyles.customButtonStyle,
+                          onPressed: () => unawaited(openAppSettings()),
+                          child: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.changeAlarmPermissions,
+                          ),
                         ),
                       ],
-                      ElevatedButton(
-                        style: AppStyles.customButtonStyle,
-                        onPressed: () => _init(),
-                        child: const Text('Restart app'),
-                      ),
-                      Spacer(),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                        style: AppStyles.customButtonStyle,
-                        onPressed: () => unawaited(openAppSettings()),
-                        child:
-                            const Text('Change alarm permission configuration'),
-                      ),
-                    ],
-                  )
-                ])
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -108,71 +113,87 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     });
   }
 
-//
+  //
 
   Future<void> initializePort() async {
     main.wakeupPort = await PortFacilities.initializePort(
-        main.wakeupPort, main.uiWakeupPortName, main.subscription);
-    developer.log('Port ${main.uiWakeupPortName} registered',
-        level: Level.CONFIG.value);
+      main.wakeupPort,
+      main.uiWakeupPortName,
+      main.subscription,
+    );
+    developer.log(
+      'Port ${main.uiWakeupPortName} registered',
+      level: Level.CONFIG.value,
+    );
     main.subscription = null;
-    main.subscription =
-        _listenWakeupPort(main.wakeupPort!, main.uiWakeupPortName);
+    main.subscription = _listenWakeupPort(
+      main.wakeupPort!,
+      main.uiWakeupPortName,
+    );
   }
 
   StreamSubscription<dynamic> _listenWakeupPort(
-      ReceivePort port, String portName) {
-    return port.listen(
-      (d) async {
-        if (d is String && d == "wakeup") {
-          developer.log('Wakeup message arrived foreground',
-              level: Level.INFO.value);
-          final navigator = main.navigatorKey.currentState;
-          if (navigator != null) {
-            bool currentRouteIsNewRoute = false;
-            navigator.popUntil((currentRoute) {
-              // This is just a way to access currentRoute; the top route in the
-              // Navigator stack.
-              if (currentRoute.settings.name == main.alarmScreenPath) {
-                currentRouteIsNewRoute = true;
-              }
-              developer.log(
-                  'popuntil; now in: ${currentRoute.settings.name ?? "null"}',
-                  level: Level.FINEST.value);
-              // Return true so popUntil() pops nothing.
-              return true;
-            });
-            if (currentRouteIsNewRoute) {
-              developer.log('Alarm screen is already on top of stack',
-                  level: Level.FINEST.value);
-            } else {
-              while (navigator.canPop()) {
-                navigator.pop();
-              }
-              developer.log(
-                  "Foreground routes popped: now let's replace screen",
-                  level: Level.FINEST.value);
-              await navigator.pushReplacementNamed(main.alarmScreenPath);
+    ReceivePort port,
+    String portName,
+  ) {
+    return port.listen((d) async {
+      if (d is String && d == "wakeup") {
+        developer.log(
+          'Wakeup message arrived foreground',
+          level: Level.INFO.value,
+        );
+        final navigator = main.navigatorKey.currentState;
+        if (navigator != null) {
+          bool currentRouteIsNewRoute = false;
+          navigator.popUntil((currentRoute) {
+            // This is just a way to access currentRoute; the top route in the
+            // Navigator stack.
+            if (currentRoute.settings.name == main.alarmScreenPath) {
+              currentRouteIsNewRoute = true;
             }
+            developer.log(
+              'popuntil; now in: ${currentRoute.settings.name ?? "null"}',
+              level: Level.FINEST.value,
+            );
+            // Return true so popUntil() pops nothing.
+            return true;
+          });
+          if (currentRouteIsNewRoute) {
+            developer.log(
+              'Alarm screen is already on top of stack',
+              level: Level.FINEST.value,
+            );
           } else {
-            developer.log('NAVIGATOR is null', level: Level.SEVERE.value);
+            while (navigator.canPop()) {
+              navigator.pop();
+            }
+            developer.log(
+              "Foreground routes popped: now let's replace screen",
+              level: Level.FINEST.value,
+            );
+            await navigator.pushReplacementNamed(main.alarmScreenPath);
           }
         } else {
-          developer.log('Unknown message from $portName: $d',
-              level: Level.WARNING.value);
+          developer.log('NAVIGATOR is null', level: Level.SEVERE.value);
         }
-      },
-    );
+      } else {
+        developer.log(
+          'Unknown message from $portName: $d',
+          level: Level.WARNING.value,
+        );
+      }
+    });
   }
 
   Future<void> _checkPermissions() async {
     // Request multiple permissions at once.
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.scheduleExactAlarm,
-      Permission.notification,
-      Permission.systemAlertWindow,
-      Permission.ignoreBatteryOptimizations,
-    ].request();
+    Map<Permission, PermissionStatus> statuses =
+        await [
+          Permission.scheduleExactAlarm,
+          Permission.notification,
+          Permission.systemAlertWindow,
+          Permission.ignoreBatteryOptimizations,
+        ].request();
     PermissionStatus tmpResult = statuses.values.reduce((result, st) {
       if (st == PermissionStatus.permanentlyDenied) {
         return PermissionStatus.permanentlyDenied;
@@ -183,10 +204,14 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
         return result;
       }
     });
-    developer.log("Result permission statuses: ${statuses.toString()}",
-        level: Level.FINE.value);
-    developer.log("Resulting permission: ${tmpResult.toString()}",
-        level: Level.INFO.value);
+    developer.log(
+      "Result permission statuses: ${statuses.toString()}",
+      level: Level.FINE.value,
+    );
+    developer.log(
+      "Resulting permission: ${tmpResult.toString()}",
+      level: Level.INFO.value,
+    );
     if (permissionStatus != tmpResult) {
       setState(() {
         permissionStatus = tmpResult;
@@ -200,7 +225,9 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     changeStatus(AppLocalizations.of(context)!.initializing);
     developer.log('Initializing (splash screen)', level: Level.FINER.value);
     ConfigPreferences preferences = context.read<ConfigPreferences>();
-    await Future.delayed(const Duration(milliseconds: 100), () => null);
+    // Future.delayed raise problems ???
+    // E/libEGL  (18424): called unimplemented OpenGL ES API
+    await Future.delayed(GlobalConstants.longDelayForOperation, () => null);
     /* loading parameters */
     if (mounted) {
       changeStatus(AppLocalizations.of(context)!.loadingParameters);
@@ -235,10 +262,12 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       /* inici de l'app */
       if (mounted) {
         await Navigator.pushReplacement(
-            context,
-            MaterialPageRoute<MainConfigScreen>(
-                builder: (context) => const MainConfigScreen(),
-                settings: RouteSettings(name: main.configScreenPath)));
+          context,
+          MaterialPageRoute<MainConfigScreen>(
+            builder: (context) => const MainConfigScreen(),
+            settings: RouteSettings(name: main.configScreenPath),
+          ),
+        );
       } else {
         failed = true;
       }
@@ -246,8 +275,10 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
       failed = true;
     }
     if (failed) {
-      developer.log("Non mounted context. Widget end",
-          level: Level.SEVERE.value);
+      developer.log(
+        "Non mounted context. Widget end",
+        level: Level.SEVERE.value,
+      );
       developer.debugger();
       await SystemNavigator.pop();
       if (kDebugMode) exit(1); // App error

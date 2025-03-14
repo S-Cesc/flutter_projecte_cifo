@@ -4,11 +4,11 @@ import 'package:logging/logging.dart' show Level;
 // Dart base
 import 'dart:convert';
 // Flutter
-import 'package:flutter_projecte_cifo/model/weekly_time_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/alarm.dart';
 import '../model/general_preferences.dart';
+import '../model/weekly_time_table.dart';
 import 'general_settings.dart';
 
 //==============================================================================
@@ -35,6 +35,7 @@ class BackgroundPreferences {
     _generalSettings = GeneralSettings(_shPrefs, null);
   }
 
+  /// Instance creation: Get the singleton
   factory BackgroundPreferences() => _backgroundPrefs;
 
   //-----------------------class special members--------------------------------
@@ -92,10 +93,14 @@ class BackgroundPreferences {
     if (_currentAlarm != null && _currentAlarm!.id == alarmId) {
       final Map<String, dynamic> jsonStructured = _currentAlarm!.toJson();
       await _shPrefs.setString(
-          GeneralSettings.alarmJsonKey(alarmId), jsonEncode(jsonStructured));
+        GeneralSettings.alarmJsonKey(alarmId),
+        jsonEncode(jsonStructured),
+      );
     } else {
-      developer.log("Cached alarm $alarmId missed; state not updated!!",
-          level: Level.WARNING.value);
+      developer.log(
+        "Cached alarm $alarmId missed; state not updated!!",
+        level: Level.WARNING.value,
+      );
     }
   }
 }

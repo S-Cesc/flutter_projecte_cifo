@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 /// Application styles
 class AppStyles {
-
   /// A custom style for buttons
   static final ButtonStyle textButtonstyle = TextButton.styleFrom(
     shape: CircleBorder(
@@ -21,12 +20,17 @@ class AppStyles {
 
   /// A custom style for buttons
   static final customButtonStyle = ButtonStyle(
-    shape: WidgetStatePropertyAll<OutlinedBorder>(ContinuousRectangleBorder(
+    shape: WidgetStatePropertyAll<OutlinedBorder>(
+      ContinuousRectangleBorder(
         borderRadius: BorderRadius.horizontal(
-            left: const Radius.elliptical(40, 20),
-            right: const Radius.elliptical(40, 20)))),
-    backgroundColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+          left: const Radius.elliptical(40, 20),
+          right: const Radius.elliptical(40, 20),
+        ),
+      ),
+    ),
+    backgroundColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
       if (states.contains(WidgetState.disabled)) {
         return Colors.red;
       } else if (states.contains(WidgetState.pressed)) {
@@ -39,8 +43,9 @@ class AppStyles {
 
   /// A custom style for warning buttons
   static final warningButtonStyle = ButtonStyle(
-    backgroundColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    backgroundColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
       if (states.contains(WidgetState.disabled)) {
         return Colors.red;
       } else if (states.contains(WidgetState.pressed)) {
@@ -53,14 +58,88 @@ class AppStyles {
 
   /// A custom style for buttons (alarm screen)
   static final alarmButtonStyle = ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(AppStyles.colors.mantis));
+    backgroundColor: WidgetStatePropertyAll(AppStyles.colors.mantis),
+  );
 
   static const _black = Colors.black45;
+  static const _disabled = Colors.blueGrey; // Colors.grey;
   static const _white = Colors.white;
   static const _mantis = Color(0xFF81c14b);
   static const _ochre = Color(0xFFc36f09);
+  static const _ochreDisabled = Color(0xFFf9c78a);
 
-  /// predefined font styles
+  /// Font family name
+  static const fontFamilyName = 'Montserrat';
+
+  /// predefined constant font styles
+  /// Available sizes:
+  /// bigTitle: display
+  /// middleTitle: headline
+  /// distance: labelLarge, labelInverseLarge
+  /// activityType: labelSmall
+  /// body
+  static const constFonts = (
+    display: TextStyle(
+      inherit: false,
+      fontSize: 36,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+      decoration: TextDecoration.none,
+      color: _black,
+    ),
+    headline: TextStyle(
+      inherit: false,
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.bold,
+      decoration: TextDecoration.none,
+      color: _black,
+    ),
+    labelLarge: TextStyle(
+      inherit: false,
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+      decoration: TextDecoration.none,
+      color: _black,
+    ),
+    labelInverseLarge: TextStyle(
+      inherit: false,
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+      decoration: TextDecoration.none,
+      color: _black,
+      backgroundColor: _ochre,
+    ),
+    labelInverseLargeDisabled: TextStyle(
+      inherit: false,
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+      decoration: TextDecoration.none,
+      color: _disabled,
+      backgroundColor: _ochreDisabled,
+    ),
+    labelSmall: TextStyle(
+      inherit: false,
+      fontSize: 18,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.bold,
+      decoration: TextDecoration.none,
+      color: _black,
+    ),
+    body: TextStyle(
+      inherit: false,
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+      decoration: TextDecoration.none,
+      color: _black,
+    ),
+  );
+
+  /// configurable predefined font styles
   /// Available sizes:
   /// bigTitle: display
   /// middleTitle: headline
@@ -68,15 +147,14 @@ class AppStyles {
   /// activityType: labelSmall
   /// body
   static final fonts = (
-    fontFamilyName: 'Montserrat',
-    display /*bigTitle*/ : ({
-      Color color = _black,
-      FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.normal,
-      TextDecoration decoration = TextDecoration.none,
-      bool inherit = false,
-    }) =>
-        TextStyle(
+    display /*bigTitle*/ :
+        ({
+          Color color = _black,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.normal,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
           inherit: inherit,
           fontSize: 36,
           fontStyle: fontStyle,
@@ -84,14 +162,14 @@ class AppStyles {
           decoration: decoration,
           color: color,
         ),
-    headline /*middleTitle*/ : ({
-      Color color = _black,
-      FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.bold,
-      TextDecoration decoration = TextDecoration.none,
-      bool inherit = false,
-    }) =>
-        TextStyle(
+    headline /*middleTitle*/ :
+        ({
+          Color color = _black,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.bold,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
           inherit: inherit,
           fontSize: 24,
           fontStyle: fontStyle,
@@ -99,14 +177,14 @@ class AppStyles {
           decoration: decoration,
           color: color,
         ),
-    labelLarge /*distance*/ : ({
-      Color color = _black,
-      FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.normal,
-      TextDecoration decoration = TextDecoration.none,
-      bool inherit = false,
-    }) =>
-        TextStyle(
+    labelLarge:
+        ({
+          Color color = _black,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.normal,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
           inherit: inherit,
           fontSize: 24,
           fontStyle: fontStyle,
@@ -114,15 +192,15 @@ class AppStyles {
           decoration: decoration,
           color: color,
         ),
-    labelInverseLarge /*distance*/ : ({
-      Color color = _mantis,
-      Color background = _ochre,
-      FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.normal,
-      TextDecoration decoration = TextDecoration.none,
-      bool inherit = false,
-    }) =>
-        TextStyle(
+    labelInverseLarge:
+        ({
+          Color color = _mantis,
+          Color background = _ochre,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.normal,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
           inherit: inherit,
           fontSize: 24,
           fontStyle: fontStyle,
@@ -131,14 +209,14 @@ class AppStyles {
           color: color,
           backgroundColor: background,
         ),
-    labelSmall /*activityType*/ : ({
-      Color color = _black,
-      FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.bold,
-      TextDecoration decoration = TextDecoration.none,
-      bool inherit = false,
-    }) =>
-        TextStyle(
+    labelSmall:
+        ({
+          Color color = _black,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.bold,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
           inherit: inherit,
           fontSize: 18,
           fontStyle: fontStyle,
@@ -146,14 +224,29 @@ class AppStyles {
           decoration: decoration,
           color: color,
         ),
-    body: ({
-      Color color = _black,
-      FontStyle fontStyle = FontStyle.normal,
-      FontWeight fontWeight = FontWeight.normal,
-      TextDecoration decoration = TextDecoration.none,
-      bool inherit = false,
-    }) =>
-        TextStyle(
+    labelSmallDisabled:
+        ({
+          Color color = _disabled,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.normal,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
+          inherit: inherit,
+          fontSize: 18,
+          fontStyle: fontStyle,
+          fontWeight: fontWeight,
+          decoration: decoration,
+          color: color,
+        ),
+    body:
+        ({
+          Color color = _black,
+          FontStyle fontStyle = FontStyle.normal,
+          FontWeight fontWeight = FontWeight.normal,
+          TextDecoration decoration = TextDecoration.none,
+          bool inherit = false,
+        }) => TextStyle(
           inherit: inherit,
           fontSize: 14,
           fontStyle: fontStyle,
@@ -163,7 +256,7 @@ class AppStyles {
         ),
   );
 
-/*
+  /*
 https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
 {
 //'buff': { DEFAULT: '#ecba82', 100: '#40270a', 200: '#804d13', 300: '#c0741d', 400: '#e39843', 500: '#ecba82', 600: '#f0c99c', 700: '#f4d6b4', 800: '#f8e4cd', 900: '#fbf1e6' },
@@ -180,6 +273,8 @@ https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
   static const colors = (
     black: _black,
     white: _white,
+    disabled: _disabled,
+    ochreDisabled: _ochreDisabled,
     // 'ochre': { DEFAULT: '#c36f09', 100: '#271602', 200: '#4e2d04', 300: '#754306', 400: '#9c5907', 500: '#c36f09', 600: '#f49015', 700: '#f7ac50', 800: '#f9c78a', 900: '#fce3c5' },
     ochre: MaterialColor(0xFFc36f09, <int, Color>{
       100: Color(0xFF271602),
@@ -276,7 +371,7 @@ https://coolors.co/c36f09-81c14b-2e933c-297045-204e4a
       < 0 => throw RangeError.range(i, 0, null),
       < 150 => 100,
       >= 850 => 900,
-      _ => ((100 + 50) ~/ 100) * 100
+      _ => ((100 + 50) ~/ 100) * 100,
     };
   }
 }

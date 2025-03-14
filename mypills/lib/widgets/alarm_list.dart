@@ -4,17 +4,26 @@ import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
 // Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../model/alarm.dart';
 
+/// Alarm list editor
 class AlarmList extends StatelessWidget {
+  /// The list of alarms
   final List<Alarm> alarms;
+
+  /// Method to delete an alarm
   final Future<void> Function(int alarmId) deleteAlarm;
+
+  /// Method to restore the original alarm list
   final Future<void> Function() restoreAlarms;
+
+  /// Method to save the list
   final Future<void> Function() saveAlarms;
 
+  /// Ctor
   const AlarmList({
     super.key,
     required this.alarms,
@@ -25,7 +34,6 @@ class AlarmList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     var t = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(top: 30),
@@ -51,14 +59,15 @@ class AlarmList extends StatelessWidget {
                       Flexible(
                         child: Text(
                           alarms[index].name(t),
-                          style: AppStyles.fonts.labelSmall(),
+                          style: AppStyles.constFonts.labelSmall,
                         ),
                       ),
                       IconButton(
-                          onPressed: () async {
-                            await deleteAlarm(alarms[index].id);
-                          },
-                          icon: Icon(Icons.delete)),
+                        onPressed: () async {
+                          await deleteAlarm(alarms[index].id);
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
                     ],
                   ),
                 );
@@ -77,8 +86,10 @@ class AlarmList extends StatelessWidget {
                       child: ElevatedButton(
                         style: AppStyles.customButtonStyle,
                         onPressed: () async {
-                          developer.log("Restore alarms button clicked! ",
-                              level: Level.FINER.value);
+                          developer.log(
+                            "Restore alarms button clicked! ",
+                            level: Level.FINER.value,
+                          );
                           await restoreAlarms();
                         },
                         child: Text(t.undoChanges),
@@ -91,8 +102,10 @@ class AlarmList extends StatelessWidget {
                       child: ElevatedButton(
                         style: AppStyles.customButtonStyle,
                         onPressed: () async {
-                          developer.log("Save alarms button clicked! ",
-                              level: Level.FINER.value);
+                          developer.log(
+                            "Save alarms button clicked! ",
+                            level: Level.FINER.value,
+                          );
                           await saveAlarms();
                           if (context.mounted) {
                             Navigator.pop(context);

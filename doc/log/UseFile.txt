@@ -1,0 +1,17 @@
+  Future<String> get _localPath async {
+    var directory = await getExternalStorageDirectory();
+    directory ??= await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/sample.txt');
+  }
+
+  Future<File> write(String data) async {
+    final file = await _localFile;
+    // Write the file in append mode so it would append the data to existing file
+    // if it already exists
+    return file.writeAsString('$data\n', mode: FileMode.append);
+  }

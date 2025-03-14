@@ -68,6 +68,10 @@
    "@cancel": {
       "description": "Cancel operation"
    },
+   "discard": "Discard",
+   "@discard": {
+      "description": "Discard pending operations"
+   },
    "saved": "Saved",
    "@saved": {
       "description": "Data saved message"
@@ -75,6 +79,22 @@
    "added": "Item added",
    "@added": {
       "description": "Item added message"
+   },
+   "pendingChanges": "Pending changes",
+   "@pendingChanges": {
+      "description": "Pending changes (dialog) title"
+   },
+   "pendingChangesMessage": "There are pending changes.",
+   "@pendingChangesMessage": {
+      "description": "There are pending changes information message"
+   },
+   "pendingChangesDiscardQuestion": "Discard the pending changes?",
+   "@pendingChangesDiscardQuestion": {
+      "description": "Ask user if he want to discard the pending changes"
+   },
+   "pendingChangesDiscarded": "Pending changes have been discarded.",
+   "@pendingChangesDiscarded": {
+      "description": "Pending changes discarded (after user acknowledgement)"
    },
    "notSavedCauseOfError": "Error. Not saved",
    "@notSavedCauseOfError": {
@@ -105,9 +125,26 @@
    "@exitApplication": {
       "description": "button end application"
    },
+   "restartApplication": "Restart",
+   "@restartApplication": {
+      "description": "button restart application"
+   },
    "askExitApplication": "Exit application?",
    "@askExitApplication": {
       "description": "Exit application question"
+   },
+   "changeAlarmPermissions": "Change alarm permission configuration",
+   "@changeAlarmPermissions": {
+      "description": "Set alarm system permissions"
+   },
+
+   "emptyDaysetError": "Meals cannot be defined if it is not indicated for which days.",
+   "@emptyDaysetError": {
+      "description": "Defined dayset is required"
+   },
+   "timeTableModifiedWarning": "Times have been modified to maintain consistency.",
+   "@timeTableModifiedWarning": {
+      "description": "Warning: the times of the time table has been automatically modified"
    },
 
    "snooze": "Snooze",
@@ -125,6 +162,89 @@
    "snoozedAlarm": "Alarm snoozed",
    "@snoozedAlarm": {
       "description": "Alarm status: Snoozed (user requeriment or after a long ring)"
+   },
+
+   "once": "Once",
+   "@once": {
+      "description": "Take pills once (just once)"
+   },
+   "onceADay": "Once a day (24h)",
+   "@onceADay": {
+      "description": "Take pills daily (every 24h)"
+   },
+   "twiceADay": "Twice a day (12h)",
+   "@twiceADay": {
+      "description": "Take pills twice a day (every 12h)"
+   },
+   "threeTimesADay": "Three times a day (8h)",
+   "@threeTimesADay": {
+      "description": "Take pills three times a day (every 8h)"
+   },
+   "fourTimesADay": "Four times a day (6h)",
+   "@fourTimesADay": {
+      "description": "Take pills four times a day (every 6h)"
+   },
+   "weekly": "Once a week",
+   "@weekly": {
+      "description": "Take pills weekly (once a week)"
+   },
+   "everyTwoWeeks": "Every two weeks",
+   "@everyTwoWeeks": {
+      "description": "Take pills every two weeks"
+   },
+   "fortnightly": "Every fortnight (twice each month)",
+   "@fortnightly": {
+      "description": "Take pills every fortnight"
+   },
+   "everyFourWeeks": "Every four weeks",
+   "@everyFourWeeks": {
+      "description": "Take pills every four weeks"
+   },
+   "monthly": "Once a month",
+   "@monthly": {
+      "description": "Take pills once a month"
+   },
+
+
+   "once_tooltip": "Take the pills once, just once.",
+   "@once_tooltip": {
+      "description": "Take pills once (just once)"
+   },
+   "onceADay_tooltip": "Take the pills daily, every 24h.",
+   "@onceADay_tooltip": {
+      "description": "Take pills daily (every 24h)"
+   },
+   "twiceADay_tooltip": "Take the pills twice a day, every 12h.",
+   "@twiceADay_tooltip": {
+      "description": "Take pills twice a day (every 12h)"
+   },
+   "threeTimesADay_tooltip": "Take the pills three times a day, every 8h.",
+   "@threeTimesADay_tooltip": {
+      "description": "Take pills three times a day (every 8h)"
+   },
+   "fourTimesADay_tooltip": "Take the pills four times a day, every 6h.",
+   "@fourTimesADay_tooltip": {
+      "description": "Take pills four times a day (every 6h)"
+   },
+   "weekly_tooltip": "Take the pills weekly, once a week, always the same day of week.",
+   "@weekly_tooltip": {
+      "description": "Take pills weekly (once a week)"
+   },
+   "everyTwoWeeks_tooltip": "Take the pills every two weeks, always the same day of week.",
+   "@everyTwoWeeks_tooltip": {
+      "description": "Take pills every two weeks"
+   },
+   "fortnightly_tooltip": "Take pills every fortnight, twice each month, always the same day of month.",
+   "@fortnightly_tooltip": {
+      "description": "Take pills every fortnight"
+   },
+   "everyFourWeeks_tooltip": "Take pills every four weeks, always the same day of week.",
+   "@everyFourWeeks_tooltip": {
+      "description": "Take pills every four weeks"
+   },
+   "monthly_tooltip": "Take pills once a month, always the same day of month.",
+   "@monthly_tooltip": {
+      "description": "Take pills once a month"
    },
 
    "alarmSettings": "Alarm settings",
@@ -188,19 +308,19 @@
    {
       "description": "Minutes long after supper"
    },
-   "tooltipLongBefore": "Minutes for taking pills well before meals, if you take pills well before meals",
+   "tooltipLongBefore": "Minutes from taking the pills between meals until eating. Combined with the value indicated for long after the previous meal. Applies if you take pills between meals.",
    "@tooltipLongBefore": {
       "description": "Explain the minutes long before meals field"
    },
-   "tooltipBefore": "Minutes to take pills before meals, if you take pills before meals",
+   "tooltipBefore": "Minutes before meals you are notified to take the pills before meals. Applies if you take pills before meals.",
    "@tooltipBefore": {
       "description": "Explain the minutes before meals field"
    },
-   "tooltipAfter": "Minutes to take pills after finishing meals, if you take pills after finishing meals",
+   "tooltipAfter": "Minutes in addition to the time used for eating. Applies if you take pills after meals.",
    "@tooltipAfter": {
       "description": "Explain the minutes after meals field"
    },
-   "tooltipLongAfter": "Minutes to take pills long after finishing dinner, if you take pills long after finishing supper",
+   "tooltipLongAfter": "Minutes that need to pass after meals to take pills between meals. Applies if you take pills between meals.",
    "@tooltipLongAfter": {
       "description": "Explain the minutes long after meals field"
    },
@@ -209,31 +329,39 @@
    "@timeEating": {
       "description": "Time spent eating"
    },
-   "bkfDuration": "breakfast duration, in minutes",
+   "timeEatingTooltip": "Time you spend on each meal. You only have to set values for those meals you have. A distinction is made between 'fast' and 'slow' values.",
+   "@timeEatingTooltip": {
+      "description": "Explain the time spent eating setting screen"
+   },
+   "bkfDuration": "Breakfast duration, in minutes.",
    "@bkfDuration": {
       "description": "breakfast duration"
    },
-   "brunchDuration": "brunch duration, in minutes",
+   "elevensesDuration": "Elevenses duration, in minutes.",
+   "@elevensesDuration": {
+      "description": "elevenses duration"
+   },
+   "brunchDuration": "Brunch duration, in minutes.",
    "@brunchDuration": {
       "description": "brunch duration"
    },
-   "lunchDuration": "lunch duration, in minutes",
+   "lunchDuration": "Lunch duration, in minutes.",
    "@lunchDuration": {
       "description": "lunch duration"
    },
-   "teaDuration": "tea duration, in minutes",
+   "teaDuration": "Afternoon tea duration, in minutes.",
    "@teaDuration": {
-      "description": "tea duration"
+      "description": "afternoon tea duration"
    },
-   "highTeaDuration": "high tea duration, in minutes",
+   "highTeaDuration": "Tea duration, in minutes.",
    "@highTeaDuration": {
       "description": "high tea duration"
    },
-   "dinnerDuration": "dinner duration, in minutes",
+   "dinnerDuration": "Dinner duration, in minutes.",
    "@dinnerDuration": {
       "description": "dinner duration"
    },
-   "supperDuration": "supper duration, in minutes",
+   "supperDuration": "Supper duration, in minutes.",
    "@supperDuration": {
       "description": "supper duration"
    },
@@ -246,6 +374,10 @@
    "@breakfast": {
       "description": "Meal time"
    },
+   "elevenses": "elevenses",
+   "@elevenses": {
+      "description": "Meal time"
+   },
    "brunch": "brunch",
    "@brunch": {
       "description": "Meal time"
@@ -254,11 +386,11 @@
    "@lunch": {
       "description": "Meal time"
    },
-   "tea": "tea",
+   "tea": "afternoon tea",
    "@tea": {
       "description": "Meal time"
    },
-   "highTea": "high tea",
+   "highTea": "tea",
    "@highTea": {
       "description": "Meal time"
    },
@@ -297,6 +429,19 @@
       "description": "Pill meal time, for using alone to pick one option"
    },
 
+   "slowLabel": "Slow",
+   "@slowLabel": {
+      "description": "Slow speed (enum SpeedLabel)"
+   },
+   "mediumLabel": "Normal",
+   "@mediumLabel": {
+      "description": "Medium speed (enum SpeedLabel)"
+   },
+   "fastLabel": "Fast",
+   "@fastLabel": {
+      "description": "Fast speed (enum SpeedLabel)"
+   },
+
    "alarmList": "Alarm list",
    "@alarmList": {
       "description": "Alarm list screen title"
@@ -309,13 +454,25 @@
    "@weeklyTimetable": {
       "description": "Button text for setting Weekly time for each meal"
    },
+   "mealsForPills": "Meals for pills",
+   "@mealsForPills": {
+      "description": "Button text for choosing the meals available for prescriptions"
+   },
    "weeklyDefaultTimetable": "Usual",
    "@weeklyDefaultTimetable" : {
-      "description": "Usual/Other label pair"
+      "description": "Usual/Alt tabs"
    },
-   "weeklyAltTimetable": "Other",
-   "@weeklyAltTimetable" : {
-      "description": "Usual/Other label pair"
+   "weeklyAltTimetable1": "Alt-1",
+   "@weeklyAltTimetable1" : {
+      "description": "Usual/Alt tabs"
+   },
+   "weeklyAltTimetable2": "Alt-2",
+   "@weeklyAltTimetable2" : {
+      "description": "Usual/Alt tabs"
+   },
+   "weeklyAltTimetable3": "Alt-3",
+   "@weeklyAltTimetable3" : {
+      "description": "Usual/Alt tabs"
    },
    "defaultWeeklyTimetable": "Meals you usually have and at what time",
    "@defaultWeeklyTimetable": {
@@ -325,6 +482,10 @@
    "@specialWeeklyTimetable": {
       "description": "Special days of week time table for each meal"
    },
+   "configMealsTooltip": "Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, three other alternative routines can be defined for specific days of the week.",
+   "@configMealsTooltip":{
+      "description": "Tooltip for the config meals screen"
+   }, 
 
    "createNewAlarm": "Create new alarm",
    "@createNewAlarm": {
@@ -347,7 +508,23 @@
    "@pillsAfterBreakfast": {
       "description": "Pill time"
    },
-   "pillsLongBeforeBrunch": "the pills well before brunch",
+   "pillsLongBeforeElevenses": "pills well before elevenses",
+   "@pillsLongBeforeElevenses": {
+      "description": "Pill time"
+   },
+   "pillsBeforeElevenses": "pre-elevenses pills",
+   "@pillsBeforeElevenses": {
+      "description": "Pill time"
+   },
+   "pillsAtElevenses": "elevenses pills",
+   "@pillsAtElevenses": {
+      "description": "Pill time"
+   },
+   "pillsAfterElevenses": "after-elevenses pills",
+   "@pillsAfterElevenses": {
+      "description": "Pill time"
+   },
+   "pillsLongBeforeBrunch": "pills well before brunch",
    "@pillsLongBeforeBrunch": {
       "description": "Pill time"
    },
@@ -363,7 +540,7 @@
    "@pillsAfterBrunch": {
       "description": "Pill time"
    },
-   "pillsLongBeforeLunch": "the pills well before lunch",
+   "pillsLongBeforeLunch": "pills well before lunch",
    "@pillsLongBeforeLunch": {
       "description": "Meal time"
    },
@@ -379,39 +556,39 @@
    "@pillsAfterLunch": {
       "description": "Meal time"
    },
-   "pillsLongBeforeTea": "the pills well before tea",
+   "pillsLongBeforeTea": "pills well before afternoon tea",
    "@pillsLongBeforeTea": {
       "description": "Pill time"
    },
-   "pillsBeforeTea": "pre-tea pills",
+   "pillsBeforeTea": "pills before afternoon tea",
    "@pillsBeforeTea": {
       "description": "Pill time"
    },
-   "pillsAtTea": "tea pills",
+   "pillsAtTea": "afternoon tea pills",
    "@pillsAtTea": {
       "description": "Pill time"
    },
-   "pillsAfterTea": "after-tea pills",
+   "pillsAfterTea": "after-afternoon tea pills",
    "@pillsAfterTea": {
       "description": "Pill time"
    },
-   "pillsLongBeforeHighTea": "the pills well before high tea",
+   "pillsLongBeforeHighTea": "pills well before tea",
    "@pillsLongBeforeHighTea": {
       "description": "Pill time"
    },
-   "pillsBeforeHighTea": "the pills before high tea",
+   "pillsBeforeHighTea": "pills before tea",
    "@pillsBeforeHighTea": {
       "description": "Pill time"
    },
-   "pillsAtHighTea": "high tea pills",
+   "pillsAtHighTea": "tea pills",
    "@pillsAtHighTea": {
       "description": "Pill time"
    },
-   "pillsAfterHighTea": "the pills after high tea",
+   "pillsAfterHighTea": "after-tea pills",
    "@pillsAfterHighTea": {
       "description": "Pill time"
    },
-   "pillsLongBeforeDinner": "the pills well before dinner",
+   "pillsLongBeforeDinner": "pills well before dinner",
    "@pillsLongBeforeDinner": {
       "description": "Pill time"
    },
@@ -427,7 +604,7 @@
    "@pillsAfterDinner": {
       "description": "Pill time"
    },
-   "pillsLongBeforeSupper": "the pills well before supper",
+   "pillsLongBeforeSupper": "pills well before supper",
    "@pillsLongBeforeSupper": {
       "description": "Pill time"
    },

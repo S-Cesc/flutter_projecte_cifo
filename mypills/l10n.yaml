@@ -1,4 +1,6 @@
+synthetic-package: false
 arb-dir: lib/l10n
 template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 preferred-supported-locales: [ en, es ]
+header: "// ignore_for_file: unused_local_variable"

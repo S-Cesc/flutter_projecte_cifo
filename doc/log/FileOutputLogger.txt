@@ -1,0 +1,32 @@
+
+You have to create class FileOutput with extends LogOutput and pass in output param of Logger() like below
+
+    _logger = Logger(printer: PrettyPrinter(), output: FileOutput());
+
+
+
+class FileOutput extends LogOutput {
+  FileOutput();
+
+  File file;
+
+  @override
+  void init() {
+    super.init();
+    file = new File(filePath);
+  }
+
+  @override
+  void output(OutputEvent event) async {
+    if (file != null) {
+      for (var line in event.lines) {
+        await file.writeAsString("${line.toString()}\n",
+            mode: FileMode.writeOnlyAppend);
+      }
+    } else {
+      for (var line in event.lines) {
+        print(line);
+      }
+    }
+  }
+}

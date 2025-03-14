@@ -1,6 +1,3 @@
-// logging and debugging
-import 'dart:developer' as developer;
-import 'package:logging/logging.dart' show Level;
 // Dart
 import 'package:intl/intl.dart';
 // Flutter
@@ -8,24 +5,27 @@ import 'package:day_picker/day_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
-import '../styles/app_styles.dart';
 import 'meals_table.dart';
-import '../model/day_of_week.dart';
+import '../model/enum/day_of_week_bitset.dart';
+import '../model/enum/day_of_week.dart';
 import '../providers/config_preferences.dart';
 
 /// Meals time table for specific days
 class MealsTableSpecialDays extends StatefulWidget {
-  /// Save values callback
-  final Future<void> Function() saveValues;
+  /// Partition which is referenced to
+  final int partitionNumber;
 
-  /// Requery data callback to undo changes
-  final Future<void> Function() requery;
+  /// Notify parent to check if there are updates
+  final void Function() callbackCheckUpdate;
 
   /// Ctor
-  const MealsTableSpecialDays(
-      {super.key, required this.requery, required this.saveValues});
+  const MealsTableSpecialDays({
+    super.key,
+    required this.partitionNumber,
+    required this.callbackCheckUpdate,
+  });
 
   @override
   State<MealsTableSpecialDays> createState() => _MealsTableSpecialDaysState();
@@ -51,143 +51,144 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized) _initialize();
-    return Consumer<ConfigPreferences>(builder: (context, prefs, child) {
-      final Set<DayOfWeek> selectedWeekDays =
-          prefs.generalSettings.wtt.specialWeekDays;
+    // private local function
+    List<DayInWeek> computeSelectedWeekdays(ConfigPreferences prefs) {
+      final DayOfWeekBitset selectedWeekdays = prefs.generalSettings.wtt
+          .partitionWeekdays(widget.partitionNumber);
       // SelectWeekDays widget format for selectedWeekDays
       final List<DayInWeek> currentSelectedWeekdays = [
-        DayInWeek(weekDayNames[1],
-            dayKey: "1",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(1))),
-        DayInWeek(weekDayNames[2],
-            dayKey: "2",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(2))),
-        DayInWeek(weekDayNames[3],
-            dayKey: "3",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(3))),
-        DayInWeek(weekDayNames[4],
-            dayKey: "4",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(4))),
-        DayInWeek(weekDayNames[5],
-            dayKey: "5",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(5))),
-        DayInWeek(weekDayNames[6],
-            dayKey: "6",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(6))),
-        DayInWeek(weekDayNames[0],
-            dayKey: "7",
-            isSelected: selectedWeekDays.contains(DayOfWeek.fromId(7))),
+        DayInWeek(
+          weekDayNames[1],
+          dayKey: "1",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(1)],
+        ), // .contains(DayOfWeek.fromId(1))),
+        DayInWeek(
+          weekDayNames[2],
+          dayKey: "2",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(2)],
+        ),
+        DayInWeek(
+          weekDayNames[3],
+          dayKey: "3",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(3)],
+        ),
+        DayInWeek(
+          weekDayNames[4],
+          dayKey: "4",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(4)],
+        ),
+        DayInWeek(
+          weekDayNames[5],
+          dayKey: "5",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(5)],
+        ),
+        DayInWeek(
+          weekDayNames[6],
+          dayKey: "6",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(6)],
+        ),
+        DayInWeek(
+          weekDayNames[0],
+          dayKey: "7",
+          isSelected: selectedWeekdays[DayOfWeek.fromId(7)],
+        ),
       ];
-      Key refreshKey = UniqueKey();
+      return currentSelectedWeekdays;
+    }
 
-      //Weekdays onSelect update selectedWeekDays
-      void updateWeekdays(List<String> days) {
-        setState(() {
-          for (int d = 1; d <= 7; d++) {
-            if (days.contains(d.toString())) {
-              selectedWeekDays.add(DayOfWeek.fromId(d));
-            } else {
-              selectedWeekDays.remove(DayOfWeek.fromId(d));
-            }
-          }
-        });
-        developer.log("selected days: ${days.toString()}",
-            level: Level.FINE.value);
-      }
-
-      //Action buttons: Undo / Save
-      Widget actionButtonsWidget() {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                style: AppStyles.customButtonStyle,
-                onPressed: () async {
-                  await widget.requery();
-                  setState(() {
-                    refreshKey = UniqueKey();
-                  });
-                },
-                child: Text(t.undoChanges),
-              ),
-              ElevatedButton(
-                style: AppStyles.customButtonStyle,
-                onPressed: () async {
-                  await widget.saveValues();
-                },
-                child: Text(t.saveChanges),
-              ),
-            ],
-          ),
+    if (!_isInitialized) _initialize();
+    return Consumer<ConfigPreferences>(
+      builder: (context, prefs, child) {
+        final List<DayInWeek> currentSelectedWeekdays = computeSelectedWeekdays(
+          prefs,
         );
-      }
+        final Key refreshKey = UniqueKey();
 
-      //Consumer builder return value
-      return OrientationBuilder(builder: (context, orientation) {
-        if (orientation == Orientation.portrait) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: SelectWeekDays(
-                  days: currentSelectedWeekdays,
-                  onSelect: updateWeekdays,
-                  key: refreshKey,
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25),
-                  child: MealsTable(
-                    defaultMeals: false,
-                    locked: selectedWeekDays.isEmpty,
-                  ),
-                ),
-              ),
-              actionButtonsWidget(),
-            ],
+        //Weekdays onSelect update selectedWeekDays
+        void updateWeekdays(List<String> days) {
+          final weekDays =
+              days.map((x) => DayOfWeek.fromId(int.parse(x))).toSet();
+          prefs.generalSettings.wtt.defineSpecialWeekDays(
+            weekDays,
+            widget.partitionNumber,
           );
-        } else {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: SelectWeekDays(
-                        days: currentSelectedWeekdays,
-                        onSelect: updateWeekdays,
-                        key: refreshKey,
+          if (prefs.generalSettings.wtt.modified) {
+            setState(() {
+              widget.callbackCheckUpdate();
+            });
+          }
+        }
+
+        //Consumer builder return value
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            if (orientation == Orientation.portrait) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: SelectWeekDays(
+                      days: currentSelectedWeekdays,
+                      onSelect: updateWeekdays,
+                      key: refreshKey,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: MealsTable(
+                        mealsPartition: widget.partitionNumber,
+                        callbackCheckUpdate: widget.callbackCheckUpdate,
+                        locked: false, //selectedWeekDays.isEmpty,
                       ),
                     ),
-                    Spacer(),
-                    actionButtonsWidget(),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0),
-                  child: MealsTable(
-                    defaultMeals: false,
-                    locked: selectedWeekDays.isEmpty,
                   ),
-                ),
-              ),
-            ],
-          );
-        }
-      });
-    });
+                ],
+              );
+            } else {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 10, top: 60),
+                          child: SelectWeekDays(
+                            days: currentSelectedWeekdays,
+                            onSelect: updateWeekdays,
+                            //key: refreshKey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: 10,
+                        right: 20,
+                        bottom: 20,
+                        left: 40,
+                      ),
+                      child: MealsTable(
+                        mealsPartition: widget.partitionNumber,
+                        callbackCheckUpdate: widget.callbackCheckUpdate,
+                        locked: false, //selectedWeekDays.isEmpty,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
   }
 }

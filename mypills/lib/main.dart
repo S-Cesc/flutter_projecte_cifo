@@ -11,7 +11,7 @@ import 'dart:ui' show IsolateNameServer;
 import 'package:flutter/material.dart';
 
 // Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 // Project files
 import './styles/app_styles.dart';
@@ -68,54 +68,57 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => ConfigPreferences(),
-        child: MaterialApp(
-          theme: ThemeData(
-              fontFamily: AppStyles.fonts.fontFamilyName,
-              useMaterial3: true,
-              scaffoldBackgroundColor: AppStyles.colors.mantis,
-              dialogBackgroundColor: AppStyles.colors.ochre[700],
-              dialogTheme: DialogTheme(
-                iconColor: AppStyles.colors.mantis,
-                surfaceTintColor: AppStyles.colors.darkSpringGreen[200],
-                elevation: 4,
-              ),
-              appBarTheme: AppBarTheme(
-                iconTheme: IconThemeData(color: AppStyles.colors.mantis),
-                color: AppStyles.colors.ochre,
-              )),
-          routes: {
-            configScreenPath: (context) => const SplashConfigScreen(),
-            alarmScreenPath: (context) => const SplashAlarmScreen(),
-          },
-          navigatorKey: navigatorKey,
-          initialRoute: configScreenPath,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localeListResolutionCallback: (locales, supportedLocales) {
-            if (locales != null) {
-              for (final locale in locales) {
-                for (final supportedLocale in supportedLocales) {
-                  if (supportedLocale.languageCode == locale.languageCode) {
-                    return supportedLocale;
-                  }
-                }
-              }
-              // Per si un despistat té definit el basc però no el castellà
-              for (final locale in locales) {
-                if (locale.countryCode == 'ES') {
-                  return supportedLocales
-                      .firstWhere((l) => l.languageCode == 'es');
+      create: (context) => ConfigPreferences(),
+      child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: AppStyles.fontFamilyName,
+          useMaterial3: true,
+          scaffoldBackgroundColor: AppStyles.colors.mantis,
+          dialogTheme: DialogTheme(
+            iconColor: AppStyles.colors.mantis,
+            surfaceTintColor: AppStyles.colors.darkSpringGreen[200],
+            elevation: 4,
+            backgroundColor: AppStyles.colors.ochre[700],
+          ),
+          appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(color: AppStyles.colors.mantis),
+            color: AppStyles.colors.ochre,
+          ),
+        ),
+        routes: {
+          configScreenPath: (context) => const SplashConfigScreen(),
+          alarmScreenPath: (context) => const SplashAlarmScreen(),
+        },
+        navigatorKey: navigatorKey,
+        initialRoute: configScreenPath,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localeListResolutionCallback: (locales, supportedLocales) {
+          if (locales != null) {
+            for (final locale in locales) {
+              for (final supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
                 }
               }
             }
-            return supportedLocales.first; // per defecte, anglès
-          },
-          onGenerateTitle: (context) {
-            return AppLocalizations.of(context)!.appTitle;
-          },
-          //showPerformanceOverlay: true,
-        ));
+            // Per si un despistat té definit el basc però no el castellà
+            for (final locale in locales) {
+              if (locale.countryCode == 'ES') {
+                return supportedLocales.firstWhere(
+                  (l) => l.languageCode == 'es',
+                );
+              }
+            }
+          }
+          return supportedLocales.first; // per defecte, anglès
+        },
+        onGenerateTitle: (context) {
+          return AppLocalizations.of(context)!.appTitle;
+        },
+        //showPerformanceOverlay: true,
+      ),
+    );
   }
 }
 

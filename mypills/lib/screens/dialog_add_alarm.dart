@@ -1,15 +1,17 @@
 // Flutter
 import 'package:flutter/material.dart';
 // Localizations
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../model/alarm.dart';
-import '../model/meal.dart';
-import '../model/pill_meal_time.dart';
+import '../model/enum/meal.dart';
+import '../model/enum/pill_meal_time.dart';
 import '../widgets/custom_back_button.dart';
 
+/// Dialog to add an alarm
 class DialogAddAlarm extends StatefulWidget {
+  /// Ctor
   const DialogAddAlarm({super.key});
 
   @override
@@ -56,42 +58,48 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
     var t = AppLocalizations.of(context)!;
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
-            title: Text(
-              t.createNewAlarm,
-            ),
-            backgroundColor: AppStyles.colors.ochre[700],
-            elevation: 4,
-            leading: CustomBackButton(),
-            actions: <Widget>[
-              TextButton(
-                onPressed: _canSave
-                    ? () {
+          title: Text(t.createNewAlarm),
+          backgroundColor: AppStyles.colors.ochre[700],
+          elevation: 4,
+          leading: CustomBackButton(),
+          actions: <Widget>[
+            TextButton(
+              onPressed:
+                  _canSave
+                      ? () {
                         Navigator.of(context).pop(
-                            Alarm.empty(_selectedMeal!, _selectedPillMealTime!));
+                          Alarm.empty(_selectedMeal!, _selectedPillMealTime!),
+                        );
                       }
-                    : null,
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all<CircleBorder>(
-                    CircleBorder(
-                      side: BorderSide(
-                        color: AppStyles.colors.forestGreen[700]!,
-                        width: 1.0,
-                      ),
+                      : null,
+              style: ButtonStyle(
+                shape: WidgetStateProperty.all<CircleBorder>(
+                  CircleBorder(
+                    side: BorderSide(
+                      color: AppStyles.colors.forestGreen[700]!,
+                      width: 1.0,
                     ),
                   ),
-                  backgroundColor:
-                      WidgetStateProperty.all(AppStyles.colors.forestGreen),
-                  foregroundColor:
-                      WidgetStateProperty.all(AppStyles.colors.darkSlateGray),
                 ),
-                child: Icon(Icons.add_alarm), // Text('ADD'),
+                backgroundColor: WidgetStateProperty.all(
+                  AppStyles.colors.forestGreen,
+                ),
+                foregroundColor: WidgetStateProperty.all(
+                  AppStyles.colors.darkSlateGray,
+                ),
               ),
-            ]),
+              child: Icon(Icons.add_alarm), // Text('ADD'),
+            ),
+          ],
+        ),
         body: Form(
           child: ListView(
-            padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 4.0,
+              horizontal: 16.0,
+            ),
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
@@ -108,11 +116,11 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
                     },
                     dropdownMenuEntries:
                         Meal.values.map<DropdownMenuEntry<Meal>>((Meal meal) {
-                      return DropdownMenuEntry<Meal>(
-                        value: meal,
-                        label: meal.mealName(t),
-                      );
-                    }).toList(),
+                          return DropdownMenuEntry<Meal>(
+                            value: meal,
+                            label: meal.localeName(t),
+                          );
+                        }).toList(),
                   ),
                 ),
               ),
@@ -124,20 +132,24 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
                     initialSelection: initialPillMealTime,
                     controller: null,
                     label: const Text(
-                        'Time for the mealtime pills'), //hora de las pastillas de la comida
+                      'Time for the mealtime pills',
+                    ), //hora de las pastillas de la comida
                     onSelected: (PillMealTime? pillMealTime) {
                       setState(() {
                         _setPillMealTime(pillMealTime);
                       });
                     },
-                    dropdownMenuEntries: PillMealTime.values
-                        .map<DropdownMenuEntry<PillMealTime>>(
-                            (PillMealTime pillMealTime) {
-                      return DropdownMenuEntry<PillMealTime>(
-                        value: pillMealTime,
-                        label: pillMealTime.simpleName(t),
-                      );
-                    }).toList(),
+                    dropdownMenuEntries:
+                        PillMealTime.values
+                            .map<DropdownMenuEntry<PillMealTime>>((
+                              PillMealTime pillMealTime,
+                            ) {
+                              return DropdownMenuEntry<PillMealTime>(
+                                value: pillMealTime,
+                                label: pillMealTime.localeName(t),
+                              );
+                            })
+                            .toList(),
                   ),
                 ),
               ),
@@ -145,11 +157,11 @@ class _DialogAddAlarmState extends State<DialogAddAlarm> {
                 padding: EdgeInsets.only(top: 20),
                 child: Center(
                   child: Text(
-                      style: AppStyles.fonts.labelSmall(),
-                      _canSave
-                          ? _selectedPillMealTime!
-                              .pillTimeName(_selectedMeal!, t)
-                          : ""),
+                    style: AppStyles.constFonts.labelSmall,
+                    _canSave
+                        ? _selectedPillMealTime!.pillTimeName(t, _selectedMeal!)
+                        : "",
+                  ),
                 ),
               ),
             ],

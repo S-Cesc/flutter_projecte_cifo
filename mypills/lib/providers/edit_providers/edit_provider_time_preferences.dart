@@ -15,11 +15,11 @@ class EditProviderTimePreferences {
 
   /// Ctor
   EditProviderTimePreferences(GeneralSettings settings)
-      : _settings = settings,
-        _longBefore = settings.data.minutesLongBefore,
-        _before = settings.data.minutesBefore,
-        _after = settings.data.minutesAfter,
-        _longAfter = settings.data.minutesLongAfter;
+    : _settings = settings,
+      _longBefore = settings.data.minutesLongBefore,
+      _before = settings.data.minutesBefore,
+      _after = settings.data.minutesAfter,
+      _longAfter = settings.data.minutesLongAfter;
 
   /// Minutes for taking pills well before meals
   int? get minutesLongBeforeMeals => _longBefore;

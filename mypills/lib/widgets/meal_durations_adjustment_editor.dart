@@ -1,50 +1,84 @@
-// logging and debugging
-//import 'dart:developer' as developer;
-//import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
 // Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../model/general_preferences.dart';
 import '../providers/edit_providers/edit_provider_meal_durations_adjustment.dart';
-import 'nat_number_text_field.dart';
+import 'pair_nat_number_field.dart';
 
 /// Time preference editor for mealtime tablets
 class MealDurationsAdjustmentEditor extends StatefulWidget {
   final EditProviderMealDurationsAdjustment _provider;
 
   /// Ctor
-  const MealDurationsAdjustmentEditor(
-      {super.key, required EditProviderMealDurationsAdjustment provider})
-      : _provider = provider;
+  const MealDurationsAdjustmentEditor({
+    super.key,
+    required EditProviderMealDurationsAdjustment provider,
+  }) : _provider = provider;
 
   @override
-  State<MealDurationsAdjustmentEditor> createState() => _MealDurationsAdjustmentEditorState();
+  State<MealDurationsAdjustmentEditor> createState() =>
+      _MealDurationsAdjustmentEditorState();
 }
 
-class _MealDurationsAdjustmentEditorState extends State<MealDurationsAdjustmentEditor> {
+class _MealDurationsAdjustmentEditorState
+    extends State<MealDurationsAdjustmentEditor> {
   late List<TextEditingController> _controllers;
   bool saved = true;
 
   @override
   void initState() {
     _controllers = [
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.breakfastMinutes.toString())),
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.brunchMinutes.toString())),
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.lunchMinutes.toString())),
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.teaMinutes.toString())),
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.highTeaMinutes.toString())),
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.dinnerMinutes.toString())),
-      TextEditingController.fromValue(TextEditingValue(
-          text: widget._provider.supperMinutes.toString())),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.breakfastMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.breakfastMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.elevensesMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.elevensesMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.brunchMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.brunchMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.lunchMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.lunchMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.teaMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.teaMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.highTeaMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.highTeaMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.dinnerMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.dinnerMinutes.$2.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.supperMinutes.$1.toString()),
+      ),
+      TextEditingController.fromValue(
+        TextEditingValue(text: widget._provider.supperMinutes.$2.toString()),
+      ),
     ];
     super.initState();
   }
@@ -53,181 +87,220 @@ class _MealDurationsAdjustmentEditorState extends State<MealDurationsAdjustmentE
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[0],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[0],
-                      labelText: t.bkfDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.breakfastMinutes = value;
-                      },
-                    );
-                  }),
-            ),
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        const boxConstraints = BoxConstraints(
+          minHeight: 125,
+          maxHeight: 145,
+          maxWidth: 400,
+        );
+        const padding = EdgeInsets.only(left: 10, right: 10);
+        final slow = t.slowLabel;
+        final fast = t.fastLabel;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Wrap(
+            children: [
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.bkfDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[0],
+                    controller2: _controllers[1],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.breakfastMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.elevensesDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[2],
+                    controller2: _controllers[3],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.elevensesMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.brunchDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[4],
+                    controller2: _controllers[5],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.brunchMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.lunchDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[6],
+                    controller2: _controllers[7],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.lunchMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.teaDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[8],
+                    controller2: _controllers[9],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.teaMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: 125,
+                    maxHeight: 145,
+                    maxWidth: 400,
+                  ),
+                  child: PairNatNumberField(
+                    title: t.highTeaDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[10],
+                    controller2: _controllers[11],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.highTeaMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.dinnerDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[12],
+                    controller2: _controllers[13],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.dinnerMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: boxConstraints,
+                  child: PairNatNumberField(
+                    title: t.supperDuration,
+                    labelText1: fast,
+                    labelText2: slow,
+                    suffixText1: "'",
+                    suffixText2: "'",
+                    labelStyle: AppStyles.constFonts.body,
+                    titleBackgroundColor: AppStyles.colors.mantis,
+                    controller1: _controllers[14],
+                    controller2: _controllers[15],
+                    minValue: GeneralPreferences.minMealDurationMinutes,
+                    maxValue: GeneralPreferences.maxMealDurationMinutes,
+                    onChanged: (t, _) {
+                      widget._provider.supperMinutes = t;
+                    },
+                    tooltipHelp1: null,
+                    tooltipHelp2: null,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[1],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[1],
-                      labelText: t.brunchDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.brunchMinutes = value;
-                      },
-                    );
-                  }),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[2],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[2],
-                      labelText: t.lunchDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.lunchMinutes = value;
-                      },
-                    );
-                  }),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[3],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[3],
-                      labelText: t.teaDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.teaMinutes = value;
-                      },
-                    );
-                  }),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[4],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[4],
-                      labelText: t.highTeaDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.highTeaMinutes = value;
-                      },
-                    );
-                  }),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[5],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[5],
-                      labelText: t.dinnerDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.dinnerMinutes = value;
-                      },
-                    );
-                  }),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 50, right: 50),
-              child: ValueListenableBuilder(
-                  valueListenable: _controllers[6],
-                  builder: (context, TextEditingValue value, __) {
-                    return NatNumberTextField(
-                      controller: _controllers[6],
-                      labelText: t.supperDuration,
-                      tooltipHelp: null,
-                      iconColor: AppStyles.colors.ochre,
-                      suffixText: "'",
-                      minValue: GeneralPreferences.minMealDurationMinutes,
-                      maxValue: GeneralPreferences.maxMealDurationMinutes,
-                      errorText: 'invalid value: '
-                          '${GeneralPreferences.minMealDurationMinutes}'
-                          '..${GeneralPreferences.maxMealDurationMinutes}',
-                      onChanged: (int? value) {
-                        widget._provider.supperMinutes = value;
-                      },
-                    );
-                  }),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

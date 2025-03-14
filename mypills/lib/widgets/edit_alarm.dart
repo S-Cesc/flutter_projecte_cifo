@@ -1,10 +1,14 @@
 // Flutter
+// ignore_for_file: public_member_api_docs
+
+// TODO (many changes)
+
 import 'package:flutter/material.dart';
 // Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
-import '../model/meal.dart';
-import '../model/pill_meal_time.dart';
+import '../model/enum/meal.dart';
+import '../model/enum/pill_meal_time.dart';
 import '../styles/app_styles.dart';
 
 class EditAlarm extends StatefulWidget {
@@ -21,7 +25,8 @@ class _EditAlarmState extends State<EditAlarm> {
   PillMealTime? pillMealTimeValue;
 
   void _initializeLocale(BuildContext context) async {
-    _localizations = //await AppLocalizations.of(context);
+    _localizations =
+        AppLocalizations.of(context) ??
         await AppLocalizations.delegate.load(Localizations.localeOf(context));
     setState(() {
       _isInitialized = true;
@@ -34,30 +39,28 @@ class _EditAlarmState extends State<EditAlarm> {
     return Column(
       children: [
         Text(
-          mealValue?.mealName(_localizations) ?? "",
-          style: AppStyles.fonts.labelSmall(),
+          mealValue?.localeName(_localizations) ?? "",
+          style: AppStyles.constFonts.labelSmall,
         ),
         DropdownButton<Meal>(
           value: mealValue,
           icon: const Icon(Icons.arrow_downward),
           elevation: 16,
           style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.deepPurpleAccent,
-          ),
+          underline: Container(height: 2, color: Colors.deepPurpleAccent),
           onChanged: (Meal? value) {
             // This is called when the user selects an item.
             setState(() {
               mealValue = value!;
             });
           },
-          items: Meal.values.map<DropdownMenuItem<Meal>>((Meal value) {
-            return DropdownMenuItem<Meal>(
-              value: value,
-              child: Text(value.mealName(_localizations)),
-            );
-          }).toList(),
+          items:
+              Meal.values.map<DropdownMenuItem<Meal>>((Meal value) {
+                return DropdownMenuItem<Meal>(
+                  value: value,
+                  child: Text(value.localeName(_localizations)),
+                );
+              }).toList(),
         ),
         //----------------------------------
         const Divider(
@@ -70,33 +73,38 @@ class _EditAlarmState extends State<EditAlarm> {
         //----------------------------------
         Text(
           pillMealTimeValue?.pillTimeName(
-                  mealValue ?? Meal.breakfast, _localizations) ??
+                _localizations,
+                mealValue ?? Meal.breakfast,
+              ) ??
               "",
-          style: AppStyles.fonts.labelSmall(),
+          style: AppStyles.constFonts.labelSmall,
         ),
         DropdownButton<PillMealTime>(
           value: pillMealTimeValue,
           icon: const Icon(Icons.arrow_downward),
           elevation: 16,
           style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.deepPurpleAccent,
-          ),
+          underline: Container(height: 2, color: Colors.deepPurpleAccent),
           onChanged: (PillMealTime? value) {
             // This is called when the user selects an item.
             setState(() {
               pillMealTimeValue = value!;
             });
           },
-          items: PillMealTime.values
-              .map<DropdownMenuItem<PillMealTime>>((PillMealTime value) {
-            return DropdownMenuItem<PillMealTime>(
-              value: value,
-              child: Text(value.pillTimeName(
-                  mealValue ?? Meal.breakfast, _localizations)),
-            );
-          }).toList(),
+          items:
+              PillMealTime.values.map<DropdownMenuItem<PillMealTime>>((
+                PillMealTime value,
+              ) {
+                return DropdownMenuItem<PillMealTime>(
+                  value: value,
+                  child: Text(
+                    value.pillTimeName(
+                      _localizations,
+                      mealValue ?? Meal.breakfast,
+                    ),
+                  ),
+                );
+              }).toList(),
         ),
       ],
     );

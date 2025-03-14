@@ -1,10 +1,10 @@
 // Dart base
 // Flutter
 import 'package:flutter/material.dart';
-import 'package:flutter_projecte_cifo/providers/alarm_collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import 'general_settings.dart';
+import 'alarm_collection.dart';
 
 //==============================================================================
 
@@ -20,6 +20,7 @@ class ConfigPreferences with ChangeNotifier {
   late GeneralSettings _generalSettings;
   late AlarmCollection _alarmCollection;
 
+  /// Ctor
   ConfigPreferences() {
     _generalSettings = GeneralSettings(_shPrefs, callback);
     _alarmCollection = AlarmCollection(_shPrefs, this, callback);

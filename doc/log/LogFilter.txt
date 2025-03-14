@@ -1,0 +1,7 @@
+//in some other file override these classes u want to log somewhere: override todos
+class MyFilter extends LogFilter {
+ @override
+ bool shouldLog(LogEvent event) {
+ return true;
+ }
+}

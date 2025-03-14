@@ -9,9 +9,10 @@ import 'dart:convert';
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mypills/model/global_constants.dart';
 import 'package:one_clock/one_clock.dart';
 // Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // Project files
 import '../main.dart' as main;
 import '../util/port_facilities.dart';
@@ -46,11 +47,15 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
   void initState() {
     super.initState();
     if (PortFacilities.reRegisterPortWithName(
-        _infoPort.sendPort, main.uiAlarmPortName)) {
+      _infoPort.sendPort,
+      main.uiAlarmPortName,
+    )) {
       _subscription = _listenInfoPort(_infoPort);
     } else {
-      developer.log("Port ${main.uiAlarmPortName} couldn't be registered",
-          level: Level.SEVERE.value);
+      developer.log(
+        "Port ${main.uiAlarmPortName} couldn't be registered",
+        level: Level.SEVERE.value,
+      );
       TypeError();
     }
   }
@@ -61,15 +66,18 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
         try {
           final jsonMessage = jsonDecode(obj) as Map<String, dynamic>;
           developer.log(
-              'Alarm message received '
-              'from ${main.uiAlarmPortName}: '
-              '$jsonMessage',
-              level: Level.FINE.value);
+            'Alarm message received '
+            'from ${main.uiAlarmPortName}: '
+            '$jsonMessage',
+            level: Level.FINE.value,
+          );
           if (jsonMessage.containsKey(BackgroundEntry.alarmIdMessageKey)) {
             _alarmId = jsonMessage[BackgroundEntry.alarmIdMessageKey] as int;
             if (_alarmId == BackgroundEntry.idAlarmTest) {
-              developer.log('Alarm message id=$_alarmId (test)'
-                  ' from ${main.uiAlarmPortName}');
+              developer.log(
+                'Alarm message id=$_alarmId (test)'
+                ' from ${main.uiAlarmPortName}',
+              );
               setState(() {
                 _alarmId;
               });
@@ -83,15 +91,17 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
               } else {
                 _alarmId = null;
                 developer.log(
-                    'Alarm id=${_alarmId ?? "null"} message'
-                    ' from ${main.uiAlarmPortName}'
-                    ' is not binded to an alarm object',
-                    level: Level.WARNING.value);
+                  'Alarm id=${_alarmId ?? "null"} message'
+                  ' from ${main.uiAlarmPortName}'
+                  ' is not binded to an alarm object',
+                  level: Level.WARNING.value,
+                );
               }
             }
             //TODO always include alarmId in the message
-          } else if (jsonMessage
-              .containsKey(BackgroundEntry.alarmStatusMessageKey)) {
+          } else if (jsonMessage.containsKey(
+            BackgroundEntry.alarmStatusMessageKey,
+          )) {
             final String status =
                 jsonMessage[BackgroundEntry.alarmStatusMessageKey] as String;
             switch (status) {
@@ -123,12 +133,15 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
             _alarm = null;
           });
           developer.log(
-              'Error receiving message from ${main.uiAlarmPortName}: $e',
-              level: Level.WARNING.value);
+            'Error receiving message from ${main.uiAlarmPortName}: $e',
+            level: Level.WARNING.value,
+          );
         }
       } else {
-        developer.log('Unknown message from ${main.uiAlarmPortName}: $obj',
-            level: Level.WARNING.value);
+        developer.log(
+          'Unknown message from ${main.uiAlarmPortName}: $obj',
+          level: Level.WARNING.value,
+        );
       }
     });
   }
@@ -153,7 +166,8 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
 
   Widget _takeThePills(AppLocalizations t) {
     return Center(
-        child: Text(t.notificationTitle, style: AppStyles.fonts.display()));
+      child: Text(t.notificationTitle, style: AppStyles.constFonts.display),
+    );
   }
 
   Widget _digitalClock(bool isLive, DateTime alarmDateTime) {
@@ -179,7 +193,9 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
       minuteHandColor: AppStyles.colors.darkSlateGray[800]!,
       numberColor: AppStyles.colors.darkSlateGray[900]!,
       decoration: BoxDecoration(
-          color: AppStyles.colors.forestGreen[200], shape: BoxShape.circle),
+        color: AppStyles.colors.forestGreen[200],
+        shape: BoxShape.circle,
+      ),
     );
   }
 
@@ -187,82 +203,100 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
     return Padding(
       padding: EdgeInsets.only(bottom: 15),
       child: Text(
-        Alarm.getAlarmNameFromId(alarmId, t),
-        style: AppStyles.fonts.labelLarge(),
+        Alarm.getAlarmNameFromId(t, alarmId),
+        style: AppStyles.constFonts.labelLarge,
         softWrap: true,
       ),
     );
   }
 
   List<Widget> _actions(
-      AppLocalizations t, int? alarmId, bool alarmIsActivated) {
+    AppLocalizations t,
+    int? alarmId,
+    bool alarmIsActivated,
+  ) {
     return [
       if (alarmId != null) ...[
         if (alarmIsActivated) ...[
           Expanded(
             child: Center(
-                child: ElevatedButton(
-              style: AppStyles.alarmButtonStyle,
-              onPressed: () async {
-                developer.log("Cancel alarm button clicked!",
-                    level: Level.FINER.value);
-                await _cancelAlarm(alarmId);
-                await Future.delayed(const Duration(milliseconds: 1500),
+              child: ElevatedButton(
+                style: AppStyles.alarmButtonStyle,
+                onPressed: () async {
+                  developer.log(
+                    "Cancel alarm button clicked!",
+                    level: Level.FINER.value,
+                  );
+                  await _cancelAlarm(alarmId);
+                  await Future.delayed(
+                    const Duration(milliseconds: 1500),
                     () async {
-                  developer.log("Pop screen: " "Cancel button",
-                      level: Level.INFO.value);
-                  await SystemNavigator.pop();
-                });
-              },
-              // TODO: Next screen with the alarm paused
-              child: Text(
-                t.cancel,
-                style: AppStyles.fonts.headline(),
+                      developer.log(
+                        "Pop screen: "
+                        "Cancel button",
+                        level: Level.INFO.value,
+                      );
+                      await SystemNavigator.pop();
+                    },
+                  );
+                },
+                // TODO: Next screen with the alarm paused
+                child: Text(t.cancel, style: AppStyles.constFonts.headline),
               ),
-            )),
+            ),
           ),
           Expanded(
             child: Center(
-                child: ElevatedButton(
-              style: AppStyles.alarmButtonStyle,
-              onPressed: () async {
-                developer.log("Snooze alarm button clicked!",
-                    level: Level.FINER.value);
-                await _snoozeAlarm(alarmId);
-                await Future.delayed(const Duration(milliseconds: 1500),
+              child: ElevatedButton(
+                style: AppStyles.alarmButtonStyle,
+                onPressed: () async {
+                  developer.log(
+                    "Snooze alarm button clicked!",
+                    level: Level.FINER.value,
+                  );
+                  await _snoozeAlarm(alarmId);
+                  await Future.delayed(
+                    GlobalConstants.veryLongDelayForOperation,
                     () async {
-                  developer.log("Pop screen: " "Snooze button",
-                      level: Level.INFO.value);
-                  await SystemNavigator.pop();
-                });
-              },
-              child: Text(
-                t.snooze,
-                style: AppStyles.fonts.headline(),
+                      developer.log(
+                        "Pop screen: "
+                        "Snooze button",
+                        level: Level.INFO.value,
+                      );
+                      await SystemNavigator.pop();
+                    },
+                  );
+                },
+                child: Text(t.snooze, style: AppStyles.constFonts.headline),
               ),
-            )),
-          )
+            ),
+          ),
         ] else ...[
           Expanded(
             child: Center(
-              child: Builder(builder: (context) {
-                // little trick
-                unawaited(Future.delayed(const Duration(seconds: 7), () {
-                  SystemNavigator.pop();
-                }));
-                return Text(
-                  _alarmIsLost
-                      ? t.missedAlarm
-                      : _alarmIsStopped
-                          ? t.stoppedAlarm
-                          : t.snoozedAlarm,
-                  style: AppStyles.fonts.headline(),
-                );
-              }),
+              child: Builder(
+                builder: (context) {
+                  // little trick
+                  unawaited(
+                    // REVIEW: Can be set to a value from GlobalConstants?
+                    Future.delayed(const Duration(seconds: 7), () {
+                      SystemNavigator.pop();
+                    }),
+                  );
+                  return Text(
+                    _alarmIsLost
+                        ? t.missedAlarm
+                        : _alarmIsStopped
+                        ? t.stoppedAlarm
+                        : t.snoozedAlarm,
+                    style: AppStyles.constFonts.headline,
+                  );
+                },
+              ),
             ),
-          )
-        ]
-      ]
+          ),
+        ],
+      ],
     ];
   }
 
@@ -272,14 +306,13 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
     final DateTime alarmDateTime = _alarm?.lastShot ?? DateTime.now();
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: AppStyles.colors.mantis,
-        appBar: AppBar(
-          title: Text(t.notificationTitle),
-          elevation: 4,
-        ),
-        body: OrientationBuilder(builder: (context, orientation) {
-          if (orientation == Orientation.portrait) {
-            return Column(
+        appBar: AppBar(title: Text(t.notificationTitle), elevation: 4),
+        body: OrientationBuilder(
+          builder: (context, orientation) {
+            if (orientation == Orientation.portrait) {
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -295,52 +328,52 @@ class _MainAlarmScreenState extends State<MainAlarmScreen> {
                     _alarmName(t, _alarmId!),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ..._actions(t, _alarmId, _alarmIsActivated),
-                      ],
+                      children: [..._actions(t, _alarmId, _alarmIsActivated)],
                     ),
                   ],
-                ]);
-          } else {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        if (_alarmId != null) ...[
-                          _digitalClock(_alarm == null, alarmDateTime),
-                          _alarmName(t, _alarmId!),
-                          ..._actions(t, _alarmId, _alarmIsActivated),
+                ],
+              );
+            } else {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          if (_alarmId != null) ...[
+                            _digitalClock(_alarm == null, alarmDateTime),
+                            _alarmName(t, _alarmId!),
+                            ..._actions(t, _alarmId, _alarmIsActivated),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: _takeThePills(t),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 20),
-                          child: _analogClock(),
-                        ),
-                      ],
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Flexible(child: _takeThePills(t)),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 50,
+                              vertical: 20,
+                            ),
+                            child: _analogClock(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
-        }),
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

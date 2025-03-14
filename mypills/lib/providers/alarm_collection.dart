@@ -6,20 +6,23 @@ import 'dart:async';
 import 'dart:convert';
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:mypills/model/global_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../extensions/date_time_extensions.dart';
 import '../model/alarm.dart';
 import '../model/alarm_key_iterator.dart';
-import '../model/day_of_week.dart';
+import '../model/enum/day_of_week.dart';
 import '../providers/config_preferences.dart';
 import '../services/background_alarm_helper.dart';
 import 'general_settings.dart';
 
 //==============================================================================
 
-/// Collection of existing defined alarms
+/// Collection of existing defined alarms stored directly in SharedPreferences
 final class AlarmCollection {
+  //
+  //----------------------------------------------------------------------------
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs;
@@ -35,12 +38,19 @@ final class AlarmCollection {
   //-----------------------class special members--------------------------------
 
   /// Initialize the alarm collection: read it from [SharedPreferencesAsync]
+  /// Each element is directly stored using its numeric key and a key prefix
+  /// It allows rapid retrieval of an alarm,
+  /// but requieres a key full iteration to retrieve all of them
   Future<void> init() async {
     developer.log("LOAD ALARMS for editing pourposes");
+    const keyPrefix = GeneralSettings.alarmJsonKeyPrefix;
     var it = AlarmKeyIterator();
     while (it.moveNext()) {
-      final String key = Alarm.alarmKey("a", it.current.$1, it.current.$2);
-      //  'a${it.current}';
+      final String key = Alarm.alarmKey(
+        keyPrefix,
+        it.current.$1,
+        it.current.$2,
+      );
       final json = await _shPrefs.getString(key);
       developer.log("...prova clau: $key", level: Level.FINEST.value);
       if (json != null) {
@@ -51,8 +61,10 @@ final class AlarmCollection {
           final tmpAlarm = Alarm.fromJson(decodedJson);
           _alarms.putIfAbsent(tmpAlarm.id, () => tmpAlarm);
         } catch (e) {
-          developer.log("EXCEPTION (decode JSON alarm) ${e.toString()}",
-              level: Level.SHOUT.value);
+          developer.log(
+            "EXCEPTION (decode JSON alarm) ${e.toString()}",
+            level: Level.SHOUT.value,
+          );
         }
       }
     }
@@ -67,12 +79,10 @@ final class AlarmCollection {
   }
 
   /// Persist [value] the list of Alarms
-  /// Existing alarms which are also in [value] are not affected
-  /// Add new alarms from [value]
-  /// and remove non existing alarms in [value]
-  Future<void> setCurrentAlarms(
-    List<Alarm> value,
-  ) async {
+  /// - Existing alarms present also in [value] are not affected
+  /// - Add new alarms from [value]
+  /// - Remove non existing alarms in [value]
+  Future<void> setCurrentAlarms(List<Alarm> value) async {
     final inserted = <int>[], removed = <int>[];
     // remove alarms not present in parameter
     developer.log("Existing alarms: ${_alarms.length}");
@@ -86,12 +96,12 @@ final class AlarmCollection {
     for (final id in removed) {
       bool done = false;
       int count = 0;
-      while (!done && count < 25) {
+      while (!done && count++ < GlobalConstants.maxRetries) {
         done = await _removeAlarm(id);
         if (!done) {
-          await Future.delayed(const Duration(milliseconds: 50), () => null);
+          await Future.delayed(GlobalConstants.delayToRetry, () => null);
+          done = await _removeAlarm(id, force: true);
         }
-        if (!done) await _removeAlarm(id, force: true);
       }
     }
     // insert absent alarms present in the parameter
@@ -99,6 +109,7 @@ final class AlarmCollection {
       _alarms.putIfAbsent(a.id, () {
         unawaited(_setAlarm(a));
         inserted.add(a.id);
+        developer.log("Alarm added: ${a.id}");
         return a;
       });
     }
@@ -124,16 +135,24 @@ final class AlarmCollection {
         // alarm.meal alarm.pillMealTime
         final today = DateTimeExtensions.today();
         DateTime? dateTimeToFire;
-        TimeOfDay? mealTime = _owner.generalSettings.wtt
-            .dayMealTime(alarm.meal, DayOfWeek.fromDate(today));
+        // TODO: Alarm dayMealTime: requires all alarms to fire today or tomorrow
+        // - Alarms do not fire everyday (use the list of prescriptions)
+        // - The 'meal' from the Alarm only references 'usual' timetable routine
+        // TODO: Alarm time to fire (pillMealTime; now depends only from meal)
+        TimeOfDay? mealTime = _owner.generalSettings.wtt.dayMealTime(
+          alarm.meal,
+          DayOfWeek.fromDate(today),
+        );
         if (mealTime != null && DateTimeExtensions.isToday(mealTime)) {
           dateTimeToFire = DateTimeExtensions.todayAt(mealTime);
         } else {
           // Hoy no... mañana
           developer.log("L'alarma hoy no, ...mañana");
           final tomorrow = DateTimeExtensions.tomorrow();
-          mealTime = _owner.generalSettings.wtt
-              .dayMealTime(alarm.meal, DayOfWeek.fromDate(tomorrow));
+          mealTime = _owner.generalSettings.wtt.dayMealTime(
+            alarm.meal,
+            DayOfWeek.fromDate(tomorrow),
+          );
           if (mealTime != null) {
             dateTimeToFire = DateTimeExtensions.tomorrowAt(mealTime);
           }
@@ -147,15 +166,18 @@ final class AlarmCollection {
           );
         }
         developer.log(
-            mealTime == null ? "No meal time" : "meal time: $mealTime",
-            level: Level.INFO.value);
+          mealTime == null ? "No meal time" : "meal time: $mealTime",
+          level: Level.INFO.value,
+        );
       } else {
         developer.log("Alarm not found", level: Level.WARNING.value);
       }
     }
 
     await _shPrefs.setString(
-        GeneralSettings.alarmJsonKey(a.id), jsonEncode(jsonStructured));
+      GeneralSettings.alarmJsonKey(a.id),
+      jsonEncode(jsonStructured),
+    );
     await addFireAlarmProgramming(a.id);
     _callbackOnUpdate();
   }
@@ -170,14 +192,15 @@ final class AlarmCollection {
       final Alarm tmpAlarm = _alarms[alarmId]!;
       if (tmpAlarm.isActivated && !force) {
         developer.log(
-            "The alarm is now active; "
-            "it needs to be attended before to be removed",
-            level: Level.WARNING.value);
+          "The alarm is now active; "
+          "it needs to be attended before to be removed",
+          level: Level.WARNING.value,
+        );
         return false;
       } else {
-        _alarms.remove(alarmId);
         await _shPrefs.remove(GeneralSettings.alarmJsonKey(alarmId));
         await removeFireAlarmProgramming(alarmId);
+        _alarms.remove(alarmId);
         _callbackOnUpdate();
         developer.log("Remove: $alarmId");
         return true;
@@ -187,7 +210,7 @@ final class AlarmCollection {
     }
   }
 
-/*
+  /*
   Future<void> changeAlarmKey(
       Alarm a, Meal newMeal, PillMealTime newPillMealTime) async {
     if (await removeAlarm(a.id)) {

@@ -1,24 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:clock/clock.dart';
+
+//==============================================================================
 
 /// Precission for the DateTime round operation
 enum RoundTimeTo {
-  /// Round the value of the minutes
+  /// Round the value to the minutes
   minute,
 
-  /// Round the value of the seconds, exact value for minutes
+  /// Round the value to the seconds (exact value for minutes)
   second,
 }
 
+//==============================================================================
+
 /// Days without time, and other extensions
 extension DateTimeExtensions on DateTime {
+  //
+  //----------------------------------------------------------------------------
+  //---------------------------------static/constant----------------------------
+
   /// DateTime.now() with hour, minute, second... set to zero
   static DateTime today() {
-    return DateTime.now().date();
+    return clock.now().date();
   }
 
   /// Next day of DateTime.today()
   static DateTime tomorrow() {
-    return today().add(const Duration(days: 1));
+    return nextDay(clock.now());
+  }
+
+  /// The day before DateTime.today()
+  static DateTime yesterday() {
+    return theDayBefore(clock.now());
+  }
+
+  /// compute the next day of the date
+  static DateTime nextDay(DateTime date) {
+    // add 1 day and some hours to avoid DST problems
+    const int minutesInADay = 24 * 60;
+    const int maximumDstLoss = 65; //day saving time, including any leap seconds
+    return date
+        .date()
+        .add(const Duration(minutes: minutesInADay + maximumDstLoss))
+        .date();
+  }
+
+  /// compute the day before the date
+  static DateTime theDayBefore(DateTime date) {
+    // subtract 1 day minus some hours to avoid DST problems
+    const int minutesInADay = 24 * 60;
+    const int maximumDstLoss = 65; //day saving time, including any leap seconds
+    return date
+        .date()
+        .subtract(const Duration(minutes: minutesInADay - maximumDstLoss))
+        .date();
   }
 
   /// DateTime.today with specific TimeOfDay (Hour and minute)
@@ -31,7 +67,8 @@ extension DateTimeExtensions on DateTime {
     return tomorrow().at(time);
   }
 
-  /// Is the TimeOfDay today at future... or it won't happen until tomorrow ?
+  /// Is today at future the time TimeOfDay ...
+  /// ... or it won't happen until tomorrow ?
   /// It checks the time using minute precission
   static bool isToday(TimeOfDay time) {
     final now = DateTime.now().round();
@@ -40,9 +77,17 @@ extension DateTimeExtensions on DateTime {
         now.hour == time.hour && now.minute <= time.minute;
   }
 
+  //----------------------------------------------------------------------------
+  //-----------------DateTime extensions ---------------------------------------
+
   /// The date without time
   DateTime date() {
     return DateTime(year, month, day);
+  }
+
+  /// The date as a string 'yyyy-MM-dd'
+  String toDateString() {
+    return '${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
   }
 
   /// The data at a specific TimeOfDay
@@ -52,18 +97,20 @@ extension DateTimeExtensions on DateTime {
 
   /// Round DateTime to precission of minutes or seconds
   DateTime round([RoundTimeTo precission = RoundTimeTo.minute]) {
-    final s = (precission == RoundTimeTo.second
-        ? second + (millisecond >= 500 ? 1 : 0)
-        : 0);
-    final m = minute +
+    final s =
+        (precission == RoundTimeTo.second
+            ? second + (millisecond >= 500 ? 1 : 0)
+            : 0);
+    final m =
+        minute +
         (precission == RoundTimeTo.minute ? (second >= 30 ? 1 : 0) : 0);
-    return DateTime(
-      year,
-      month,
-      day,
-      hour,
-      m,
-      s,
-    );
+    return DateTime(year, month, day, hour, m, s);
   }
+
+  /// Returns true when the date is the last day of the month
+  bool isLastDayOfMonth() {
+    return DateUtils.getDaysInMonth(year, month) == day;
+  }
+
+  //-------- end extension -----------------------------------------------------
 }

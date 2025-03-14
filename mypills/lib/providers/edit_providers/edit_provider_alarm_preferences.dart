@@ -15,11 +15,11 @@ class EditProviderAlarmPreferences {
 
   /// Ctor
   EditProviderAlarmPreferences(GeneralSettings settings)
-      : _settings = settings,
-        _alarmDurationSeconds = settings.data.alarmDurationSeconds,
-        _alarmSnoozeSeconds = settings.data.alarmSnoozeSeconds,
-        _alarmRepeatTimes = settings.data.alarmRepeatTimes,
-        _minutesToDealWithAlarm = settings.data.minutesToDealWithAlarm;
+    : _settings = settings,
+      _alarmDurationSeconds = settings.data.alarmDurationSeconds,
+      _alarmSnoozeSeconds = settings.data.alarmSnoozeSeconds,
+      _alarmRepeatTimes = settings.data.alarmRepeatTimes,
+      _minutesToDealWithAlarm = settings.data.minutesToDealWithAlarm;
 
   /// Alarm duration in seconds
   int? get alarmDurationSeconds => _alarmDurationSeconds;
