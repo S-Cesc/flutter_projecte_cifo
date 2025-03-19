@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/general_preferences.dart';
 import '../model/enum/meal.dart';
+import '../model/meals_for_pills.dart';
 import '../model/weekly_time_table.dart';
 
 //==============================================================================
@@ -92,6 +93,9 @@ class GeneralSettings {
   /// JSON key for weeklyTimeTable
   static const weeklyTimeTableKey = 'wTimeTable';
 
+  /// JSON key for meals for pills
+  static const meals4PillsKey = 'm4p';
+
   /// JSON key prefix for alarm objects
   static const alarmJsonKeyPrefix = "a";
 
@@ -108,9 +112,11 @@ class GeneralSettings {
 
   late GeneralPreferences _data;
   late WeeklyTimeTable _wtt;
+  late MealsForPillsWithAlt _m4p;
   bool _initialized = false;
 
   /// Ctor
+  /// Note _callbackOnUpdate is only needed when editing the data
   GeneralSettings(this._shPrefs, this._callbackOnUpdate);
 
   //-----------------------class special members--------------------------------
@@ -198,6 +204,21 @@ class GeneralSettings {
       } catch (e) {
         _wtt = WeeklyTimeTable.empty(data, _callbackOnUpdate);
       }
+      try {
+        final String? strM4p = await _shPrefs.getString(meals4PillsKey);
+        if (strM4p != null) {
+          final parsedJson = json.decode(strM4p) as Map<String, dynamic>;
+          _m4p = MealsForPillsWithAlt.fromJson(
+            _callbackOnUpdate,
+            meals4PillsKey,
+            parsedJson,
+          );
+        } else {
+          _m4p = MealsForPillsWithAlt(_callbackOnUpdate);
+        }
+      } catch (e) {
+        _m4p = MealsForPillsWithAlt(_callbackOnUpdate);
+      }
       _initialized = true;
     }
   }
@@ -216,6 +237,9 @@ class GeneralSettings {
 
   /// WeeklyTimeTable (times of meals and days of week for each time table)
   WeeklyTimeTable get wtt => _wtt;
+
+  /// Meals for pils (meals associated with taking pills)
+  MealsForPillsWithAlt get m4p => _m4p;
 
   //-----------------------class rest of members--------------------------------
 
@@ -345,10 +369,21 @@ class GeneralSettings {
 
   // ----- //
 
-  /// sets writes to disk the [WeeklyTimeTable]
+  /// sets writes to disk the [WeeklyTimeTable] data
   Future<void> setWeeklyTimeTable(WeeklyTimeTable value) async {
     _wtt = value;
     await _shPrefs.setString(weeklyTimeTableKey, json.encode(value.toJson()));
+    value.resetModified();
+    _callbackOnUpdate!();
+  }
+
+  /// sets writes to disk the [MealsForPills] data
+  Future<void> setMeals4Pills(MealsForPillsWithAlt value) async {
+    _m4p = value;
+    await _shPrefs.setString(
+      meals4PillsKey,
+      json.encode(value.toJson(meals4PillsKey)),
+    );
     value.resetModified();
     _callbackOnUpdate!();
   }

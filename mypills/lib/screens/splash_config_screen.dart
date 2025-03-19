@@ -225,8 +225,6 @@ class _SplashConfigScreenState extends State<SplashConfigScreen> {
     changeStatus(AppLocalizations.of(context)!.initializing);
     developer.log('Initializing (splash screen)', level: Level.FINER.value);
     ConfigPreferences preferences = context.read<ConfigPreferences>();
-    // Future.delayed raise problems ???
-    // E/libEGL  (18424): called unimplemented OpenGL ES API
     await Future.delayed(GlobalConstants.longDelayForOperation, () => null);
     /* loading parameters */
     if (mounted) {

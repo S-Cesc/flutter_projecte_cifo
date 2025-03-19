@@ -241,6 +241,9 @@ class WeeklyTimeTable {
   }
 
   /// Require a minimum of 3 meals a day (needed for prescriptions)
+  /// It is required for all defined partitions:
+  /// - The main partition always must be defined
+  /// - The rest of partitions can be defined or not
   bool get isFullyDefined {
     final maxLength = Meal.values.length;
     if (_specialDaysMeals.length == _nAltMealTimeTables &&
@@ -248,13 +251,18 @@ class WeeklyTimeTable {
         _defaultDaysMeals.length <= maxLength &&
         _specialDaysMeals.every((x) => x.length <= maxLength)) {
       bool result = _defaultDaysMeals.length >= _nMealPrescriptions;
-      for (int i = 0; i < _nAltMealTimeTables; i++) {
-        if (_isPartitionDefined(i)) {
-          result &= _specialDaysMeals[i].length >= _nMealPrescriptions;
-        } else if (!_isPartitionConsistent(i)) {
-          throw FormatException(
-            "Incorrect WeeklyTimeTable structure, partition $i.",
-          );
+      {
+        int i = 0;
+        while (result && i < _nAltMealTimeTables) {
+          if (_isPartitionConsistent(i)) {
+            if (_isPartitionDefined(i)) {
+              result &= _specialDaysMeals[i].length >= _nMealPrescriptions;
+            }
+          } else {
+            // Editing partition may not be consistent
+            result = false;
+          }
+          i++;
         }
       }
       return result;
@@ -263,14 +271,33 @@ class WeeklyTimeTable {
     }
   }
 
+  // TODO: remove this
   /// Check which partition is not fully defined
-  (bool, List<bool?>) fullyDefinedPartitions() {
+  (bool, List<bool>) fullyDefinedPartitions() {
     final bool mainResult = _defaultDaysMeals.length >= _nMealPrescriptions;
-    final restResults = List<bool?>.generate(
+    final restResults = List<bool>.generate(
       _nAltMealTimeTables,
-      (int i) => _isPartitionConsistent(i) ? _isPartitionDefined(i) : null,
+      (int partition) =>
+          _isPartitionConsistent(partition) &&
+          _isPartitionDefined(partition) &&
+          _specialDaysMeals[partition].length >= _nMealPrescriptions,
     );
     return (mainResult, restResults);
+  }
+
+  /// Check whether the partition is fully defined:
+  /// it has [_nMealPrescriptions] meals well defined
+  /// [partition] null means the main partition
+  bool isPartitionFullyDefined([int? partition]) {
+    if (partition == null) {
+      return _defaultDaysMeals.length >= _nMealPrescriptions;
+    } else if (partition > 0 && partition <= _nAltMealTimeTables) {
+      return _isPartitionConsistent(partition) &&
+          _isPartitionDefined(partition) &&
+          _specialDaysMeals[partition].length >= _nMealPrescriptions;
+    } else {
+      throw ArgumentError("Invalid partition number: $partition");
+    }
   }
 
   //----------------------------------------------------------------------------
@@ -451,7 +478,7 @@ class WeeklyTimeTable {
   DayOfWeekPartitions get specialWeekdays => _specialWeekdays;
 
   /// The DayOfWeekBitset of the [altTimeTable] partition
-  /// Updates are not reflected in the object
+  /// Updates are not reflected in the object (readonly value)
   DayOfWeekBitset partitionWeekdays(int altTimeTable) =>
       _specialWeekdays.partitionWeekdays(altTimeTable);
 
@@ -508,16 +535,6 @@ class WeeklyTimeTable {
     return map[meal]?.$2;
   }
 
-  /// Which partition (map) does [day] belong to?
-  /// It will return _defaultDaysMeals when it is not a SpecialWeekDay
-  _MealMap _dayOfWeekMap(DayOfWeek day) {
-    if (isSpecialWeekDay(day)) {
-      return _specialDaysMeals[_specialWeekdays[day]!];
-    } else {
-      return _defaultDaysMeals;
-    }
-  }
-
   //TODO: Meal application: Remove all that!!! (use an alternative algorithm)
   /// Search tomorrow equivalent meal
   Meal tomorrowEquivalentMeal(Meal meal, DayOfWeek todayWD) {
@@ -562,6 +579,29 @@ class WeeklyTimeTable {
             (tomorrowMealsLst.length > todayMealsLst.length ? diff : -diff)];
       }
     }
+  }
+
+  /// Which partition (map) does [day] belong to?
+  /// It will return _defaultDaysMeals when it is not a SpecialWeekDay
+  _MealMap _dayOfWeekMap(DayOfWeek day) {
+    if (isSpecialWeekDay(day)) {
+      return _specialDaysMeals[_specialWeekdays[day]!];
+    } else {
+      return _defaultDaysMeals;
+    }
+  }
+
+  /// Get the minimum meal from [altTimeTable]
+  ///  which is greater or equal to [from]
+  Meal? minMeal(Meal from, [int? altTimeTable]) {
+    final map =
+        altTimeTable == null
+            ? _defaultDaysMeals
+            : _specialDaysMeals[altTimeTable];
+    final result = map.keys.reduce(
+      (a, b) => (a.id >= from.id && a.id.compareTo(b.id) < 0) ? a : b,
+    );
+    return result.id >= from.id ? result : null;
   }
 
   //----------------------------------------------------------------------------
@@ -649,8 +689,8 @@ class WeeklyTimeTable {
     int? altTimeTable,
   ]) {
     if (!isMealDefined(meal, altTimeTable)) {
+      bool timeTableModified = false;
       developer.log("- add Meal $meal: $value", level: Level.FINER.value);
-      bool hasChanges = false;
       if (altTimeTable == null) {
         assert(!_defaultDaysMeals.containsKey(meal));
         _defaultDaysMeals[meal] = value;
@@ -659,7 +699,7 @@ class WeeklyTimeTable {
         _defaultDaysTimeToSleep = TimeOfDayExtension.max(
           tmpTimeToSleep,
           _ensureMealTimeCoherence(meal, _defaultDaysMeals, tmpTimeToSleep, () {
-            hasChanges = true;
+            timeTableModified = true;
           }),
           _maxMinutesBetweenMeals,
         );
@@ -679,18 +719,16 @@ class WeeklyTimeTable {
               _specialDaysMeals[altTimeTable],
               tmpTimeToSleep,
               () {
-                hasChanges = true;
+                timeTableModified = true;
               },
             ),
             _maxMinutesBetweenMeals,
           );
         }
       }
-      if (hasChanges) {
-        _modified = true;
-        _callbackOnUpdate?.call();
-        _notifyChanges(context);
-      }
+      _modified = true;
+      _callbackOnUpdate?.call();
+      if (timeTableModified) _notifyChanges(context);
     } else {
       developer.log(
         "Can't add the Meal $meal, because already exists",
@@ -704,42 +742,17 @@ class WeeklyTimeTable {
   void removeMeal(BuildContext context, Meal meal, [int? altTimeTable]) {
     if (isMealDefined(meal, altTimeTable)) {
       developer.log("- remove Meal $meal", level: Level.FINER.value);
-      bool hasChanges = false;
       if (altTimeTable == null) {
         assert(_defaultDaysMeals.containsKey(meal));
         _defaultDaysMeals.removeWhere((m, _) => m == meal);
-        // coherence (redundant - not needed)
-        final tmpTimeToSleep = _defaultDaysTimeToSleep;
-        _defaultDaysTimeToSleep = TimeOfDayExtension.max(
-          tmpTimeToSleep,
-          _ensureMealTimeCoherence(null, _defaultDaysMeals, tmpTimeToSleep, () {
-            hasChanges = true;
-          }),
-          _maxMinutesBetweenMeals,
-        );
+        // coherence check - not needed
       } else {
         assert(_specialDaysMeals[altTimeTable].containsKey(meal));
         _specialDaysMeals[altTimeTable].removeWhere((m, _) => m == meal);
-        // coherence (redundant - not needed)
-        final tmpTimeToSleep = _specialDaysTimeToSleep[altTimeTable];
-        _specialDaysTimeToSleep[altTimeTable] = TimeOfDayExtension.max(
-          tmpTimeToSleep,
-          _ensureMealTimeCoherence(
-            null,
-            _specialDaysMeals[altTimeTable],
-            tmpTimeToSleep,
-            () {
-              hasChanges = true;
-            },
-          ),
-          _maxMinutesBetweenMeals,
-        );
+        // coherence check - not needed
       }
-      if (hasChanges) {
-        _modified = true;
-        _callbackOnUpdate?.call();
-        _notifyChanges(context);
-      }
+      _modified = true;
+      _callbackOnUpdate?.call();
     } else {
       developer.log(
         "Can't remove not exisiting Meal $meal",
@@ -763,12 +776,14 @@ class WeeklyTimeTable {
         level: Level.FINER.value,
       );
       bool hasChanges = false;
+      bool timeTableModified = false;
       if (altTimeTable == null) {
         assert(_defaultDaysMeals.containsKey(meal));
         bool isNewValue = _defaultDaysMeals[meal]!.$1 != mealtime;
         if (isNewValue) {
           final mealSpeed = _defaultDaysMeals[meal]!.$2;
           _defaultDaysMeals[meal] = (mealtime, mealSpeed);
+          hasChanges = true;
           // coherence
           final tmpTimeToSleep = _defaultDaysTimeToSleep;
           _defaultDaysTimeToSleep = TimeOfDayExtension.max(
@@ -778,7 +793,7 @@ class WeeklyTimeTable {
               _defaultDaysMeals,
               tmpTimeToSleep,
               () {
-                hasChanges = true;
+                timeTableModified = true;
               },
             ),
             _maxMinutesBetweenMeals,
@@ -791,6 +806,7 @@ class WeeklyTimeTable {
         if (isNewValue) {
           final mealSpeed = _specialDaysMeals[altTimeTable][meal]!.$2;
           _specialDaysMeals[altTimeTable][meal] = (mealtime, mealSpeed);
+          hasChanges = true;
           // coherence
           final tmpTimeToSleep = _specialDaysTimeToSleep[altTimeTable];
           _specialDaysTimeToSleep[altTimeTable] = TimeOfDayExtension.max(
@@ -800,7 +816,7 @@ class WeeklyTimeTable {
               _specialDaysMeals[altTimeTable],
               tmpTimeToSleep,
               () {
-                hasChanges = true;
+                timeTableModified = true;
               },
             ),
             _maxMinutesBetweenMeals,
@@ -810,7 +826,7 @@ class WeeklyTimeTable {
       if (hasChanges) {
         _modified = true;
         _callbackOnUpdate?.call();
-        _notifyChanges(context);
+        if (timeTableModified) _notifyChanges(context);
       }
     } else {
       developer.log(
@@ -836,12 +852,14 @@ class WeeklyTimeTable {
         level: Level.FINER.value,
       );
       bool hasChanges = false;
+      bool timeTableModified = false;
       if (altTimeTable == null) {
         assert(_defaultDaysMeals.containsKey(meal));
         bool isNewValue = _defaultDaysMeals[meal]!.$2 != speed;
         if (isNewValue) {
           final mealTime = _defaultDaysMeals[meal]!.$1;
           _defaultDaysMeals[meal] = (mealTime, speed);
+          hasChanges = true;
           // coherence
           final tmpTimeToSleep = _defaultDaysTimeToSleep;
           _defaultDaysTimeToSleep = TimeOfDayExtension.max(
@@ -851,7 +869,7 @@ class WeeklyTimeTable {
               _defaultDaysMeals,
               tmpTimeToSleep,
               () {
-                hasChanges = true;
+                timeTableModified = true;
               },
             ),
             _maxMinutesBetweenMeals,
@@ -864,6 +882,7 @@ class WeeklyTimeTable {
         if (isNewValue) {
           final mealTime = _specialDaysMeals[altTimeTable][meal]!.$1;
           _specialDaysMeals[altTimeTable][meal] = (mealTime, speed);
+          hasChanges = true;
           // coherence
           final tmpTimeToSleep = _specialDaysTimeToSleep[altTimeTable];
           _specialDaysTimeToSleep[altTimeTable] = TimeOfDayExtension.max(
@@ -873,7 +892,7 @@ class WeeklyTimeTable {
               _specialDaysMeals[altTimeTable],
               tmpTimeToSleep,
               () {
-                hasChanges = true;
+                timeTableModified = true;
               },
             ),
             _maxMinutesBetweenMeals,
@@ -883,7 +902,7 @@ class WeeklyTimeTable {
       if (hasChanges) {
         _modified = true;
         _callbackOnUpdate?.call();
-        _notifyChanges(context);
+        if (timeTableModified) _notifyChanges(context);
       }
     } else {
       developer.log(
@@ -903,16 +922,20 @@ class WeeklyTimeTable {
   ]) {
     //
     // local private proc
-    void effectiveSet(TimeOfDay value, [int? altTimeTable]) {
+    bool effectiveSet(TimeOfDay value, [int? altTimeTable]) {
       if (altTimeTable == null) {
         if (_defaultDaysTimeToSleep != value) {
           _defaultDaysTimeToSleep = value;
-          _modified = true;
+          return true;
+        } else {
+          return false;
         }
       } else {
         if (_specialDaysTimeToSleep[altTimeTable] != value) {
           _specialDaysTimeToSleep[altTimeTable] = value;
-          _modified = true;
+          return true;
+        } else {
+          return false;
         }
       }
     }
@@ -942,19 +965,22 @@ class WeeklyTimeTable {
     }
 
     // setTimeToSleep
-    var minTimeToSleep = getMinTimeToSleep(altTimeTable);
+    final minTimeToSleep = getMinTimeToSleep(altTimeTable);
+    bool hasChanges = false;
     // Check that minTimeToSleep is before value
     // Warning! may be value is at the next day!
     // We use maxMinutesBetweenMeals to mesure difference,
     // which must be long enough
     if (value.gte(minTimeToSleep, _maxMinutesBetweenMeals) &&
         minTimeToSleep.minutesUntil(value) <= _maxMinutesBetweenMeals) {
-      effectiveSet(value, altTimeTable);
-    } else {
-      effectiveSet(minTimeToSleep, altTimeTable);
+      hasChanges = effectiveSet(value, altTimeTable);
+    } else if (effectiveSet(minTimeToSleep, altTimeTable)) {
+      hasChanges = true;
       _notifyChanges(context);
     }
-    _modified = true;
-    _callbackOnUpdate?.call();
+    if (hasChanges) {
+      _modified = true;
+      _callbackOnUpdate?.call();
+    }
   }
 }

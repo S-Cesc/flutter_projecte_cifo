@@ -19,13 +19,10 @@ class AppStyles {
   );
 
   /// A custom style for buttons
-  static final customButtonStyle = ButtonStyle(
+  static final ButtonStyle customButtonStyle = ButtonStyle(
     shape: WidgetStatePropertyAll<OutlinedBorder>(
       ContinuousRectangleBorder(
-        borderRadius: BorderRadius.horizontal(
-          left: const Radius.elliptical(40, 20),
-          right: const Radius.elliptical(40, 20),
-        ),
+        borderRadius: BorderRadius.all(const Radius.elliptical(40, 20)),
       ),
     ),
     backgroundColor: WidgetStateProperty.resolveWith<Color?>((
@@ -39,10 +36,19 @@ class AppStyles {
         return AppStyles.colors.mantis[700];
       }
     }),
+    foregroundColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.white;
+      } else {
+        return AppStyles.colors.darkSpringGreen[300];        
+      }
+    }),
   );
 
   /// A custom style for warning buttons
-  static final warningButtonStyle = ButtonStyle(
+  static final ButtonStyle warningButtonStyle = ButtonStyle(
     backgroundColor: WidgetStateProperty.resolveWith<Color?>((
       Set<WidgetState> states,
     ) {
@@ -57,7 +63,7 @@ class AppStyles {
   );
 
   /// A custom style for buttons (alarm screen)
-  static final alarmButtonStyle = ButtonStyle(
+  static final ButtonStyle alarmButtonStyle = ButtonStyle(
     backgroundColor: WidgetStatePropertyAll(AppStyles.colors.mantis),
   );
 

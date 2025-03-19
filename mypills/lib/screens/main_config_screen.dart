@@ -146,7 +146,9 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
         ),
         body: OrientationBuilder(
           builder: (context, orientation) {
-            final pref = context.read<ConfigPreferences>();
+            final bool isWttFullyDefined = context.select(
+              (ConfigPreferences cp) => cp.generalSettings.wtt.isFullyDefined,
+            );
             return GridView.count(
               crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
               scrollDirection: Axis.vertical,
@@ -205,26 +207,50 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
                   iconAlignment: IconAlignment.start,
                 ),
                 // config weekdays
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<ConfigMealsScreen>(
-                        builder: (context) => ConfigMealsScreen(),
+                Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: [
+                    Positioned.fill(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<ConfigMealsScreen>(
+                              builder: (context) => ConfigMealsScreen(),
+                            ),
+                          );
+                        },
+                        style: AppStyles.customButtonStyle,
+                        icon: const Icon(Symbols.calendar_clock),
+                        label: Text(t.weeklyTimetable),
+                        iconAlignment: IconAlignment.start,
                       ),
-                    );
-                  },
-                  style: AppStyles.customButtonStyle,
-                  icon: const Icon(Symbols.calendar_clock),
-                  label: Text(t.weeklyTimetable),
-                  iconAlignment: IconAlignment.start,
+                    ),
+                    if (!isWttFullyDefined)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.only(end: 25),
+                          child: Text(
+                            "Needs to be defined",
+                            style: AppStyles.constFonts.body,
+                            // child: Icon(
+                            //   Icons.warning,
+                            //   color: AppStyles.colors.forestGreen,
+                            // ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 // config pill meals
                 ElevatedButton.icon(
-                  onPressed:  pref.generalSettings.wtt.isFullyDefined ?                   
-                   () {
-                    // TODO: Meals for pills
-                    /*
+                  onPressed:
+                      isWttFullyDefined
+                          ? () {
+                            // TODO: Meals for pills screen
+                            /*
                     Navigator.push(
                       context,
                       MaterialPageRoute<ConfigMealsScreen>(
@@ -232,7 +258,8 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
                       ),
                     );
                     */
-                  } : null,
+                          }
+                          : null,
                   style: AppStyles.customButtonStyle,
                   icon: const Icon(Symbols.pill_off),
                   label: Text(t.mealsForPills),
