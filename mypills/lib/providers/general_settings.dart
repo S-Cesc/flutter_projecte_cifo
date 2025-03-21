@@ -19,7 +19,6 @@ import '../model/weekly_time_table.dart';
 class ReadOnlyGeneralSettings {
   //-------------------------static/constant------------------------------------
 
-
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs;
@@ -131,7 +130,7 @@ class ReadOnlyGeneralSettings {
   }
 
   /// sets writes to disk the [WeeklyTimeTable] data
-  Future<void> setWeeklyTimeTable(WeeklyTimeTable value) async {
+  Future<void> saveWeeklyTimeTable(WeeklyTimeTable value) async {
     _wtt.copyValues(value);
     await _shPrefs.setString(
       JsonKeys.weeklyTimeTableKey,

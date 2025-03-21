@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mypills/model/global_functions.dart';
 
 import '../l10n/app_localizations.dart';
 import '../styles/app_styles.dart';
@@ -77,9 +78,6 @@ class CustomBackButton extends StatelessWidget {
               if (result) {
                 discardChanges!.call();
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(t.pendingChangesDiscarded)),
-                  );
                   Navigator.of(context).pop();
                 }
               }

@@ -161,9 +161,8 @@ class WeeklyTimeTable {
   bool _modified;
 
   /// Create an empty weekly time table
-  WeeklyTimeTable.empty(
-    ReadOnlyGeneralPreferences callback,
-  ) : _callback = callback,
+  WeeklyTimeTable.empty(ReadOnlyGeneralPreferences callback)
+    : _callback = callback,
       _defaultDaysMeals = {},
       _defaultDaysTimeToSleep = GeneralPreferences.defaultTimeToSleep,
       _specialWeekdays = DayOfWeekPartitions(
@@ -205,10 +204,8 @@ class WeeklyTimeTable {
 
   // use Map<String, dynamic> parsedJson = jsonDecode(json);
   /// constructor from Json object got from jsonDecode of a string
-  WeeklyTimeTable.fromJson(
-    this._callback,
-    Map<String, dynamic> parsedJson,
-  ) : _defaultDaysMeals = _timeTableFromJson(
+  WeeklyTimeTable.fromJson(this._callback, Map<String, dynamic> parsedJson)
+    : _defaultDaysMeals = _timeTableFromJson(
         parsedJson['defaultMeals'] as Map<String, dynamic>,
       ),
       _defaultDaysTimeToSleep =
@@ -656,29 +653,20 @@ class WeeklyTimeTable {
 
 /// Edit provider for a WeeklyTimeTable
 class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
+  //
+  /// Function called when automatic changes are made
+  final void Function() notifyAutomaticChanges;
+  /// Function called when the dayset is empty
+  /// Dayset must be defined to add meals into an Alt-partition
+  final void Function() notifyEmptyDayset;
+
   /// The WeeklyTimeTable edit provider
   /// is always built from an existing WeeklyTimeTable
-  EditProviderWeeklyTimeTable(super.wtt) : super.clone();
-
-  //TODO: use a callback function
-  void _notifyChanges(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(t.timeTableModifiedWarning),
-        backgroundColor: Colors.red,
-      ),
-    );
-    notifyListeners();
-  }
-
-  //TODO: use a callback function
-  void _notifyEmptyDayset(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(t.emptyDaysetError), backgroundColor: Colors.red),
-    );
-  }
+  EditProviderWeeklyTimeTable(
+    super.wtt,
+    this.notifyAutomaticChanges,
+    this.notifyEmptyDayset,
+  ) : super.clone();
 
   /// Define which days of week are "special"
   void defineSpecialWeekDays(Set<DayOfWeek> weekDays, int altTimeTable) {
@@ -721,7 +709,6 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
   /// Add a meal definition
   /// It can also be used for special days, using the [altTimeTable]
   void defineMeal(
-    BuildContext context,
     Meal meal,
     (TimeOfDay, SpeedLabel) value, [
     int? altTimeTable,
@@ -745,7 +732,7 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
         assert(!_specialDaysMeals[altTimeTable].containsKey(meal));
         if (_specialWeekdays.partitionWeekdays(altTimeTable).isEmpty) {
           _specialDaysMeals[altTimeTable].clear();
-          _notifyEmptyDayset(context);
+          notifyEmptyDayset();
         } else {
           _specialDaysMeals[altTimeTable][meal] = value;
           // coherence
@@ -766,7 +753,7 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
       }
       _modified = true;
       notifyListeners();
-      if (timeTableModified) _notifyChanges(context);
+      if (timeTableModified) notifyAutomaticChanges();
     } else {
       developer.log(
         "Can't add the Meal $meal, because already exists",
@@ -777,7 +764,7 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
 
   /// Remove a meal from the collection
   /// It can also be used for special days, using the [altTimeTable]
-  void removeMeal(BuildContext context, Meal meal, [int? altTimeTable]) {
+  void removeMeal(Meal meal, [int? altTimeTable]) {
     if (isMealDefined(meal, altTimeTable)) {
       developer.log("- remove Meal $meal", level: Level.FINER.value);
       if (altTimeTable == null) {
@@ -802,7 +789,6 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
   /// Set the time for a meal
   /// It can also be used for special days, using the [altTimeTable]
   void defineMealTime(
-    BuildContext context,
     Meal meal,
     TimeOfDay mealtime, [
     int? altTimeTable,
@@ -864,7 +850,7 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
       if (hasChanges) {
         _modified = true;
         notifyListeners();
-        if (timeTableModified) _notifyChanges(context);
+        if (timeTableModified) notifyAutomaticChanges();
       }
     } else {
       developer.log(
@@ -879,7 +865,6 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
   /// Set the time for a meal
   /// It can also be used for special days, using the [altTimeTable]
   void defineMealSpeed(
-    BuildContext context,
     Meal meal,
     SpeedLabel speed, [
     int? altTimeTable,
@@ -940,7 +925,7 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
       if (hasChanges) {
         _modified = true;
         notifyListeners();
-        if (timeTableModified) _notifyChanges(context);
+        if (timeTableModified) notifyAutomaticChanges();
       }
     } else {
       developer.log(
@@ -954,7 +939,6 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
 
   /// Set timeToSleep configuration
   void setTimeToSleep(
-    BuildContext context,
     TimeOfDay value, [
     int? altTimeTable,
   ]) {
@@ -1015,7 +999,7 @@ class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
       hasChanges = effectiveSet(value, altTimeTable);
     } else if (effectiveSet(minTimeToSleep, altTimeTable)) {
       hasChanges = true;
-      _notifyChanges(context);
+      notifyAutomaticChanges();
     }
     if (hasChanges) {
       _modified = true;

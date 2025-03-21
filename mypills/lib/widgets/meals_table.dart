@@ -152,7 +152,6 @@ class _MealsTableState extends State<MealsTable> {
                                       if (value != null) {
                                         setState(() {
                                           wtt.defineMealSpeed(
-                                            context,
                                             meal,
                                             value,
                                             widget.mealsPartition,
@@ -204,14 +203,13 @@ class _MealsTableState extends State<MealsTable> {
                                 if (value != null) {
                                   setState(() {
                                     if (value && !meals.containsKey(meal)) {
-                                      wtt.defineMeal(context, meal, (
+                                      wtt.defineMeal(meal, (
                                         mealTime,
                                         mealSpeed,
                                       ), widget.mealsPartition);
                                     } else if (!value &&
                                         meals.containsKey(meal)) {
                                       wtt.removeMeal(
-                                        context,
                                         meal,
                                         widget.mealsPartition,
                                       );
@@ -270,7 +268,6 @@ class _MealsTableState extends State<MealsTable> {
                                   if (value != null) {
                                     setState(() {
                                       wtt.defineMealTime(
-                                        context,
                                         meal,
                                         value,
                                         widget.mealsPartition,
@@ -372,7 +369,6 @@ class _MealsTableState extends State<MealsTable> {
                           if (value != null) {
                             setState(() {
                               wtt.setTimeToSleep(
-                                context,
                                 value,
                                 widget.mealsPartition,
                               );

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 // Localization
 import '../l10n/app_localizations.dart';
 // Project files
+import '../model/global_functions.dart';
 import '../styles/app_styles.dart';
 import '../providers/config_preferences.dart';
 import '../providers/edit_providers/edit_provider_time_preferences.dart';
@@ -47,6 +48,7 @@ class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
                       );
                       FocusScope.of(context).unfocus();
                       timePreferencesProvider.discardChanges();
+                      GlobalFunctions.notifyUndo(context, t);
                       setState(() {
                         editorKey = GlobalKey();
                       });
@@ -108,7 +110,10 @@ class _TimePreferencesScreenState extends State<TimePreferencesScreen> {
           elevation: 4,
           leading: CustomBackButton(
             areThereChanges: () => timePreferencesProvider.hasChanges,
-            discardChanges: timePreferencesProvider.discardChanges,
+            discardChanges: () {
+              timePreferencesProvider.discardChanges();
+              GlobalFunctions.notifyUndo(context, t);
+            },
             //NOTE: discard do not affect widget setState, as it moves back
           ),
           actions: <Widget>[discardChangesButton(), saveValuesButton()],

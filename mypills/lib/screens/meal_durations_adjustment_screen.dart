@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 // Project files
 import '../model/global_constants.dart';
+import '../model/global_functions.dart';
 import '../styles/app_styles.dart';
 import '../providers/config_preferences.dart';
 import '../providers/edit_providers/edit_provider_meal_durations_adjustment.dart';
@@ -49,6 +50,7 @@ class _MealDurationsAdjustmentScreenState
                       );
                       FocusScope.of(context).unfocus();
                       mealDurationsAdjustmentProvider.discardChanges();
+                      GlobalFunctions.notifyUndo(context, t);
                       setState(() {
                         editorKey = GlobalKey();
                       });
@@ -111,7 +113,10 @@ class _MealDurationsAdjustmentScreenState
           elevation: 4,
           leading: CustomBackButton(
             areThereChanges: () => mealDurationsAdjustmentProvider.hasChanges,
-            discardChanges: mealDurationsAdjustmentProvider.discardChanges,
+            discardChanges: () {
+              mealDurationsAdjustmentProvider.discardChanges();
+              GlobalFunctions.notifyUndo(context, t);
+            },
             //NOTE: discard do not affect widget setState, as it moves back
           ),
           actions: <Widget>[discardChangesButton(), saveValuesButton()],

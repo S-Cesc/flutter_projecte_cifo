@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 // Localization
 import '../l10n/app_localizations.dart';
 // Project files
+import '../model/global_functions.dart';
 import '../providers/config_preferences.dart';
 import '../providers/edit_providers/edit_provider_alarm_preferences.dart';
 import '../styles/app_styles.dart';
@@ -47,6 +48,7 @@ class _AlarmPreferencesScreenState extends State<AlarmPreferencesScreen> {
                       );
                       FocusScope.of(context).unfocus();
                       alarmPreferencesProvider.discardChanges();
+                      GlobalFunctions.notifyUndo(context, t);
                       setState(() {
                         editorKey = GlobalKey();
                       });
@@ -108,7 +110,10 @@ class _AlarmPreferencesScreenState extends State<AlarmPreferencesScreen> {
           elevation: 4,
           leading: CustomBackButton(
             areThereChanges: () => alarmPreferencesProvider.hasChanges,
-            discardChanges: alarmPreferencesProvider.discardChanges,
+            discardChanges: () {
+              alarmPreferencesProvider.discardChanges();
+              GlobalFunctions.notifyUndo(context, t);
+            },
             //NOTE: discard do not affect widget setState, as it moves back
           ),
           actions: <Widget>[discardChangesButton(), saveValuesButton()],

@@ -53,4 +53,5 @@ class GlobalConstants {
   /// Dynamic duration of a tooltip
   static Duration tooltipDuration(int messageLength) =>
       Duration(seconds: 1 + messageLength ~/ 5);
+
 }

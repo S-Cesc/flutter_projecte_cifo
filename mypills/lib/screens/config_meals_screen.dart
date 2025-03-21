@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:mypills/model/global_functions.dart';
 import 'package:mypills/model/weekly_time_table.dart';
 import 'package:provider/provider.dart';
 // Localizations
@@ -33,8 +34,7 @@ class _ConfigMealsScreenState extends State<ConfigMealsScreen> {
 
     Future<void> saveValues(EditProviderWeeklyTimeTable wtt) async {
       final pref = context.read<ConfigPreferences>();
-      // TODO: value-copy only
-      await pref.generalSettings.setWeeklyTimeTable(wtt as WeeklyTimeTable);
+      await pref.generalSettings.saveWeeklyTimeTable(wtt as WeeklyTimeTable);
       setState(() {});
     }
 
@@ -44,6 +44,7 @@ class _ConfigMealsScreenState extends State<ConfigMealsScreen> {
       final pref = context.read<ConfigPreferences>();
       wtt.copyValues(pref.generalSettings.wtt);
       wtt.resetModified();
+      GlobalFunctions.notifyUndo(context, t);
     }
 
     Future<void> requery(EditProviderWeeklyTimeTable wtt) async {
@@ -52,10 +53,30 @@ class _ConfigMealsScreenState extends State<ConfigMealsScreen> {
       setState(() {});
     }
 
+    void notifyAutomatichanges() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t.timeTableModifiedWarning),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+
+    void notifyEmptyDayset() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t.emptyDaysetError),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+
     return ChangeNotifierProvider(
       create:
           (context) => EditProviderWeeklyTimeTable(
             context.read<ConfigPreferences>().generalSettings.wtt,
+            notifyAutomatichanges,
+            notifyEmptyDayset,
           ),
       child: Builder(
         builder: (context) {
