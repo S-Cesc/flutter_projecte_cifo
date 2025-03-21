@@ -7,6 +7,12 @@ class EditProviderTimePreferences {
   final GeneralSettings _settings;
   final ValueNotifier<bool> _hasChanges = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _hasValidChanges = ValueNotifier<bool>(false);
+  final List<bool> _changes = List.of([
+    false,
+    false,
+    false,
+    false,
+  ], growable: false);
 
   int? _longBefore;
   int? _before;
@@ -34,30 +40,36 @@ class EditProviderTimePreferences {
   int? get minutesLongAfterMeals => _longAfter;
 
   /// Are there any value changed?
-  bool get hasChanges => _hasChanges.value;
+  bool get hasChanges => _changes.any((x) => x);
+
+  void _checkChanges() {
+    bool isChanged = hasChanges;
+    _hasChanges.value = isChanged;
+    _hasValidChanges.value = isChanged && hasValidValues;
+  }
 
   set minutesLongBeforeMeals(int? value) {
     _longBefore = value;
-    _hasChanges.value = (value != _settings.data.minutesLongBefore);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[0] = _longBefore != _settings.data.minutesLongBefore;
+    _checkChanges();
   }
 
   set minutesBeforeMeals(int? value) {
     _before = value;
-    _hasChanges.value = (value != _settings.data.minutesBefore);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[1] = _before != _settings.data.minutesBefore;
+    _checkChanges();
   }
 
   set minutesAfterMeals(int? value) {
     _after = value;
-    _hasChanges.value = (value != _settings.data.minutesAfter);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[2] = _after != _settings.data.minutesAfter;
+    _checkChanges();
   }
 
   set minutesLongAfterMeals(int? value) {
     _longAfter = value;
-    _hasChanges.value = (value != _settings.data.minutesLongAfter);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[3] = _longAfter != _settings.data.minutesLongAfter;
+    _checkChanges();
   }
 
   /// Are all the values valid? It must be checked to save the values

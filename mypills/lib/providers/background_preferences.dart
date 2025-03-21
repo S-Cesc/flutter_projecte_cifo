@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/alarm.dart';
 import '../model/general_preferences.dart';
+import '../model/json_keys.dart';
 import '../model/weekly_time_table.dart';
 import 'general_settings.dart';
 
@@ -27,12 +28,12 @@ class BackgroundPreferences {
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs;
-  late GeneralSettings _generalSettings;
+  late ReadOnlyGeneralSettings _generalSettings;
 
   Alarm? _currentAlarm;
 
   BackgroundPreferences._() : _shPrefs = SharedPreferencesAsync() {
-    _generalSettings = GeneralSettings(_shPrefs, null);
+    _generalSettings = ReadOnlyGeneralSettings(_shPrefs);
   }
 
   /// Instance creation: Get the singleton
@@ -68,7 +69,7 @@ class BackgroundPreferences {
     if (_currentAlarm?.id == alarmId) {
       return _currentAlarm;
     } else {
-      final String key = GeneralSettings.alarmJsonKey(alarmId);
+      final String key = JsonKeys.alarmJsonKey(alarmId);
       final json = await _shPrefs.getString(key);
       if (json != null) {
         try {
@@ -93,7 +94,7 @@ class BackgroundPreferences {
     if (_currentAlarm != null && _currentAlarm!.id == alarmId) {
       final Map<String, dynamic> jsonStructured = _currentAlarm!.toJson();
       await _shPrefs.setString(
-        GeneralSettings.alarmJsonKey(alarmId),
+        JsonKeys.alarmJsonKey(alarmId),
         jsonEncode(jsonStructured),
       );
     } else {

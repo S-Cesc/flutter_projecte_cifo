@@ -25,6 +25,10 @@ class DayOfWeekPartitions {
     assert(numberOfSubsets > 0 && numberOfSubsets <= 7);
   }
 
+  /// Clone from another instance
+  DayOfWeekPartitions.clone(DayOfWeekPartitions value)
+    : _partitionsWeekdays = Uint8List.fromList(value._partitionsWeekdays);
+
   /// Restore from a String
   /// The String must be build with toString() method
   factory DayOfWeekPartitions.parse(String value) {

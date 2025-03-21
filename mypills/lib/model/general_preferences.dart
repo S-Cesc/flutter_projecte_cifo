@@ -39,7 +39,7 @@ base class ReadOnlyGeneralPreferences {
   (int, int) _supperMinutes;
 
   /// Ctor
-  ReadOnlyGeneralPreferences(
+  ReadOnlyGeneralPreferences._(
     this._alarmDurationSeconds,
     this._alarmSnoozeSeconds,
     this._alarmRepeatTimes,
@@ -57,6 +57,55 @@ base class ReadOnlyGeneralPreferences {
     this._dinnerMinutes,
     this._supperMinutes,
   );
+
+  /// Ctor: use a list of int values to create the object
+  factory ReadOnlyGeneralPreferences.create(List<int?> values) {
+    if (values.length != 24) {
+      throw ArgumentError.value(values, 'values', 'List must have 24 elements');
+    }
+    return ReadOnlyGeneralPreferences._(
+      values[0] ?? GeneralPreferences.defaultAlarmDurationSeconds,
+      values[1] ?? GeneralPreferences.defaultAlarmSnoozeSeconds,
+      values[2] ?? GeneralPreferences.defaultAlarmRepeatTimes,
+      values[3] ?? GeneralPreferences.defaultMinutesToDealWithAlarm,
+      values[4] ?? GeneralPreferences.defaultMinutesLongBefore,
+      values[5] ?? GeneralPreferences.defaultMinutesBefore,
+      values[6] ?? GeneralPreferences.defaultMinutesAfter,
+      values[7] ?? GeneralPreferences.defaultMinutesLongAfter,
+      (
+        values[8] ?? Meal.defaultMealDuration(Meal.breakfast).inMinutes,
+        values[9] ?? Meal.defaultMealDuration(Meal.breakfast).inMinutes,
+      ),
+      (
+        values[10] ?? Meal.defaultMealDuration(Meal.elevenses).inMinutes,
+        values[11] ?? Meal.defaultMealDuration(Meal.elevenses).inMinutes,
+      ),
+      (
+        values[12] ?? Meal.defaultMealDuration(Meal.brunch).inMinutes,
+        values[13] ?? Meal.defaultMealDuration(Meal.brunch).inMinutes,
+      ),
+      (
+        values[14] ?? Meal.defaultMealDuration(Meal.lunch).inMinutes,
+        values[15] ?? Meal.defaultMealDuration(Meal.lunch).inMinutes,
+      ),
+      (
+        values[16] ?? Meal.defaultMealDuration(Meal.tea).inMinutes,
+        values[17] ?? Meal.defaultMealDuration(Meal.tea).inMinutes,
+      ),
+      (
+        values[18] ?? Meal.defaultMealDuration(Meal.highTea).inMinutes,
+        values[19] ?? Meal.defaultMealDuration(Meal.highTea).inMinutes,
+      ),
+      (
+        values[20] ?? Meal.defaultMealDuration(Meal.dinner).inMinutes,
+        values[21] ?? Meal.defaultMealDuration(Meal.dinner).inMinutes,
+      ),
+      (
+        values[22] ?? Meal.defaultMealDuration(Meal.supper).inMinutes,
+        values[23] ?? Meal.defaultMealDuration(Meal.supper).inMinutes,
+      ),
+    );
+  }
 
   //----------------------------------------------------------------------------
   //-----------------------class rest of members--------------------------------
@@ -432,9 +481,13 @@ base class ReadOnlyGeneralPreferences {
   //-------- end class ---------------------------------------------------------
 }
 
-//=======================================================================
-// Using same file for class extension allows to access private fields ==
-//=======================================================================
+//==============================================================================
+//------------------------------------------------------------------------------
+//-------------- UPDATABLE VERSION ---------------------------------------------
+//------------------------------------------------------------------------------
+//==============================================================================
+//     Using same file for class extension allows to access private fields =====
+//==============================================================================
 
 /// Parameters for the general configuration of the application
 /// Writable class for use in setting configuration
@@ -469,7 +522,7 @@ final class GeneralPreferences extends ReadOnlyGeneralPreferences {
   /// max time to deal with alarm
   static const maxMinutesToDealWithAlarm = 40;
 
-  //-- ...Alarm settings defaults --//
+  //-- (1...) Alarm settings defaults --//
 
   /// default value alarm duration
   static const defaultAlarmDurationSeconds = kDebugMode ? 15 : 300;
@@ -505,7 +558,7 @@ final class GeneralPreferences extends ReadOnlyGeneralPreferences {
   /// max value
   static const maxMealDurationMinutes = 120;
 
-  //-- ...Meal durations defaults --//
+  //-- (3...) Meal durations defaults --//
 
   /// default value
   static const defaultMinutesLongBefore = 90;
@@ -525,8 +578,8 @@ final class GeneralPreferences extends ReadOnlyGeneralPreferences {
   //----------------------------------------------------------------------------
   //-----------------class state members and constructors ----------------------
 
-  /// Ctor AlarmPreferences editable
-  GeneralPreferences(
+  /// Ctor GeneralPreferences editable
+  GeneralPreferences._(
     super._alarmDurationSeconds,
     super._alarmSnoozeSeconds,
     super._alarmRepeatTimes,
@@ -543,7 +596,56 @@ final class GeneralPreferences extends ReadOnlyGeneralPreferences {
     super._highTeaMinutes,
     super._dinnerMinutes,
     super._supperMinutes,
-  );
+  ) : super._();
+
+  /// Ctor: use a list of int values to create the object
+  factory GeneralPreferences.create(List<int?> values) {
+    if (values.length != 24) {
+      throw ArgumentError.value(values, 'values', 'List must have 24 elements');
+    }
+    return GeneralPreferences._(
+      values[0] ?? GeneralPreferences.defaultAlarmDurationSeconds,
+      values[1] ?? GeneralPreferences.defaultAlarmSnoozeSeconds,
+      values[2] ?? GeneralPreferences.defaultAlarmRepeatTimes,
+      values[3] ?? GeneralPreferences.defaultMinutesToDealWithAlarm,
+      values[4] ?? GeneralPreferences.defaultMinutesLongBefore,
+      values[5] ?? GeneralPreferences.defaultMinutesBefore,
+      values[6] ?? GeneralPreferences.defaultMinutesAfter,
+      values[7] ?? GeneralPreferences.defaultMinutesLongAfter,
+      (
+        values[8] ?? Meal.defaultMealDuration(Meal.breakfast).inMinutes,
+        values[9] ?? Meal.defaultMealDuration(Meal.breakfast).inMinutes,
+      ),
+      (
+        values[10] ?? Meal.defaultMealDuration(Meal.elevenses).inMinutes,
+        values[11] ?? Meal.defaultMealDuration(Meal.elevenses).inMinutes,
+      ),
+      (
+        values[12] ?? Meal.defaultMealDuration(Meal.brunch).inMinutes,
+        values[13] ?? Meal.defaultMealDuration(Meal.brunch).inMinutes,
+      ),
+      (
+        values[14] ?? Meal.defaultMealDuration(Meal.lunch).inMinutes,
+        values[15] ?? Meal.defaultMealDuration(Meal.lunch).inMinutes,
+      ),
+      (
+        values[16] ?? Meal.defaultMealDuration(Meal.tea).inMinutes,
+        values[17] ?? Meal.defaultMealDuration(Meal.tea).inMinutes,
+      ),
+      (
+        values[18] ?? Meal.defaultMealDuration(Meal.highTea).inMinutes,
+        values[19] ?? Meal.defaultMealDuration(Meal.highTea).inMinutes,
+      ),
+      (
+        values[20] ?? Meal.defaultMealDuration(Meal.dinner).inMinutes,
+        values[21] ?? Meal.defaultMealDuration(Meal.dinner).inMinutes,
+      ),
+      (
+        values[22] ?? Meal.defaultMealDuration(Meal.supper).inMinutes,
+        values[23] ?? Meal.defaultMealDuration(Meal.supper).inMinutes,
+      ),
+    );
+  }
 
   //----------------------------------------------------------------------------
   //-----------------------class special members--------------------------------

@@ -117,18 +117,20 @@
   "mediumLabel": "Normal",
   "fastLabel": "Rápido",
   
-  "alarmList": "Lista de alarmas",
-  "alarms": "Alarmas",
   "weeklyTimetable": "Rutina semanal",
-  "mealsForPills": "Comidas para pastillas",
   "weeklyDefaultTimetable": "Usual",
   "weeklyAltTimetable1": "Alt-1",
   "weeklyAltTimetable2": "Alt-2",
   "weeklyAltTimetable3": "Alt-3",
   "defaultWeeklyTimetable": "Comidas que realiza habitualmente y a qué hora",
   "specialWeeklyTimetable": "Comidas y su hora en los días determinados",
-  "configMealsTooltip": "Deben definirse las comidas de cada día, para que el sistema pueda conocer los intervalos de tiempo entre comidas. Además se pueden definir otras tres rutinas alternativas para días concretos de la semana.",
+  "notFullyDefined": "Se ha de definir",
+  "configMealsTooltip": "Deben definirse las comidas de cada día, para que el sistema pueda conocer los intervalos de tiempo entre comidas. Además, opcionalmente, se pueden definir hasta otras tres rutinas alternativas para días concretos de la semana.",
 
+  "mealsForPills": "Comidas para pastillas",
+
+  "alarmList": "Lista de alarmas",
+  "alarms": "Alarmas",
   "createNewAlarm": "Crear nueva alarma",
 
   "pillsLongBeforeBreakfast": "pastillas de la mañana",

@@ -4,6 +4,7 @@ import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mypills/model/json_keys.dart';
 // Localizations
 import '../l10n/app_localizations.dart';
 // Project files
@@ -27,14 +28,6 @@ class Alarm implements Comparable<Alarm> {
   //
   //----------------------------------------------------------------------------
   //-------------------------static/constant------------------------------------
-
-  static const _pairKey = 'IdKey';
-  static const _lastShotKey = 'lastShot';
-  static const _stoppedKey = 'stopped';
-  static const _dealingWithKey = 'dealingWith';
-  static const _isRunningKey = 'isRunning';
-  static const _isSnoozedKey = 'isSnoozed';
-  static const _actualReplayKey = 'nReplay';
 
   /// Get the string key used to store the alarm
   /// from its key pair ([meal], [pillMealTime])
@@ -123,13 +116,13 @@ class Alarm implements Comparable<Alarm> {
 
   /// Build Alarm fromJson decoded
   Alarm.fromJson(Map<String, dynamic> json)
-    : pair = MealPillmealtimePair(json[_pairKey] as int),
-      _lastShot = DateTime.tryParse(json[_lastShotKey].toString()),
-      _stopped = DateTime.tryParse(json[_stoppedKey].toString()),
-      _dealingWith = DateTime.tryParse(json[_dealingWithKey].toString()),
-      _isRunning = json[_isRunningKey] as bool,
-      _isSnoozed = json[_isSnoozedKey] as bool,
-      _actualReplay = json[_actualReplayKey] as int;
+    : pair = MealPillmealtimePair(json[JsonKeys.pairKey] as int),
+      _lastShot = DateTime.tryParse(json[JsonKeys.lastShotKey].toString()),
+      _stopped = DateTime.tryParse(json[JsonKeys.stoppedKey].toString()),
+      _dealingWith = DateTime.tryParse(json[JsonKeys.dealingWithKey].toString()),
+      _isRunning = json[JsonKeys.isRunningKey] as bool,
+      _isSnoozed = json[JsonKeys.isSnoozedKey] as bool,
+      _actualReplay = json[JsonKeys.actualReplayKey] as int;
 
   //----------------------------------------------------------------------------
   //-----------------------class special members--------------------------------
@@ -149,13 +142,13 @@ class Alarm implements Comparable<Alarm> {
   /// Convert to a Json object which must be encoded to became a string
   Map<String, dynamic> toJson() {
     return {
-      _pairKey: id,
-      _lastShotKey: _lastShot?.toIso8601String(),
-      _stoppedKey: _stopped?.toIso8601String(),
-      _dealingWithKey: _dealingWith?.toIso8601String(),
-      _isRunningKey: isRunning,
-      _isSnoozedKey: isSnoozed,
-      _actualReplayKey: _actualReplay,
+      JsonKeys.pairKey: id,
+      JsonKeys.lastShotKey: _lastShot?.toIso8601String(),
+      JsonKeys.stoppedKey: _stopped?.toIso8601String(),
+      JsonKeys.dealingWithKey: _dealingWith?.toIso8601String(),
+      JsonKeys.isRunningKey: isRunning,
+      JsonKeys.isSnoozedKey: isSnoozed,
+      JsonKeys.actualReplayKey: _actualReplay,
     };
   }
 

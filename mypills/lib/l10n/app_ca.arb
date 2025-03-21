@@ -116,18 +116,20 @@
   "mediumLabel": "Normal",
   "fastLabel": "Ràpid",
 
-  "alarmList": "Llista d'alarmes",
-  "alarms": "Alarmes",
   "weeklyTimetable": "Rutina setmanal",
-  "mealsForPills": "Menjades per a pastilles",
   "weeklyDefaultTimetable": "Usual",
   "weeklyAltTimetable1": "Alt-1",
   "weeklyAltTimetable2": "Alt-2",
   "weeklyAltTimetable3": "Alt-3",
   "defaultWeeklyTimetable": "Menjars que feu habitualment i a quina hora",
   "specialWeeklyTimetable": "Menjars i hora en els dies determinats",
-  "configMealsTooltip": "Han de definir-se els menjars de cada dia, perquè el sistema pugui conèixer els intervals de temps entre menjars. A més es poden definir altres tres rutines alternatives per a dies concrets de la setmana.",
+  "notFullyDefined": "S'ha de definir",
+  "configMealsTooltip": "Han de definir-se els menjars de cada dia, perquè el sistema pugui conèixer els intervals de temps entre menjars. A més, opcionalment, es poden definir fins a altres tres rutines alternatives per a dies concrets de la setmana.",
 
+  "mealsForPills": "Menjades per a pastilles",
+
+  "alarmList": "Llista d'alarmes",
+  "alarms": "Alarmes",
   "createNewAlarm": "Crear nova alarma",
 
   "pillsLongBeforeBreakfast": "pastilles del matí",

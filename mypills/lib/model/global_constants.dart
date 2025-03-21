@@ -19,6 +19,10 @@ class GlobalConstants {
   static const int maxMinutesBetweenMeals =
       4 * TimeOfDay.minutesPerHour + 2 * TimeOfDay.minutesPerHour ~/ 3;
 
+  /// Min minutes between meals is added to meal duration
+  /// It sets a minimal margin between meals
+  static const int minMinutesBetweenMeals = 5;
+
   /// Max number of retries for operations not expected to fail
   static const maxRetries = 3;
 

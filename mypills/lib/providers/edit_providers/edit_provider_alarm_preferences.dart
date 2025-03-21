@@ -7,6 +7,12 @@ class EditProviderAlarmPreferences {
   final GeneralSettings _settings;
   final ValueNotifier<bool> _hasChanges = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _hasValidChanges = ValueNotifier<bool>(false);
+  final List<bool> _changes = List.of([
+    false,
+    false,
+    false,
+    false,
+  ], growable: false);
 
   int? _alarmDurationSeconds;
   int? _alarmSnoozeSeconds;
@@ -35,30 +41,37 @@ class EditProviderAlarmPreferences {
   int? get minutesToDealWithAlarm => _minutesToDealWithAlarm;
 
   /// Are there any value changed?
-  bool get hasChanges => _hasChanges.value;
+  bool get hasChanges => _changes.any((x) => x);
+
+  void _checkChanges() {
+    bool isChanged = hasChanges;
+    _hasChanges.value = isChanged;
+    _hasValidChanges.value = isChanged && hasValidValues;
+  }
 
   set alarmDurationSeconds(int? value) {
     _alarmDurationSeconds = value;
-    _hasChanges.value = (value != _settings.data.alarmDurationSeconds);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[0] = _alarmDurationSeconds != _settings.data.alarmDurationSeconds;
+    _checkChanges();
   }
 
   set alarmSnoozeSeconds(int? value) {
     _alarmSnoozeSeconds = value;
-    _hasChanges.value = (value != _settings.data.alarmSnoozeSeconds);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[1] = _alarmSnoozeSeconds != _settings.data.alarmSnoozeSeconds;
+    _checkChanges();
   }
 
   set alarmRepeatTimes(int? value) {
     _alarmRepeatTimes = value;
-    _hasChanges.value = (value != _settings.data.alarmRepeatTimes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[2] = _alarmRepeatTimes != _settings.data.alarmRepeatTimes;
+    _checkChanges();
   }
 
   set minutesToDealWithAlarm(int? value) {
     _minutesToDealWithAlarm = value;
-    _hasChanges.value = (value != _settings.data.minutesToDealWithAlarm);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[3] =
+        _minutesToDealWithAlarm != _settings.data.minutesToDealWithAlarm;
+    _checkChanges();
   }
 
   /// Are all the values valid? It must be checked to save the values

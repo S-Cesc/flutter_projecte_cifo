@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 // Localization
 import '../l10n/app_localizations.dart';
 // Project files
+import '../model/weekly_time_table.dart';
 import '../model/enum/speed_label.dart';
 import '../styles/app_styles.dart';
 import '../model/enum/meal.dart';
@@ -21,18 +22,13 @@ class MealsTable extends StatefulWidget {
   /// the partition edited; null for the default one
   final int? mealsPartition;
 
-  /// Notify parent to check if there are updates
-  final void Function() callbackCheckUpdate;
-
   /// Lock the widget to disable edit
   final bool locked;
-  //final Future<void> Function(WeeklyTimeTable wtt) saveValues;
 
   /// Ctor
   const MealsTable({
     super.key,
     required this.mealsPartition,
-    required this.callbackCheckUpdate,
     this.locked = false,
   });
 
@@ -69,15 +65,16 @@ class _MealsTableState extends State<MealsTable> {
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) _initializeLocale(context);
+    EditProviderWeeklyTimeTable wtt = Provider.of<EditProviderWeeklyTimeTable>(
+      context,
+    );
     return Consumer<ConfigPreferences>(
       builder: (context, prefs, _) {
         final f = NumberFormat("00");
         var meals =
             (widget.mealsPartition != null)
-                ? prefs.generalSettings.wtt.specialDaysMeals(
-                  widget.mealsPartition!,
-                )
-                : prefs.generalSettings.wtt.defaultDaysMeals;
+                ? wtt.specialDaysMeals(widget.mealsPartition!)
+                : wtt.defaultDaysMeals;
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -100,16 +97,10 @@ class _MealsTableState extends State<MealsTable> {
                   if (v < Meal.values.length) {
                     final meal = Meal.fromOrdinal(v + 1);
                     var mealTime =
-                        prefs.generalSettings.wtt.mealTime(
-                          meal,
-                          widget.mealsPartition,
-                        ) ??
+                        wtt.mealTime(meal, widget.mealsPartition) ??
                         Meal.defaultMealTime(meal);
                     var mealSpeed =
-                        prefs.generalSettings.wtt.mealSpeed(
-                          meal,
-                          widget.mealsPartition,
-                        ) ??
+                        wtt.mealSpeed(meal, widget.mealsPartition) ??
                         Meal.defaultMealSpeed;
                     return CheckboxListTile(
                       title: Row(
@@ -132,24 +123,27 @@ class _MealsTableState extends State<MealsTable> {
                             menuWidth: 70,
                             padding: EdgeInsets.all(0),
                             items:
-                                SpeedLabel.values
-                                    .map<DropdownMenuItem<SpeedLabel>>((
-                                      SpeedLabel speed,
-                                    ) {
-                                      final txt =
-                                          prefs.generalSettings.data
-                                              .getMealDuration(meal, speed)
-                                              .inMinutes
-                                              .toString();
-                                      return DropdownMenuItem<SpeedLabel>(
-                                        value: speed,
-                                        child: Text(
-                                          "$txt '",
-                                          style: AppStyles.fonts.body(),
-                                        ),
-                                      );
-                                    })
-                                    .toList(),
+                                SpeedLabel.values.map<
+                                  DropdownMenuItem<SpeedLabel>
+                                >((SpeedLabel speed) {
+                                  final txt =
+                                      context
+                                          .select<ConfigPreferences, Duration>(
+                                            (ConfigPreferences p) => p
+                                                .generalSettings
+                                                .data
+                                                .getMealDuration(meal, speed),
+                                          )
+                                          .inMinutes
+                                          .toString();
+                                  return DropdownMenuItem<SpeedLabel>(
+                                    value: speed,
+                                    child: Text(
+                                      "$txt '",
+                                      style: AppStyles.fonts.body(),
+                                    ),
+                                  );
+                                }).toList(),
                             value: mealSpeed,
                             onChanged:
                                 widget.locked || !meals.containsKey(meal)
@@ -157,15 +151,13 @@ class _MealsTableState extends State<MealsTable> {
                                     : (SpeedLabel? value) {
                                       if (value != null) {
                                         setState(() {
-                                          prefs.generalSettings.wtt
-                                              .defineMealSpeed(
-                                                context,
-                                                meal,
-                                                value,
-                                                widget.mealsPartition,
-                                              );
+                                          wtt.defineMealSpeed(
+                                            context,
+                                            meal,
+                                            value,
+                                            widget.mealsPartition,
+                                          );
                                           mealSpeed = value;
-                                          widget.callbackCheckUpdate();
                                           // Debug check
                                           if (kDebugMode) {
                                             developer.log(
@@ -177,20 +169,14 @@ class _MealsTableState extends State<MealsTable> {
                                               "$meal = ${meals[meal]}",
                                               level: Level.FINER.value,
                                             );
-                                            final dMealTime = prefs
-                                                .generalSettings
-                                                .wtt
-                                                .mealTime(
-                                                  meal,
-                                                  widget.mealsPartition,
-                                                );
-                                            final dMealSpeed = prefs
-                                                .generalSettings
-                                                .wtt
-                                                .mealSpeed(
-                                                  meal,
-                                                  widget.mealsPartition,
-                                                );
+                                            final dMealTime = wtt.mealTime(
+                                              meal,
+                                              widget.mealsPartition,
+                                            );
+                                            final dMealSpeed = wtt.mealSpeed(
+                                              meal,
+                                              widget.mealsPartition,
+                                            );
                                             // check store object already updated
                                             developer.log(
                                               "Store Value: "
@@ -218,21 +204,18 @@ class _MealsTableState extends State<MealsTable> {
                                 if (value != null) {
                                   setState(() {
                                     if (value && !meals.containsKey(meal)) {
-                                      prefs.generalSettings.wtt.defineMeal(
-                                        context,
-                                        meal,
-                                        (mealTime, mealSpeed),
-                                        widget.mealsPartition,
-                                      );
+                                      wtt.defineMeal(context, meal, (
+                                        mealTime,
+                                        mealSpeed,
+                                      ), widget.mealsPartition);
                                     } else if (!value &&
                                         meals.containsKey(meal)) {
-                                      prefs.generalSettings.wtt.removeMeal(
+                                      wtt.removeMeal(
                                         context,
                                         meal,
                                         widget.mealsPartition,
                                       );
                                     }
-                                    widget.callbackCheckUpdate();
                                     // Debug check
                                     if (kDebugMode) {
                                       // Local value
@@ -249,22 +232,15 @@ class _MealsTableState extends State<MealsTable> {
                                         );
                                       }
                                       // Store value
-                                      if (prefs.generalSettings.wtt
-                                          .isMealDefined(meal)) {
-                                        final dMealTime = prefs
-                                            .generalSettings
-                                            .wtt
-                                            .mealTime(
-                                              meal,
-                                              widget.mealsPartition,
-                                            );
-                                        final dMealSpeed = prefs
-                                            .generalSettings
-                                            .wtt
-                                            .mealSpeed(
-                                              meal,
-                                              widget.mealsPartition,
-                                            );
+                                      if (wtt.isMealDefined(meal)) {
+                                        final dMealTime = wtt.mealTime(
+                                          meal,
+                                          widget.mealsPartition,
+                                        );
+                                        final dMealSpeed = wtt.mealSpeed(
+                                          meal,
+                                          widget.mealsPartition,
+                                        );
                                         developer.log(
                                           "Store Value: "
                                           "$meal = ($dMealTime, $dMealSpeed)",
@@ -293,30 +269,23 @@ class _MealsTableState extends State<MealsTable> {
                                   );
                                   if (value != null) {
                                     setState(() {
-                                      prefs.generalSettings.wtt.defineMealTime(
+                                      wtt.defineMealTime(
                                         context,
                                         meal,
                                         value,
                                         widget.mealsPartition,
                                       );
                                       mealTime = value;
-                                      widget.callbackCheckUpdate();
                                       // Debug check
                                       if (kDebugMode) {
-                                        final dMealTime = prefs
-                                            .generalSettings
-                                            .wtt
-                                            .mealTime(
-                                              meal,
-                                              widget.mealsPartition,
-                                            );
-                                        final dMealSpeed = prefs
-                                            .generalSettings
-                                            .wtt
-                                            .mealSpeed(
-                                              meal,
-                                              widget.mealsPartition,
-                                            );
+                                        final dMealTime = wtt.mealTime(
+                                          meal,
+                                          widget.mealsPartition,
+                                        );
+                                        final dMealSpeed = wtt.mealSpeed(
+                                          meal,
+                                          widget.mealsPartition,
+                                        );
                                         // check store object already updated
                                         developer.log(
                                           "Local value: "
@@ -371,8 +340,9 @@ class _MealsTableState extends State<MealsTable> {
                       ),
                     );
                   } else {
-                    TimeOfDay timeToSleep = prefs.generalSettings.wtt
-                        .getTimeToSleep(widget.mealsPartition);
+                    TimeOfDay timeToSleep = wtt.getTimeToSleep(
+                      widget.mealsPartition,
+                    );
                     return CheckboxListTile(
                       title: Text("Going to sleep"),
                       value: true,
@@ -401,12 +371,11 @@ class _MealsTableState extends State<MealsTable> {
                           );
                           if (value != null) {
                             setState(() {
-                              prefs.generalSettings.wtt.setTimeToSleep(
+                              wtt.setTimeToSleep(
                                 context,
                                 value,
                                 widget.mealsPartition,
                               );
-                              widget.callbackCheckUpdate();
                             });
                             developer.log(
                               "Time to sleep changed! $value",

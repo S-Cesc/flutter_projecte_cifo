@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 // Localization
 import '../l10n/app_localizations.dart';
 // Project files
+import '../model/weekly_time_table.dart';
 import 'meals_table.dart';
 import '../model/enum/day_of_week_bitset.dart';
 import '../model/enum/day_of_week.dart';
@@ -17,14 +18,10 @@ class MealsTableSpecialDays extends StatefulWidget {
   /// Partition which is referenced to
   final int partitionNumber;
 
-  /// Notify parent to check if there are updates
-  final void Function() callbackCheckUpdate;
-
   /// Ctor
   const MealsTableSpecialDays({
     super.key,
     required this.partitionNumber,
-    required this.callbackCheckUpdate,
   });
 
   @override
@@ -51,9 +48,15 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
 
   @override
   Widget build(BuildContext context) {
+
+    EditProviderWeeklyTimeTable wtt = Provider.of<EditProviderWeeklyTimeTable>(
+      context,
+    );
+
+
     // private local function
-    List<DayInWeek> computeSelectedWeekdays(ConfigPreferences prefs) {
-      final DayOfWeekBitset selectedWeekdays = prefs.generalSettings.wtt
+    List<DayInWeek> computeSelectedWeekdays() {
+      final DayOfWeekBitset selectedWeekdays = wtt
           .partitionWeekdays(widget.partitionNumber);
       // SelectWeekDays widget format for selectedWeekDays
       final List<DayInWeek> currentSelectedWeekdays = [
@@ -99,22 +102,19 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
     if (!_isInitialized) _initialize();
     return Consumer<ConfigPreferences>(
       builder: (context, prefs, child) {
-        final List<DayInWeek> currentSelectedWeekdays = computeSelectedWeekdays(
-          prefs,
-        );
+        final List<DayInWeek> currentSelectedWeekdays = computeSelectedWeekdays();
         final Key refreshKey = UniqueKey();
 
         //Weekdays onSelect update selectedWeekDays
         void updateWeekdays(List<String> days) {
           final weekDays =
               days.map((x) => DayOfWeek.fromId(int.parse(x))).toSet();
-          prefs.generalSettings.wtt.defineSpecialWeekDays(
+          wtt.defineSpecialWeekDays(
             weekDays,
             widget.partitionNumber,
           );
-          if (prefs.generalSettings.wtt.modified) {
+          if (wtt.modified) {
             setState(() {
-              widget.callbackCheckUpdate();
             });
           }
         }
@@ -140,7 +140,6 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
                       padding: EdgeInsets.only(left: 5),
                       child: MealsTable(
                         mealsPartition: widget.partitionNumber,
-                        callbackCheckUpdate: widget.callbackCheckUpdate,
                         locked: false, //selectedWeekDays.isEmpty,
                       ),
                     ),
@@ -161,7 +160,7 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
                           child: SelectWeekDays(
                             days: currentSelectedWeekdays,
                             onSelect: updateWeekdays,
-                            //key: refreshKey,
+                            key: refreshKey,
                           ),
                         ),
                       ],
@@ -178,7 +177,6 @@ class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
                       ),
                       child: MealsTable(
                         mealsPartition: widget.partitionNumber,
-                        callbackCheckUpdate: widget.callbackCheckUpdate,
                         locked: false, //selectedWeekDays.isEmpty,
                       ),
                     ),

@@ -345,16 +345,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fastLabel => 'Rápido';
 
   @override
-  String get alarmList => 'Lista de alarmas';
-
-  @override
-  String get alarms => 'Alarmas';
-
-  @override
   String get weeklyTimetable => 'Rutina semanal';
-
-  @override
-  String get mealsForPills => 'Comidas para pastillas';
 
   @override
   String get weeklyDefaultTimetable => 'Usual';
@@ -375,7 +366,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get specialWeeklyTimetable => 'Comidas y su hora en los días determinados';
 
   @override
-  String get configMealsTooltip => 'Deben definirse las comidas de cada día, para que el sistema pueda conocer los intervalos de tiempo entre comidas. Además se pueden definir otras tres rutinas alternativas para días concretos de la semana.';
+  String get notFullyDefined => 'Se ha de definir';
+
+  @override
+  String get configMealsTooltip => 'Deben definirse las comidas de cada día, para que el sistema pueda conocer los intervalos de tiempo entre comidas. Además, opcionalmente, se pueden definir hasta otras tres rutinas alternativas para días concretos de la semana.';
+
+  @override
+  String get mealsForPills => 'Comidas para pastillas';
+
+  @override
+  String get alarmList => 'Lista de alarmas';
+
+  @override
+  String get alarms => 'Alarmas';
 
   @override
   String get createNewAlarm => 'Crear nueva alarma';

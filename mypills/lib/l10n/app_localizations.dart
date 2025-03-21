@@ -710,29 +710,11 @@ abstract class AppLocalizations {
   /// **'Fast'**
   String get fastLabel;
 
-  /// Alarm list screen title
-  ///
-  /// In en, this message translates to:
-  /// **'Alarm list'**
-  String get alarmList;
-
-  /// Button & title Alarms
-  ///
-  /// In en, this message translates to:
-  /// **'Alarms'**
-  String get alarms;
-
   /// Button text for setting Weekly time for each meal
   ///
   /// In en, this message translates to:
   /// **'Weekly routine'**
   String get weeklyTimetable;
-
-  /// Button text for choosing the meals available for prescriptions
-  ///
-  /// In en, this message translates to:
-  /// **'Meals for pills'**
-  String get mealsForPills;
 
   /// Usual/Alt tabs
   ///
@@ -770,11 +752,35 @@ abstract class AppLocalizations {
   /// **'Meals and its time on designated days '**
   String get specialWeeklyTimetable;
 
+  /// Not enough meal times defined in the time table; overlay tag which appears in the button
+  ///
+  /// In en, this message translates to:
+  /// **'Needs to be defined'**
+  String get notFullyDefined;
+
   /// Tooltip for the config meals screen
   ///
   /// In en, this message translates to:
-  /// **'Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, three other alternative routines can be defined for specific days of the week.'**
+  /// **'Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, you can optionally define up to three alternative routines for specific days of the week.'**
   String get configMealsTooltip;
+
+  /// Button text for choosing the meals available for prescriptions
+  ///
+  /// In en, this message translates to:
+  /// **'Meals for pills'**
+  String get mealsForPills;
+
+  /// Alarm list screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm list'**
+  String get alarmList;
+
+  /// Button & title Alarms
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms'**
+  String get alarms;
 
   /// New alarm screen title
   ///

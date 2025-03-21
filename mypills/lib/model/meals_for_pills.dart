@@ -24,7 +24,7 @@ class MealsForPills {
 
   /// Function called on data update
   /// It allows call to NotifyListeners
-  final void Function()? _callbackOnUpdate;
+  final void Function()? _onChanged;
 
   bool _modified = false;
 
@@ -35,12 +35,12 @@ class MealsForPills {
   MealPillmealtimePair? _betweenMeals;
 
   /// Ctor
-  MealsForPills(void Function()? callbackOnUpdate)
-    : _callbackOnUpdate = callbackOnUpdate;
+  MealsForPills(void Function()? onChanged)
+    : _onChanged = onChanged;
 
   /// constructor from Json object got from jsonDecode of a string
   factory MealsForPills.fromJson(
-    void Function()? callbackOnUpdate,
+    void Function()? onChanged,
     String key,
     Map<String, dynamic> json,
   ) {
@@ -50,7 +50,7 @@ class MealsForPills {
       meals.map((e) => Meal.values[e as int]),
       growable: false,
     );
-    return MealsForPills(callbackOnUpdate)
+    return MealsForPills(onChanged)
       ..meals[0] = mealsList[0]
       ..meals[1] = mealsList[1]
       ..meals[2] = mealsList[2]
@@ -131,16 +131,16 @@ class MealsForPillsWithAlt extends MealsForPills {
   final List<MealsForPills> alt;
 
   /// Ctor
-  MealsForPillsWithAlt(super.callbackOnUpdate)
+  MealsForPillsWithAlt(super.onChanged)
     : alt = List<MealsForPills>.of([
-        MealsForPills(callbackOnUpdate),
-        MealsForPills(callbackOnUpdate),
-        MealsForPills(callbackOnUpdate),
+        MealsForPills(onChanged),
+        MealsForPills(onChanged),
+        MealsForPills(onChanged),
       ], growable: false);
 
   /// constructor from Json object got from jsonDecode of a string
   factory MealsForPillsWithAlt.fromJson(
-    void Function()? callbackOnUpdate,
+    void Function()? onChanged,
     String key,
     Map<String, dynamic> json,
   ) {
@@ -150,10 +150,10 @@ class MealsForPillsWithAlt extends MealsForPills {
       meals.map((e) => Meal.values[e as int]),
       growable: false,
     );
-    final alt1 = MealsForPills.fromJson(callbackOnUpdate, "${key}1", json);
-    final alt2 = MealsForPills.fromJson(callbackOnUpdate, "${key}2", json);
-    final alt3 = MealsForPills.fromJson(callbackOnUpdate, "${key}3", json);
-    return MealsForPillsWithAlt(callbackOnUpdate)
+    final alt1 = MealsForPills.fromJson(onChanged, "${key}1", json);
+    final alt2 = MealsForPills.fromJson(onChanged, "${key}2", json);
+    final alt3 = MealsForPills.fromJson(onChanged, "${key}3", json);
+    return MealsForPillsWithAlt(onChanged)
       ..meals[0] = mealsList[0]
       ..meals[1] = mealsList[1]
       ..meals[2] = mealsList[2]
@@ -257,7 +257,7 @@ class MealsForPillsWithAlt extends MealsForPills {
       }
       if (hasChanges) {
         _modified = true;
-        _callbackOnUpdate?.call();
+        _onChanged?.call();
       }
     }
   }

@@ -25,179 +25,186 @@ class ConfigMealsScreen extends StatefulWidget {
 }
 
 class _ConfigMealsScreenState extends State<ConfigMealsScreen> {
-  bool changed = false;
-
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
 
-    void callbackCheckUpdate() {
-      // if there are changes then notify
+    bool areThereChanges(EditProviderWeeklyTimeTable wtt) => wtt.modified;
+
+    Future<void> saveValues(EditProviderWeeklyTimeTable wtt) async {
       final pref = context.read<ConfigPreferences>();
-      final tmpResult = pref.generalSettings.wtt.modified;
-      if (tmpResult) {
-        setState(() {
-          changed = true;
-          // Notify listeners
-          pref.generalSettings.wtt.callbackUpdate();
-        });
-      }
+      // TODO: value-copy only
+      await pref.generalSettings.setWeeklyTimeTable(wtt as WeeklyTimeTable);
+      setState(() {});
     }
 
-    bool areThereChanges() => changed;
-
-    Future<void> saveValues() async {
+    //NOTE: discard do not affect widget setState,
+    // because it is used to move back
+    Future<void> discard(EditProviderWeeklyTimeTable wtt) async {
       final pref = context.read<ConfigPreferences>();
-      pref.generalSettings.wtt.callbackUpdate();
-      await pref.generalSettings.setWeeklyTimeTable(pref.generalSettings.wtt);
-      setState(() {
-        changed = false;
-        // Notify listeners
-        pref.generalSettings.wtt.callbackUpdate();
-      });
+      wtt.copyValues(pref.generalSettings.wtt);
+      wtt.resetModified();
     }
 
-    Future<void> discard() async {
-      final pref = context.read<ConfigPreferences>();
-      await pref.generalSettings.requery();
+    Future<void> requery(EditProviderWeeklyTimeTable wtt) async {
+      await discard(wtt);
+      // requery does not move back: restore state
+      setState(() {});
     }
 
-    Future<void> requery() async {
-      await discard();
-      setState(() {
-        changed = false;
-      });
-    }
-
-    return SafeArea(
-      child: DefaultTabController(
-        length: 4,
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
-          backgroundColor: AppStyles.colors.mantis,
-          appBar: AppBar(
-            backgroundColor: AppStyles.colors.ochre[700],
-            leading: CustomBackButton(
-              areThereChanges: areThereChanges,
-              discardChanges: discard,
-              //NOTE: discard do not affect widget setState, when it moves back
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: Stack(
-                children: [
-                  TabBar(
-                    isScrollable: true,
-                    tabs: [
-                      Center(
-                        child: Text(
-                          WeeklyTimeTable.partitionNames(t).$1,
-                          style: AppStyles.constFonts.display,
+    return ChangeNotifierProvider(
+      create:
+          (context) => EditProviderWeeklyTimeTable(
+            context.read<ConfigPreferences>().generalSettings.wtt,
+          ),
+      child: Builder(
+        builder: (context) {
+          return SafeArea(
+            child: DefaultTabController(
+              length: 4,
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: AppStyles.colors.mantis,
+                appBar: AppBar(
+                  backgroundColor: AppStyles.colors.ochre[700],
+                  leading: CustomBackButton(
+                    // Flutter error: context is not included in the clousure
+                    // so, you can't pass areThereChanges func as a parameter
+                    // because it depends on a provider defined in context
+                    // It seems that context has its own rules
+                    // Riverpod does not use the context!
+                    areThereChanges:
+                        areThereChanges(
+                              context.watch<EditProviderWeeklyTimeTable>(),
+                            )
+                            ? () => true
+                            : null,
+                    discardChanges:
+                        () => discard(
+                          context.read<EditProviderWeeklyTimeTable>(),
                         ),
-                      ),
-                      Center(
-                        child: Text(
-                          WeeklyTimeTable.partitionNames(t).$2[0],
-                          style: AppStyles.constFonts.labelLarge,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          WeeklyTimeTable.partitionNames(t).$2[1],
-                          style: AppStyles.constFonts.labelLarge,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          WeeklyTimeTable.partitionNames(t).$2[2],
-                          style: AppStyles.constFonts.labelLarge,
-                        ),
-                      ),
-                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: Tooltip(
-                      message: t.configMealsTooltip,
-                      triggerMode: TooltipTriggerMode.tap,
-                      showDuration: GlobalConstants.tooltipDuration(
-                        t.configMealsTooltip.length,
-                      ),
-                      child: Icon(Icons.help, color: AppStyles.colors.ochre),
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(kToolbarHeight),
+                    child: Stack(
+                      children: [
+                        TabBar(
+                          isScrollable: true,
+                          tabs: [
+                            Center(
+                              child: Text(
+                                WeeklyTimeTable.partitionNames(t).$1,
+                                style: AppStyles.constFonts.display,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                WeeklyTimeTable.partitionNames(t).$2[0],
+                                style: AppStyles.constFonts.labelLarge,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                WeeklyTimeTable.partitionNames(t).$2[1],
+                                style: AppStyles.constFonts.labelLarge,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                WeeklyTimeTable.partitionNames(t).$2[2],
+                                style: AppStyles.constFonts.labelLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Tooltip(
+                            message: t.configMealsTooltip,
+                            triggerMode: TooltipTriggerMode.tap,
+                            showDuration: GlobalConstants.tooltipDuration(
+                              t.configMealsTooltip.length,
+                            ),
+                            child: Icon(
+                              Icons.help,
+                              color: AppStyles.colors.ochre,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                  elevation: 4,
+                  actions: <Widget>[
+                    IconButton(
+                      onPressed:
+                          areThereChanges(
+                                context.watch<EditProviderWeeklyTimeTable>(),
+                              )
+                              ? () async {
+                                developer.log(
+                                  "Undo button clicked! ",
+                                  level: Level.FINER.value,
+                                );
+                                await requery(
+                                  context.read<EditProviderWeeklyTimeTable>(),
+                                );
+                              }
+                              : null,
+                      style: AppStyles.textButtonstyle,
+                      icon: const Icon(Icons.undo),
+                    ),
+                    TextButton(
+                      onPressed:
+                          areThereChanges(
+                                context.watch<EditProviderWeeklyTimeTable>(),
+                              )
+                              ? () async {
+                                developer.log(
+                                  "Save button clicked! ",
+                                  level: Level.FINER.value,
+                                );
+                                await saveValues(
+                                  context.read<EditProviderWeeklyTimeTable>(),
+                                );
+                              }
+                              : null,
+                      style: AppStyles.textButtonstyle,
+                      child: const Icon(Icons.archive),
+                    ),
+                  ],
+                ),
+                body: TabBarView(
+                  children: [
+                    OrientationBuilder(
+                      builder: (orientationContext, orientation) {
+                        if (orientation == Orientation.portrait) {
+                          return Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: MealsTable(mealsPartition: null),
+                          );
+                        } else {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 170,
+                              vertical: 10,
+                            ),
+                            child: MealsTable(mealsPartition: null),
+                          );
+                        }
+                      },
+                    ),
+                    for (var tabIndex = 0; tabIndex < 3; tabIndex++)
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: MealsTableSpecialDays(partitionNumber: tabIndex),
+                      ),
+                  ],
+                ),
               ),
             ),
-            elevation: 4,
-            actions: <Widget>[
-              IconButton(
-                onPressed:
-                    changed
-                        ? () async {
-                          developer.log(
-                            "Undo button clicked! ",
-                            level: Level.FINER.value,
-                          );
-                          await requery();
-                        }
-                        : null,
-                style: AppStyles.textButtonstyle,
-                icon: const Icon(Icons.undo),
-              ),
-              TextButton(
-                onPressed:
-                    changed
-                        ? () async {
-                          developer.log(
-                            "Save button clicked! ",
-                            level: Level.FINER.value,
-                          );
-                          await saveValues();
-                        }
-                        : null,
-                style: AppStyles.textButtonstyle,
-                child: const Icon(Icons.archive),
-              ),
-            ],
-          ),
-          body: TabBarView(
-            children: [
-              OrientationBuilder(
-                builder: (orientationContext, orientation) {
-                  if (orientation == Orientation.portrait) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: MealsTable(
-                        mealsPartition: null,
-                        callbackCheckUpdate: callbackCheckUpdate,
-                      ),
-                    );
-                  } else {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 170,
-                        vertical: 10,
-                      ),
-                      child: MealsTable(
-                        mealsPartition: null,
-                        callbackCheckUpdate: callbackCheckUpdate,
-                      ),
-                    );
-                  }
-                },
-              ),
-              for (var tabIndex = 0; tabIndex < 3; tabIndex++)
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: MealsTableSpecialDays(
-                    partitionNumber: tabIndex,
-                    callbackCheckUpdate: callbackCheckUpdate,
-                  ),
-                ),
-            ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }

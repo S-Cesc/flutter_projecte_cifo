@@ -28,13 +28,14 @@ class WeeklyTimeTable {
   //----------------------------------------------------------------------------
   //-------------------------static/constant------------------------------------
 
-  /// Min minutes between meals added to meal duration
-  /// minimal margin: like coffe time after lunch
-  static const int _minMinutesBetweenMeals = 5;
+  /// Shortname
+  /// Min minutes between meals is added to meal duration
+  static const int minMinutesBetweenMeals =
+      GlobalConstants.minMinutesBetweenMeals;
 
   /// Shortname
   /// Allows time sequence to pass to the next day
-  static const int _maxMinutesBetweenMeals =
+  static const int maxMinutesBetweenMeals =
       GlobalConstants.maxMinutesBetweenMeals;
 
   /// Shortname
@@ -42,6 +43,20 @@ class WeeklyTimeTable {
 
   /// Shortname
   static const _nMealPrescriptions = GlobalConstants.nMealPrescriptions;
+
+  /// The names of every partition:
+  /// - The main one (without days of week)
+  /// - The others ones
+  static (String, List<String>) partitionNames(AppLocalizations t) {
+    return (
+      t.weeklyDefaultTimetable,
+      List.unmodifiable([
+        t.weeklyAltTimetable1,
+        t.weeklyAltTimetable2,
+        t.weeklyAltTimetable3,
+      ]),
+    );
+  }
 
   static Map<String, dynamic> _timeTableToJson(
     Map<Meal, (TimeOfDay, SpeedLabel)> value,
@@ -92,66 +107,50 @@ class WeeklyTimeTable {
   static List<dynamic> _lstTimeTableToJson(
     List<Map<Meal, (TimeOfDay, SpeedLabel)>> value,
   ) {
-    final List<Map<String, dynamic>> result = [];
-    for (var x in value) {
-      result.add(_timeTableToJson(x));
-    }
-    return result;
+    assert(value.length == _nAltMealTimeTables);
+    return List<Map<String, dynamic>>.generate(
+      value.length,
+      (int i) => _timeTableToJson(value[i]),
+      growable: false,
+    );
   }
 
   static List<Map<Meal, (TimeOfDay, SpeedLabel)>> _lstTimeTableFromJson(
     List<dynamic> value,
   ) {
-    final List<Map<Meal, (TimeOfDay, SpeedLabel)>> result = [];
-    for (var x in value) {
-      result.add(_timeTableFromJson(x as Map<String, dynamic>));
-    }
-    return result;
+    assert(value.length == _nAltMealTimeTables);
+    return List<Map<Meal, (TimeOfDay, SpeedLabel)>>.generate(
+      value.length,
+      (int i) => _timeTableFromJson(value[i] as Map<String, dynamic>),
+      growable: false,
+    );
   }
 
   static List<dynamic> _lstTimeToSleepToJson(List<TimeOfDay> value) {
-    final List<dynamic> result = [];
-    for (var d = 0; d < _nAltMealTimeTables; d++) {
-      result.add(value[d].toJsonString);
-    }
-    return result;
+    assert(value.length == _nAltMealTimeTables);
+    return List<dynamic>.generate(
+      value.length,
+      (int i) => value[i].toJsonString,
+      growable: false,
+    );
   }
 
-  static List<TimeOfDay> _lstTimeToSleepFromJson(
-    List<dynamic> jsonTimeToSleep,
-  ) {
-    final List<TimeOfDay> result = [];
-    for (var x in jsonTimeToSleep) {
-      result.add(
-        TimeOfDayExtension.parseTimeOfDay(x as String) ??
-            GeneralPreferences.defaultTimeToSleep,
-      );
-    }
-    return result;
-  }
-
-  /// The names of every partition:
-  /// - The main one (without days of week)
-  /// - The others ones
-  static (String, List<String>) partitionNames(AppLocalizations t) {
-    return (
-      t.weeklyDefaultTimetable,
-      List.unmodifiable([
-        t.weeklyAltTimetable1,
-        t.weeklyAltTimetable2,
-        t.weeklyAltTimetable3,
-      ]),
+  static List<TimeOfDay> _lstTimeToSleepFromJson(List<dynamic> value) {
+    assert(value.length == _nAltMealTimeTables);
+    return List<TimeOfDay>.generate(
+      value.length,
+      (int i) =>
+          TimeOfDayExtension.parseTimeOfDay(value[i] as String) ??
+          GeneralPreferences.defaultTimeToSleep,
+      growable: false,
     );
   }
 
   //----------------------------------------------------------------------------
   //----------class state members and constructors------------------------------
 
-  /// Function called on data update
-  /// It allows call to NotifyListeners
-  final void Function()? _callbackOnUpdate;
-
   /// Some functions need to call preferences settings
+  /// - Used to compute the meal durations
   final ReadOnlyGeneralPreferences _callback;
 
   final _MealMap _defaultDaysMeals;
@@ -162,8 +161,10 @@ class WeeklyTimeTable {
   bool _modified;
 
   /// Create an empty weekly time table
-  WeeklyTimeTable.empty(this._callback, this._callbackOnUpdate)
-    : _defaultDaysMeals = {},
+  WeeklyTimeTable.empty(
+    ReadOnlyGeneralPreferences callback,
+  ) : _callback = callback,
+      _defaultDaysMeals = {},
       _defaultDaysTimeToSleep = GeneralPreferences.defaultTimeToSleep,
       _specialWeekdays = DayOfWeekPartitions(
         numberOfSubsets: _nAltMealTimeTables,
@@ -180,11 +181,32 @@ class WeeklyTimeTable {
       ),
       _modified = false;
 
+  /// Clone from an other instance
+  @protected
+  WeeklyTimeTable.clone(WeeklyTimeTable wtt)
+    : _callback = wtt._callback,
+      _defaultDaysMeals = Map<Meal, (TimeOfDay, SpeedLabel)>.from(
+        wtt.defaultDaysMeals,
+      ),
+      _defaultDaysTimeToSleep = wtt.getTimeToSleep(null),
+      _specialWeekdays = DayOfWeekPartitions.clone(wtt.specialWeekdays),
+      _specialDaysMeals = List<_MealMap>.generate(
+        _nAltMealTimeTables,
+        (int i) =>
+            Map<Meal, (TimeOfDay, SpeedLabel)>.from(wtt.specialDaysMeals(i)),
+        growable: false,
+      ),
+      _specialDaysTimeToSleep = List<TimeOfDay>.generate(
+        _nAltMealTimeTables,
+        (int i) => wtt._specialDaysTimeToSleep[i],
+        growable: false,
+      ),
+      _modified = wtt._modified;
+
   // use Map<String, dynamic> parsedJson = jsonDecode(json);
   /// constructor from Json object got from jsonDecode of a string
   WeeklyTimeTable.fromJson(
     this._callback,
-    this._callbackOnUpdate,
     Map<String, dynamic> parsedJson,
   ) : _defaultDaysMeals = _timeTableFromJson(
         parsedJson['defaultMeals'] as Map<String, dynamic>,
@@ -230,14 +252,18 @@ class WeeklyTimeTable {
     };
   }
 
-  bool _isPartitionDefined(int i) {
-    return specialWeekdays.partitionWeekdays(i).count() > 0 &&
-        _specialDaysMeals[i].isNotEmpty;
-  }
-
-  bool _isPartitionConsistent(int i) {
-    return specialWeekdays.partitionWeekdays(i).count() > 0 ==
-        _specialDaysMeals[i].isNotEmpty;
+  /// Copy values from another WeeklyTimeTable
+  void copyValues(WeeklyTimeTable wtt) {
+    _defaultDaysMeals.clear();
+    _defaultDaysMeals.addAll(wtt._defaultDaysMeals);
+    _defaultDaysTimeToSleep = wtt._defaultDaysTimeToSleep;
+    _specialWeekdays.copyFrom(wtt._specialWeekdays);
+    for (int i = 0; i < _nAltMealTimeTables; i++) {
+      _specialDaysMeals[i].clear();
+      _specialDaysMeals[i].addAll(wtt._specialDaysMeals[i]);
+      _specialDaysTimeToSleep[i] = wtt._specialDaysTimeToSleep[i];
+    }
+    _modified = true;
   }
 
   /// Require a minimum of 3 meals a day (needed for prescriptions)
@@ -255,6 +281,7 @@ class WeeklyTimeTable {
         int i = 0;
         while (result && i < _nAltMealTimeTables) {
           if (_isPartitionConsistent(i)) {
+            // Only take into account the partitions that are defined
             if (_isPartitionDefined(i)) {
               result &= _specialDaysMeals[i].length >= _nMealPrescriptions;
             }
@@ -300,6 +327,16 @@ class WeeklyTimeTable {
     }
   }
 
+  bool _isPartitionDefined(int i) {
+    return specialWeekdays.partitionWeekdays(i).count() > 0 &&
+        _specialDaysMeals[i].isNotEmpty;
+  }
+
+  bool _isPartitionConsistent(int i) {
+    return specialWeekdays.partitionWeekdays(i).count() > 0 ==
+        _specialDaysMeals[i].isNotEmpty;
+  }
+
   //----------------------------------------------------------------------------
   //----------class special members---------------------------------------------
   //----------check coherence---------------------------------------------------
@@ -338,7 +375,7 @@ class WeeklyTimeTable {
   }
 
   /// Fix [fromMeal] subsequent values to ensure coherence
-  /// Use [fromMeal] null to fix all the entries
+  /// Use a [fromMeal] null value to fix all the entries
   /// Returns the value of the time to sleep updated
   TimeOfDay _ensureMealTimeCoherence(
     Meal? fromMeal,
@@ -378,9 +415,9 @@ class WeeklyTimeTable {
       TimeOfDay nextMealTime,
     ) {
       final TimeOfDay mealEndTime = mealTime.plusMinutes(
-        mealDurationMinutes + _minMinutesBetweenMeals,
+        mealDurationMinutes + minMinutesBetweenMeals,
       );
-      if (mealEndTime.isLater(nextMealTime, _maxMinutesBetweenMeals)) {
+      if (mealEndTime.isLater(nextMealTime, maxMinutesBetweenMeals)) {
         return mealEndTime;
       } else {
         return nextMealTime;
@@ -403,10 +440,7 @@ class WeeklyTimeTable {
         currentTimeNextMeal,
       );
       if (nextMeal != null) {
-        if (timeNextMeal.isLater(
-          currentTimeNextMeal,
-          _maxMinutesBetweenMeals,
-        )) {
+        if (timeNextMeal.isLater(currentTimeNextMeal, maxMinutesBetweenMeals)) {
           map[nextMeal] = (timeNextMeal, map[nextMeal]!.$2);
           notifyChanges?.call();
         }
@@ -426,7 +460,7 @@ class WeeklyTimeTable {
         );
         final firstMeal = min(map.keys);
         final newTimeToSleep = ensureMealMapCoherence(firstMeal, timeToSleep);
-        if (newTimeToSleep.gt(timeToSleep, _maxMinutesBetweenMeals)) {
+        if (newTimeToSleep.gt(timeToSleep, maxMinutesBetweenMeals)) {
           notifyChanges?.call();
           return newTimeToSleep;
         } else {
@@ -442,7 +476,7 @@ class WeeklyTimeTable {
           prevMeal ?? fromMeal,
           timeToSleep,
         );
-        if (newTimeToSleep.gt(timeToSleep, _maxMinutesBetweenMeals)) {
+        if (newTimeToSleep.gt(timeToSleep, maxMinutesBetweenMeals)) {
           notifyChanges?.call();
           return newTimeToSleep;
         } else {
@@ -604,34 +638,6 @@ class WeeklyTimeTable {
     return result.id >= from.id ? result : null;
   }
 
-  //----------------------------------------------------------------------------
-  //--------- UPDATE -----------------------------------------------------------
-  //----------------------------------------------------------------------------
-
-  /// callback call which allows notify listeners
-  /// when updating components of the object
-  /// without using the explicit update methods
-  void callbackUpdate() {
-    _callbackOnUpdate?.call();
-  }
-
-  void _notifyChanges(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(t.timeTableModifiedWarning),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-
-  void _notifyEmptyDayset(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(t.emptyDaysetError), backgroundColor: Colors.red),
-    );
-  }
-
   /// Is the meal defined?
   /// It can also be used for special days, using the [altTimeTable]
   bool isMealDefined(Meal meal, [int? altTimeTable]) {
@@ -640,6 +646,38 @@ class WeeklyTimeTable {
     } else {
       return _specialDaysMeals[altTimeTable].containsKey(meal);
     }
+  }
+}
+
+//==============================================================================
+//------------------------------------------------------------------------------
+//--------- Edit Provider (UPDATE) ---------------------------------------------
+//------------------------------------------------------------------------------
+
+/// Edit provider for a WeeklyTimeTable
+class EditProviderWeeklyTimeTable extends WeeklyTimeTable with ChangeNotifier {
+  /// The WeeklyTimeTable edit provider
+  /// is always built from an existing WeeklyTimeTable
+  EditProviderWeeklyTimeTable(super.wtt) : super.clone();
+
+  //TODO: use a callback function
+  void _notifyChanges(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(t.timeTableModifiedWarning),
+        backgroundColor: Colors.red,
+      ),
+    );
+    notifyListeners();
+  }
+
+  //TODO: use a callback function
+  void _notifyEmptyDayset(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(t.emptyDaysetError), backgroundColor: Colors.red),
+    );
   }
 
   /// Define which days of week are "special"
@@ -651,7 +689,7 @@ class WeeklyTimeTable {
         _specialWeekdays.clear(altTimeTable);
         _specialDaysMeals[altTimeTable].clear();
         _modified = true;
-        _callbackOnUpdate?.call();
+        notifyListeners();
       }
     } else {
       bool hasChanges = false;
@@ -675,7 +713,7 @@ class WeeklyTimeTable {
       }
       if (hasChanges) {
         _modified = true;
-        _callbackOnUpdate?.call();
+        notifyListeners();
       }
     }
   }
@@ -701,7 +739,7 @@ class WeeklyTimeTable {
           _ensureMealTimeCoherence(meal, _defaultDaysMeals, tmpTimeToSleep, () {
             timeTableModified = true;
           }),
-          _maxMinutesBetweenMeals,
+          WeeklyTimeTable.maxMinutesBetweenMeals,
         );
       } else {
         assert(!_specialDaysMeals[altTimeTable].containsKey(meal));
@@ -722,12 +760,12 @@ class WeeklyTimeTable {
                 timeTableModified = true;
               },
             ),
-            _maxMinutesBetweenMeals,
+            WeeklyTimeTable.maxMinutesBetweenMeals,
           );
         }
       }
       _modified = true;
-      _callbackOnUpdate?.call();
+      notifyListeners();
       if (timeTableModified) _notifyChanges(context);
     } else {
       developer.log(
@@ -752,7 +790,7 @@ class WeeklyTimeTable {
         // coherence check - not needed
       }
       _modified = true;
-      _callbackOnUpdate?.call();
+      notifyListeners();
     } else {
       developer.log(
         "Can't remove not exisiting Meal $meal",
@@ -796,7 +834,7 @@ class WeeklyTimeTable {
                 timeTableModified = true;
               },
             ),
-            _maxMinutesBetweenMeals,
+            WeeklyTimeTable.maxMinutesBetweenMeals,
           );
         }
       } else {
@@ -819,13 +857,13 @@ class WeeklyTimeTable {
                 timeTableModified = true;
               },
             ),
-            _maxMinutesBetweenMeals,
+            WeeklyTimeTable.maxMinutesBetweenMeals,
           );
         }
       }
       if (hasChanges) {
         _modified = true;
-        _callbackOnUpdate?.call();
+        notifyListeners();
         if (timeTableModified) _notifyChanges(context);
       }
     } else {
@@ -872,7 +910,7 @@ class WeeklyTimeTable {
                 timeTableModified = true;
               },
             ),
-            _maxMinutesBetweenMeals,
+            WeeklyTimeTable.maxMinutesBetweenMeals,
           );
         }
       } else {
@@ -895,13 +933,13 @@ class WeeklyTimeTable {
                 timeTableModified = true;
               },
             ),
-            _maxMinutesBetweenMeals,
+            WeeklyTimeTable.maxMinutesBetweenMeals,
           );
         }
       }
       if (hasChanges) {
         _modified = true;
-        _callbackOnUpdate?.call();
+        notifyListeners();
         if (timeTableModified) _notifyChanges(context);
       }
     } else {
@@ -959,7 +997,7 @@ class WeeklyTimeTable {
           timeTable[lastMeal]!.$2,
         );
         return lastMealTime.plusMinutes(
-          mealDuration.inMinutes + _minMinutesBetweenMeals,
+          mealDuration.inMinutes + WeeklyTimeTable.minMinutesBetweenMeals,
         );
       }
     }
@@ -971,8 +1009,9 @@ class WeeklyTimeTable {
     // Warning! may be value is at the next day!
     // We use maxMinutesBetweenMeals to mesure difference,
     // which must be long enough
-    if (value.gte(minTimeToSleep, _maxMinutesBetweenMeals) &&
-        minTimeToSleep.minutesUntil(value) <= _maxMinutesBetweenMeals) {
+    if (value.gte(minTimeToSleep, WeeklyTimeTable.maxMinutesBetweenMeals) &&
+        minTimeToSleep.minutesUntil(value) <=
+            WeeklyTimeTable.maxMinutesBetweenMeals) {
       hasChanges = effectiveSet(value, altTimeTable);
     } else if (effectiveSet(minTimeToSleep, altTimeTable)) {
       hasChanges = true;
@@ -980,7 +1019,7 @@ class WeeklyTimeTable {
     }
     if (hasChanges) {
       _modified = true;
-      _callbackOnUpdate?.call();
+      notifyListeners();
     }
   }
 }

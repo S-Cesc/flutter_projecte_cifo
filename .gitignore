@@ -48,4 +48,6 @@ doc/lliurament/mypills.pptx
 doc/lliurament/mypills-vídeo-demo.mp4
 doc/lliurament/mypills.apk
 doc/lliurament/mypills.apk.sha1
+
+# Erroneous files
 mypills/lib/widgets/blink_widget.dart

@@ -7,6 +7,16 @@ class EditProviderMealDurationsAdjustment {
   final GeneralSettings _settings;
   final ValueNotifier<bool> _hasChanges = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _hasValidChanges = ValueNotifier<bool>(false);
+  final List<bool> _changes = List.of([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ], growable: false);
 
   (int?, int?) _breakfastMinutes;
   (int?, int?) _elevensesMinutes;
@@ -54,54 +64,60 @@ class EditProviderMealDurationsAdjustment {
   (int?, int?) get supperMinutes => _supperMinutes;
 
   /// Are there any value changed?
-  bool get hasChanges => _hasChanges.value;
+  bool get hasChanges => _changes.any((x) => x);
+
+  void _checkChanges() {
+    bool isChanged = hasChanges;
+    _hasChanges.value = isChanged;
+    _hasValidChanges.value = isChanged && hasValidValues;
+  }
 
   set breakfastMinutes((int?, int?) value) {
     _breakfastMinutes = value;
-    _hasChanges.value = (value != _settings.data.breakfastMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[0] = _breakfastMinutes != _settings.data.breakfastMinutes;
+    _checkChanges();
   }
 
   set elevensesMinutes((int?, int?) value) {
     _elevensesMinutes = value;
-    _hasChanges.value = (value != _settings.data.elevensesMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[1] = _elevensesMinutes != _settings.data.elevensesMinutes;
+    _checkChanges();
   }
 
   set brunchMinutes((int?, int?) value) {
     _brunchMinutes = value;
-    _hasChanges.value = (value != _settings.data.brunchMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[2] = _brunchMinutes != _settings.data.brunchMinutes;
+    _checkChanges();
   }
 
   set lunchMinutes((int?, int?) value) {
     _lunchMinutes = value;
-    _hasChanges.value = (value != _settings.data.lunchMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[3] = _lunchMinutes != _settings.data.lunchMinutes;
+    _checkChanges();
   }
 
   set teaMinutes((int?, int?) value) {
     _teaMinutes = value;
-    _hasChanges.value = (value != _settings.data.teaMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[4] = _teaMinutes != _settings.data.teaMinutes;
+    _checkChanges();
   }
 
   set highTeaMinutes((int?, int?) value) {
     _highTeaMinutes = value;
-    _hasChanges.value = (value != _settings.data.highTeaMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[5] = _highTeaMinutes != _settings.data.highTeaMinutes;
+    _checkChanges();
   }
 
   set dinnerMinutes((int?, int?) value) {
     _dinnerMinutes = value;
-    _hasChanges.value = (value != _settings.data.dinnerMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[6] = _dinnerMinutes != _settings.data.dinnerMinutes;
+    _checkChanges();
   }
 
   set supperMinutes((int?, int?) value) {
     _supperMinutes = value;
-    _hasChanges.value = (value != _settings.data.supperMinutes);
-    _hasValidChanges.value = _hasChanges.value && hasValidValues;
+    _changes[7] = _supperMinutes != _settings.data.supperMinutes;
+    _checkChanges();
   }
 
   /// Are all the values valid? It must be checked to save the values

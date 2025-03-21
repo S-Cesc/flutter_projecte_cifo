@@ -442,21 +442,9 @@
       "description": "Fast speed (enum SpeedLabel)"
    },
 
-   "alarmList": "Alarm list",
-   "@alarmList": {
-      "description": "Alarm list screen title"
-   },
-   "alarms": "Alarms",
-   "@alarms": {
-      "description": "Button & title Alarms"
-   },
    "weeklyTimetable": "Weekly routine",
    "@weeklyTimetable": {
       "description": "Button text for setting Weekly time for each meal"
-   },
-   "mealsForPills": "Meals for pills",
-   "@mealsForPills": {
-      "description": "Button text for choosing the meals available for prescriptions"
    },
    "weeklyDefaultTimetable": "Usual",
    "@weeklyDefaultTimetable" : {
@@ -482,11 +470,28 @@
    "@specialWeeklyTimetable": {
       "description": "Special days of week time table for each meal"
    },
-   "configMealsTooltip": "Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, three other alternative routines can be defined for specific days of the week.",
+   "notFullyDefined": "Needs to be defined",
+   "@notFullyDefined": {
+      "description": "Not enough meal times defined in the time table; overlay tag which appears in the button"
+   },
+   "configMealsTooltip": "Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, you can optionally define up to three alternative routines for specific days of the week.",
    "@configMealsTooltip":{
       "description": "Tooltip for the config meals screen"
    }, 
 
+   "mealsForPills": "Meals for pills",
+   "@mealsForPills": {
+      "description": "Button text for choosing the meals available for prescriptions"
+   },
+
+   "alarmList": "Alarm list",
+   "@alarmList": {
+      "description": "Alarm list screen title"
+   },
+   "alarms": "Alarms",
+   "@alarms": {
+      "description": "Button & title Alarms"
+   },
    "createNewAlarm": "Create new alarm",
    "@createNewAlarm": {
       "description": "New alarm screen title"

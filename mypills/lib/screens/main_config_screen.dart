@@ -232,13 +232,19 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
                         right: 0,
                         child: Padding(
                           padding: EdgeInsetsDirectional.only(end: 25),
-                          child: Text(
-                            "Needs to be defined",
-                            style: AppStyles.constFonts.body,
-                            // child: Icon(
-                            //   Icons.warning,
-                            //   color: AppStyles.colors.forestGreen,
-                            // ),
+                          child: Wrap(
+                            spacing: 4,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.warning,
+                                color: AppStyles.colors.forestGreen,
+                              ),
+                              Text(
+                                t.notFullyDefined,
+                                style: AppStyles.constFonts.body,
+                              ),
+                            ],
                           ),
                         ),
                       ),

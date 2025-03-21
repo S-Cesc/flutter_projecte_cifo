@@ -13,9 +13,9 @@ import '../extensions/date_time_extensions.dart';
 import '../model/alarm.dart';
 import '../model/alarm_key_iterator.dart';
 import '../model/enum/day_of_week.dart';
+import '../model/json_keys.dart';
 import '../providers/config_preferences.dart';
 import '../services/background_alarm_helper.dart';
-import 'general_settings.dart';
 
 //==============================================================================
 
@@ -43,7 +43,7 @@ final class AlarmCollection {
   /// but requieres a key full iteration to retrieve all of them
   Future<void> init() async {
     developer.log("LOAD ALARMS for editing pourposes");
-    const keyPrefix = GeneralSettings.alarmJsonKeyPrefix;
+    const keyPrefix = JsonKeys.alarmJsonKeyPrefix;
     var it = AlarmKeyIterator();
     while (it.moveNext()) {
       final String key = Alarm.alarmKey(
@@ -175,7 +175,7 @@ final class AlarmCollection {
     }
 
     await _shPrefs.setString(
-      GeneralSettings.alarmJsonKey(a.id),
+      JsonKeys.alarmJsonKey(a.id),
       jsonEncode(jsonStructured),
     );
     await addFireAlarmProgramming(a.id);
@@ -198,7 +198,7 @@ final class AlarmCollection {
         );
         return false;
       } else {
-        await _shPrefs.remove(GeneralSettings.alarmJsonKey(alarmId));
+        await _shPrefs.remove(JsonKeys.alarmJsonKey(alarmId));
         await removeFireAlarmProgramming(alarmId);
         _alarms.remove(alarmId);
         _callbackOnUpdate();

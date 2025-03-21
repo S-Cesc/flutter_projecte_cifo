@@ -1,5 +1,7 @@
 // Dart base
 // Flutter
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
@@ -17,21 +19,16 @@ class ConfigPreferences with ChangeNotifier {
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs = SharedPreferencesAsync();
-  late GeneralSettings _generalSettings;
-  late AlarmCollection _alarmCollection;
+  late final GeneralSettings _generalSettings;
+  late final AlarmCollection _alarmCollection;
 
   /// Ctor
   ConfigPreferences() {
-    _generalSettings = GeneralSettings(_shPrefs, callback);
-    _alarmCollection = AlarmCollection(_shPrefs, this, callback);
+    _generalSettings = GeneralSettings(_shPrefs, notifyListeners);
+    _alarmCollection = AlarmCollection(_shPrefs, this, notifyListeners);
   }
 
   //-----------------------class special members--------------------------------
-
-  /// Child objects must call to notify changes done
-  void callback() {
-    notifyListeners();
-  }
 
   /// Initialization of the object
   Future<void> init() async {
