@@ -74,10 +74,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pendingChangesMessage => 'Hay cambios pendientes.';
 
   @override
-  String get pendingChangesDiscardQuestion => '¿Quiere descartar los cambios pendientes?';
+  String get pendingChangesDiscardQuestion =>
+      '¿Quiere descartar los cambios pendientes?';
 
   @override
-  String get pendingChangesDiscarded => 'Se han descartado los cambios pendientes.';
+  String get pendingChangesDiscarded =>
+      'Se han descartado los cambios pendientes.';
 
   @override
   String get notSavedCauseOfError => 'Error. No se ha salvado';
@@ -92,24 +94,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String confirmDeletion(num count, String gender) {
     final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String countString = countNumberFormat.format(count);
 
-    String _temp0 = intl.Intl.selectLogic(
-      gender,
-      {
-        'f': 'las',
-        'other': 'los',
-      },
-    );
-    String _temp1 = intl.Intl.selectLogic(
-      gender,
-      {
-        'f': 'la',
-        'other': 'lo',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(gender, {'f': 'las', 'other': 'los'});
+    String _temp1 = intl.Intl.selectLogic(gender, {'f': 'la', 'other': 'lo'});
     String _temp2 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -129,13 +118,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get askExitApplication => '¿Salir de la aplicación?';
 
   @override
-  String get changeAlarmPermissions => 'Cambiar la configuración de permisos de alarma';
+  String get changeAlarmPermissions =>
+      'Cambiar la configuración de permisos de alarma';
 
   @override
-  String get emptyDaysetError => 'No pueden definirse comidas si no se indica para qué días.';
+  String get emptyDaysetError =>
+      'No pueden definirse comidas si no se indica para qué días.';
 
   @override
-  String get timeTableModifiedWarning => 'Se han modificado las horas para mantener la coherencia.';
+  String get timeTableModifiedWarning =>
+      'Se han modificado las horas para mantener la coherencia.';
 
   @override
   String get snooze => 'Retardar';
@@ -186,28 +178,36 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onceADay_tooltip => 'Tomar las pastillas diariamente, cada 24h.';
 
   @override
-  String get twiceADay_tooltip => 'Tomar las pastillas dos veces al día, cada 12h.';
+  String get twiceADay_tooltip =>
+      'Tomar las pastillas dos veces al día, cada 12h.';
 
   @override
-  String get threeTimesADay_tooltip => 'Tomar las pastillas tres veces al día, cada 8h.';
+  String get threeTimesADay_tooltip =>
+      'Tomar las pastillas tres veces al día, cada 8h.';
 
   @override
-  String get fourTimesADay_tooltip => 'Tomar las pastillas cuatro veces al día, cada 6h.';
+  String get fourTimesADay_tooltip =>
+      'Tomar las pastillas cuatro veces al día, cada 6h.';
 
   @override
-  String get weekly_tooltip => 'Tomar las pastillas semanalmente, una vez a la semana, siempre el mismo día de la semana.';
+  String get weekly_tooltip =>
+      'Tomar las pastillas semanalmente, una vez a la semana, siempre el mismo día de la semana.';
 
   @override
-  String get everyTwoWeeks_tooltip => 'Tomar las pastillas cada dos semanas, siempre el mismo día de la semana.';
+  String get everyTwoWeeks_tooltip =>
+      'Tomar las pastillas cada dos semanas, siempre el mismo día de la semana.';
 
   @override
-  String get fortnightly_tooltip => 'Tomar pastillas cada quince días, dos veces al mes, siempre el mismo día del mes.';
+  String get fortnightly_tooltip =>
+      'Tomar pastillas cada quince días, dos veces al mes, siempre el mismo día del mes.';
 
   @override
-  String get everyFourWeeks_tooltip => 'Tomar las pastillas cada cuatro semanas, siempre el mismo día de la semana.';
+  String get everyFourWeeks_tooltip =>
+      'Tomar las pastillas cada cuatro semanas, siempre el mismo día de la semana.';
 
   @override
-  String get monthly_tooltip => 'Tomar las pastillas una vez al mes, siempre el mismo día del mes.';
+  String get monthly_tooltip =>
+      'Tomar las pastillas una vez al mes, siempre el mismo día del mes.';
 
   @override
   String get alarmSettings => 'Configuración de las alarmas';
@@ -225,16 +225,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get minutesToDealWithAlarm => 'Minutos para atender la alarma';
 
   @override
-  String get tooltipAlarmRepeatTimes => 'Número veces que suena la alarma hasta que se da por perdida';
+  String get tooltipAlarmRepeatTimes =>
+      'Número veces que suena la alarma hasta que se da por perdida';
 
   @override
-  String get tooltipSnoozeSeconds => 'Segundos desde que termina de sonar la alarma sin haberla detenido hasta que se repite automáticamente';
+  String get tooltipSnoozeSeconds =>
+      'Segundos desde que termina de sonar la alarma sin haberla detenido hasta que se repite automáticamente';
 
   @override
-  String get tooltipAlarmDurationSeconds => 'Segundos que suena la alarma si no se detiene';
+  String get tooltipAlarmDurationSeconds =>
+      'Segundos que suena la alarma si no se detiene';
 
   @override
-  String get tooltipMinutesToDealWithAlarm => 'Minutos que como máximo transcurren desde que se acepta la alarma hasta indicar que se han tomado las pastillas';
+  String get tooltipMinutesToDealWithAlarm =>
+      'Minutos que como máximo transcurren desde que se acepta la alarma hasta indicar que se han tomado las pastillas';
 
   @override
   String get timeSettings => 'Minutos antes/después';
@@ -252,28 +256,34 @@ class AppLocalizationsEs extends AppLocalizations {
   String get minutesLongAfter => 'Minutos mucho después';
 
   @override
-  String get tooltipLongBefore => 'Minutos desde que se toman las pastillas entre comidas hasta comer. Se combina con el valor indicado para mucho después de la anterior comida. Aplica si toma pastillas entre comidas.';
+  String get tooltipLongBefore =>
+      'Minutos desde que se toman las pastillas entre comidas hasta comer. Se combina con el valor indicado para mucho después de la anterior comida. Aplica si toma pastillas entre comidas.';
 
   @override
-  String get tooltipBefore => 'Minutos antes de las comidas que se le notifica para tomar las pastillas antes de las comidas. Aplica si toma pastillas antes de las comidas.';
+  String get tooltipBefore =>
+      'Minutos antes de las comidas que se le notifica para tomar las pastillas antes de las comidas. Aplica si toma pastillas antes de las comidas.';
 
   @override
-  String get tooltipAfter => 'Minutos que se suman al tiempo usado para comer. Aplica si toma pastillas después de las comidas.';
+  String get tooltipAfter =>
+      'Minutos que se suman al tiempo usado para comer. Aplica si toma pastillas después de las comidas.';
 
   @override
-  String get tooltipLongAfter => 'Minutos que tienen que pasar después de las comidas para tomar las pastillas entre comidas. Aplica si toma pastillas entre comidas.';
+  String get tooltipLongAfter =>
+      'Minutos que tienen que pasar después de las comidas para tomar las pastillas entre comidas. Aplica si toma pastillas entre comidas.';
 
   @override
   String get timeEating => 'Tiempo para comer';
 
   @override
-  String get timeEatingTooltip => 'Tiempo que dedica a cada comida. Sólo tiene que establecer valores para las comidas que realiza. Se diferencian valores «rápidos» y «lentos».';
+  String get timeEatingTooltip =>
+      'Tiempo que dedica a cada comida. Sólo tiene que establecer valores para las comidas que realiza. Se diferencian valores «rápidos» y «lentos».';
 
   @override
   String get bkfDuration => 'Duración del desayuno, en minutos.';
 
   @override
-  String get elevensesDuration => 'Duración del café de media mañana, en minutos.';
+  String get elevensesDuration =>
+      'Duración del café de media mañana, en minutos.';
 
   @override
   String get brunchDuration => 'Duración del almuerzo, en minutos.';
@@ -360,16 +370,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get weeklyAltTimetable3 => 'Alt-3';
 
   @override
-  String get defaultWeeklyTimetable => 'Comidas que realiza habitualmente y a qué hora';
+  String get defaultWeeklyTimetable =>
+      'Comidas que realiza habitualmente y a qué hora';
 
   @override
-  String get specialWeeklyTimetable => 'Comidas y su hora en los días determinados';
+  String get specialWeeklyTimetable =>
+      'Comidas y su hora en los días determinados';
 
   @override
   String get notFullyDefined => 'Se ha de definir';
 
   @override
-  String get configMealsTooltip => 'Deben definirse las comidas de cada día, para que el sistema pueda conocer los intervalos de tiempo entre comidas. Además, opcionalmente, se pueden definir hasta otras tres rutinas alternativas para días concretos de la semana.';
+  String get configMealsTooltip =>
+      'Deben definirse las comidas de cada día, para que el sistema pueda conocer los intervalos de tiempo entre comidas. Además, opcionalmente, se pueden definir hasta otras tres rutinas alternativas para días concretos de la semana.';
 
   @override
   String get mealsForPills => 'Comidas para pastillas';
@@ -396,16 +409,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pillsAfterBreakfast => 'pastillas de después del desayuno';
 
   @override
-  String get pillsLongBeforeElevenses => 'pastillas de mucho antes del café de media mañana';
+  String get pillsLongBeforeElevenses =>
+      'pastillas de mucho antes del café de media mañana';
 
   @override
-  String get pillsBeforeElevenses => 'pastillas de antes del café de media mañana';
+  String get pillsBeforeElevenses =>
+      'pastillas de antes del café de media mañana';
 
   @override
   String get pillsAtElevenses => 'pastillas del café de media mañana';
 
   @override
-  String get pillsAfterElevenses => 'pastillas després del café de media mañana';
+  String get pillsAfterElevenses =>
+      'pastillas després del café de media mañana';
 
   @override
   String get pillsLongBeforeBrunch => 'pastillas de mucho antes del almuerzo';
@@ -432,7 +448,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pillsAfterLunch => 'pastillas de después la comida';
 
   @override
-  String get pillsLongBeforeTea => 'pastillas de mucho antes de la hora del café';
+  String get pillsLongBeforeTea =>
+      'pastillas de mucho antes de la hora del café';
 
   @override
   String get pillsBeforeTea => 'pastillas de antes de la hora del café';

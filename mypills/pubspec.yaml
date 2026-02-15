@@ -11,18 +11,18 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: 0.19.0
-  android_alarm_manager_plus: ^4.0.6
+  intl: ^0.20.2
+  android_alarm_manager_plus: ^5.0.0
   confirm_dialog: ^1.0.4
   day_picker: ^2.3.0
-  flutter_foreground_task: ^8.13.0
+  flutter_foreground_task: ^9.2.0
   flutter_ringtone_player: ^5.0.0-dev.1
   format: ^1.5.2
   logging: ^1.3.0
   mask_text_input_formatter: ^2.9.0
   material_symbols_icons: ^4.2800.2
   one_clock: ^2.0.1
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
   provider: ^6.1.2
   shared_preferences: ^2.3.5
   week_number: ^1.1.1
@@ -31,7 +31,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

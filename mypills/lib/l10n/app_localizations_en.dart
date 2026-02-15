@@ -92,16 +92,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String confirmDeletion(num count, String gender) {
     final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String countString = countNumberFormat.format(count);
 
-    String _temp0 = intl.Intl.selectLogic(
-      gender,
-      {
-        'other': 'Would you like to remove?',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(gender, {
+      'other': 'Would you like to remove?',
+    });
     String _temp1 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -123,10 +119,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeAlarmPermissions => 'Change alarm permission configuration';
 
   @override
-  String get emptyDaysetError => 'Meals cannot be defined if it is not indicated for which days.';
+  String get emptyDaysetError =>
+      'Meals cannot be defined if it is not indicated for which days.';
 
   @override
-  String get timeTableModifiedWarning => 'Times have been modified to maintain consistency.';
+  String get timeTableModifiedWarning =>
+      'Times have been modified to maintain consistency.';
 
   @override
   String get snooze => 'Snooze';
@@ -180,25 +178,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get twiceADay_tooltip => 'Take the pills twice a day, every 12h.';
 
   @override
-  String get threeTimesADay_tooltip => 'Take the pills three times a day, every 8h.';
+  String get threeTimesADay_tooltip =>
+      'Take the pills three times a day, every 8h.';
 
   @override
-  String get fourTimesADay_tooltip => 'Take the pills four times a day, every 6h.';
+  String get fourTimesADay_tooltip =>
+      'Take the pills four times a day, every 6h.';
 
   @override
-  String get weekly_tooltip => 'Take the pills weekly, once a week, always the same day of week.';
+  String get weekly_tooltip =>
+      'Take the pills weekly, once a week, always the same day of week.';
 
   @override
-  String get everyTwoWeeks_tooltip => 'Take the pills every two weeks, always the same day of week.';
+  String get everyTwoWeeks_tooltip =>
+      'Take the pills every two weeks, always the same day of week.';
 
   @override
-  String get fortnightly_tooltip => 'Take pills every fortnight, twice each month, always the same day of month.';
+  String get fortnightly_tooltip =>
+      'Take pills every fortnight, twice each month, always the same day of month.';
 
   @override
-  String get everyFourWeeks_tooltip => 'Take pills every four weeks, always the same day of week.';
+  String get everyFourWeeks_tooltip =>
+      'Take pills every four weeks, always the same day of week.';
 
   @override
-  String get monthly_tooltip => 'Take pills once a month, always the same day of month.';
+  String get monthly_tooltip =>
+      'Take pills once a month, always the same day of month.';
 
   @override
   String get alarmSettings => 'Alarm settings';
@@ -216,16 +221,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get minutesToDealWithAlarm => 'Minutes to deal with alarm';
 
   @override
-  String get tooltipAlarmRepeatTimes => 'Number of times the alarm sounds until it is given up as lost';
+  String get tooltipAlarmRepeatTimes =>
+      'Number of times the alarm sounds until it is given up as lost';
 
   @override
-  String get tooltipSnoozeSeconds => 'Seconds from the end of the alarm sounding without stopping it until it automatically repeats itself';
+  String get tooltipSnoozeSeconds =>
+      'Seconds from the end of the alarm sounding without stopping it until it automatically repeats itself';
 
   @override
-  String get tooltipAlarmDurationSeconds => 'Seconds the alarm sounds if not stopped';
+  String get tooltipAlarmDurationSeconds =>
+      'Seconds the alarm sounds if not stopped';
 
   @override
-  String get tooltipMinutesToDealWithAlarm => 'Maximum number of minutes from the time the alarm is acknowledged until the pills are taken';
+  String get tooltipMinutesToDealWithAlarm =>
+      'Maximum number of minutes from the time the alarm is acknowledged until the pills are taken';
 
   @override
   String get timeSettings => 'Before/after minutes';
@@ -243,22 +252,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get minutesLongAfter => 'Minutes long after supper';
 
   @override
-  String get tooltipLongBefore => 'Minutes from taking the pills between meals until eating. Combined with the value indicated for long after the previous meal. Applies if you take pills between meals.';
+  String get tooltipLongBefore =>
+      'Minutes from taking the pills between meals until eating. Combined with the value indicated for long after the previous meal. Applies if you take pills between meals.';
 
   @override
-  String get tooltipBefore => 'Minutes before meals you are notified to take the pills before meals. Applies if you take pills before meals.';
+  String get tooltipBefore =>
+      'Minutes before meals you are notified to take the pills before meals. Applies if you take pills before meals.';
 
   @override
-  String get tooltipAfter => 'Minutes in addition to the time used for eating. Applies if you take pills after meals.';
+  String get tooltipAfter =>
+      'Minutes in addition to the time used for eating. Applies if you take pills after meals.';
 
   @override
-  String get tooltipLongAfter => 'Minutes that need to pass after meals to take pills between meals. Applies if you take pills between meals.';
+  String get tooltipLongAfter =>
+      'Minutes that need to pass after meals to take pills between meals. Applies if you take pills between meals.';
 
   @override
   String get timeEating => 'Time spent eating';
 
   @override
-  String get timeEatingTooltip => 'Time you spend on each meal. You only have to set values for those meals you have. A distinction is made between \'fast\' and \'slow\' values.';
+  String get timeEatingTooltip =>
+      'Time you spend on each meal. You only have to set values for those meals you have. A distinction is made between \'fast\' and \'slow\' values.';
 
   @override
   String get bkfDuration => 'Breakfast duration, in minutes.';
@@ -351,7 +365,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weeklyAltTimetable3 => 'Alt-3';
 
   @override
-  String get defaultWeeklyTimetable => 'Meals you usually have and at what time';
+  String get defaultWeeklyTimetable =>
+      'Meals you usually have and at what time';
 
   @override
   String get specialWeeklyTimetable => 'Meals and its time on designated days ';
@@ -360,7 +375,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notFullyDefined => 'Needs to be defined';
 
   @override
-  String get configMealsTooltip => 'Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, you can optionally define up to three alternative routines for specific days of the week.';
+  String get configMealsTooltip =>
+      'Meals should be defined for each day, so that the system can know the time intervals between meals. In addition, you can optionally define up to three alternative routines for specific days of the week.';
 
   @override
   String get mealsForPills => 'Meals for pills';

@@ -74,7 +74,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get pendingChangesMessage => 'N\'hi ha canvis pendents.';
 
   @override
-  String get pendingChangesDiscardQuestion => 'Voleu descartar els canvis pendents?';
+  String get pendingChangesDiscardQuestion =>
+      'Voleu descartar els canvis pendents?';
 
   @override
   String get pendingChangesDiscarded => 'S\'han descartat els canvis pendents.';
@@ -92,24 +93,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String confirmDeletion(num count, String gender) {
     final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String countString = countNumberFormat.format(count);
 
-    String _temp0 = intl.Intl.selectLogic(
-      gender,
-      {
-        'f': 'les',
-        'other': 'els',
-      },
-    );
-    String _temp1 = intl.Intl.selectLogic(
-      gender,
-      {
-        'f': 'la',
-        'other': 'el',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(gender, {'f': 'les', 'other': 'els'});
+    String _temp1 = intl.Intl.selectLogic(gender, {'f': 'la', 'other': 'el'});
     String _temp2 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -129,13 +117,16 @@ class AppLocalizationsCa extends AppLocalizations {
   String get askExitApplication => 'Sortir de l\'aplicació?';
 
   @override
-  String get changeAlarmPermissions => 'Canviar la configuració de permisos d\'alarma';
+  String get changeAlarmPermissions =>
+      'Canviar la configuració de permisos d\'alarma';
 
   @override
-  String get emptyDaysetError => 'No poden definir-se menjades si no s\'indica per a quins dies.';
+  String get emptyDaysetError =>
+      'No poden definir-se menjades si no s\'indica per a quins dies.';
 
   @override
-  String get timeTableModifiedWarning => 'S\'han modificat les hores per mantenir la coherència.';
+  String get timeTableModifiedWarning =>
+      'S\'han modificat les hores per mantenir la coherència.';
 
   @override
   String get snooze => 'Retarda';
@@ -180,34 +171,43 @@ class AppLocalizationsCa extends AppLocalizations {
   String get monthly => 'Una vegada al mes';
 
   @override
-  String get once_tooltip => 'Prendre les pastilles una vegada, només una vegada.';
+  String get once_tooltip =>
+      'Prendre les pastilles una vegada, només una vegada.';
 
   @override
   String get onceADay_tooltip => 'Prendre les pastilles diàriament, cada 24h.';
 
   @override
-  String get twiceADay_tooltip => 'Prendre les pastilles dues vegades al dia, cada 12h.';
+  String get twiceADay_tooltip =>
+      'Prendre les pastilles dues vegades al dia, cada 12h.';
 
   @override
-  String get threeTimesADay_tooltip => 'Prendre les pastilles tres vegades al dia, cada 8h.';
+  String get threeTimesADay_tooltip =>
+      'Prendre les pastilles tres vegades al dia, cada 8h.';
 
   @override
-  String get fourTimesADay_tooltip => 'Prendre les pastilles quatre vegades al dia, cada 6h.';
+  String get fourTimesADay_tooltip =>
+      'Prendre les pastilles quatre vegades al dia, cada 6h.';
 
   @override
-  String get weekly_tooltip => 'Prendre les pastilles setmanalment, una vegada a la setmana, sempre el mateix dia de la setmana.';
+  String get weekly_tooltip =>
+      'Prendre les pastilles setmanalment, una vegada a la setmana, sempre el mateix dia de la setmana.';
 
   @override
-  String get everyTwoWeeks_tooltip => 'Prendre les pastilles cada dues setmanes, sempre el mateix dia de la setmana.';
+  String get everyTwoWeeks_tooltip =>
+      'Prendre les pastilles cada dues setmanes, sempre el mateix dia de la setmana.';
 
   @override
-  String get fortnightly_tooltip => 'Prendre pastilles cada quinze dies, dues vegades al mes, sempre el mateix dia del mes.';
+  String get fortnightly_tooltip =>
+      'Prendre pastilles cada quinze dies, dues vegades al mes, sempre el mateix dia del mes.';
 
   @override
-  String get everyFourWeeks_tooltip => 'Prendre les pastilles cada quatre setmanes, sempre el mateix dia de la setmana.';
+  String get everyFourWeeks_tooltip =>
+      'Prendre les pastilles cada quatre setmanes, sempre el mateix dia de la setmana.';
 
   @override
-  String get monthly_tooltip => 'Prendre les pastilles una vegada al mes, sempre el mateix dia del mes.';
+  String get monthly_tooltip =>
+      'Prendre les pastilles una vegada al mes, sempre el mateix dia del mes.';
 
   @override
   String get alarmSettings => 'Configuració d\'alarmes';
@@ -225,16 +225,20 @@ class AppLocalizationsCa extends AppLocalizations {
   String get minutesToDealWithAlarm => 'Minuts per a atendre l\'alarma';
 
   @override
-  String get tooltipAlarmRepeatTimes => 'Nombre de vegades que sona l\'alarma fins que es considera perduda';
+  String get tooltipAlarmRepeatTimes =>
+      'Nombre de vegades que sona l\'alarma fins que es considera perduda';
 
   @override
-  String get tooltipSnoozeSeconds => 'Segons des de que acaba de sonar l\'alarma sense haver-la aturat fins que es repeteix automàticament';
+  String get tooltipSnoozeSeconds =>
+      'Segons des de que acaba de sonar l\'alarma sense haver-la aturat fins que es repeteix automàticament';
 
   @override
-  String get tooltipAlarmDurationSeconds => 'Segons que l\'alarma està sonant si no s\'atura';
+  String get tooltipAlarmDurationSeconds =>
+      'Segons que l\'alarma està sonant si no s\'atura';
 
   @override
-  String get tooltipMinutesToDealWithAlarm => 'Minuts que transcorren com a màxim des de que s\'accepta l\'alarma fins a indicar que s\'han pres les pastilles';
+  String get tooltipMinutesToDealWithAlarm =>
+      'Minuts que transcorren com a màxim des de que s\'accepta l\'alarma fins a indicar que s\'han pres les pastilles';
 
   @override
   String get timeSettings => 'Minuts abans/després';
@@ -252,22 +256,27 @@ class AppLocalizationsCa extends AppLocalizations {
   String get minutesLongAfter => 'Minuts molt després';
 
   @override
-  String get tooltipLongBefore => 'Minuts d\'ençà que es prenen les pastilles entre menjades fins a menjar. Es combina amb el valor indicat per a molt després de l\'anterior menjada. Aplica si prens pastilles entre menjades.';
+  String get tooltipLongBefore =>
+      'Minuts d\'ençà que es prenen les pastilles entre menjades fins a menjar. Es combina amb el valor indicat per a molt després de l\'anterior menjada. Aplica si prens pastilles entre menjades.';
 
   @override
-  String get tooltipBefore => 'Minuts abans dels menjars que avisa per a prendre pastilles abans dels menjars. Aplica si prens pastilles abans dels menjars.';
+  String get tooltipBefore =>
+      'Minuts abans dels menjars que avisa per a prendre pastilles abans dels menjars. Aplica si prens pastilles abans dels menjars.';
 
   @override
-  String get tooltipAfter => 'Minuts que se sumen al temps per a menjar. Aplica si prens pastilles després dels menjars.';
+  String get tooltipAfter =>
+      'Minuts que se sumen al temps per a menjar. Aplica si prens pastilles després dels menjars.';
 
   @override
-  String get tooltipLongAfter => 'Minuts que han de passar després dels menjars per a prendre pastilles entre menjades. Aplica si prens pastilles entre menjades.';
+  String get tooltipLongAfter =>
+      'Minuts que han de passar després dels menjars per a prendre pastilles entre menjades. Aplica si prens pastilles entre menjades.';
 
   @override
   String get timeEating => 'Temps per a menjar';
 
   @override
-  String get timeEatingTooltip => 'Temps que dediques a cada menjar. Només has d\'establir valors per als menjars que realitzes. Es diferencien valors «ràpids» i «lents».';
+  String get timeEatingTooltip =>
+      'Temps que dediques a cada menjar. Només has d\'establir valors per als menjars que realitzes. Es diferencien valors «ràpids» i «lents».';
 
   @override
   String get bkfDuration => 'Durada del desdejuni, en minuts.';
@@ -360,7 +369,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get weeklyAltTimetable3 => 'Alt-3';
 
   @override
-  String get defaultWeeklyTimetable => 'Menjars que feu habitualment i a quina hora';
+  String get defaultWeeklyTimetable =>
+      'Menjars que feu habitualment i a quina hora';
 
   @override
   String get specialWeeklyTimetable => 'Menjars i hora en els dies determinats';
@@ -369,7 +379,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notFullyDefined => 'S\'ha de definir';
 
   @override
-  String get configMealsTooltip => 'Han de definir-se els menjars de cada dia, perquè el sistema pugui conèixer els intervals de temps entre menjars. A més, opcionalment, es poden definir fins a altres tres rutines alternatives per a dies concrets de la setmana.';
+  String get configMealsTooltip =>
+      'Han de definir-se els menjars de cada dia, perquè el sistema pugui conèixer els intervals de temps entre menjars. A més, opcionalment, es poden definir fins a altres tres rutines alternatives per a dies concrets de la setmana.';
 
   @override
   String get mealsForPills => 'Menjades per a pastilles';
@@ -396,7 +407,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get pillsAfterBreakfast => 'pastilles de després del desdejuni';
 
   @override
-  String get pillsLongBeforeElevenses => 'pastilles de molt abans del cafè de mig matí';
+  String get pillsLongBeforeElevenses =>
+      'pastilles de molt abans del cafè de mig matí';
 
   @override
   String get pillsBeforeElevenses => 'pastilles d\'abans del cafè de mig matí';
@@ -432,7 +444,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get pillsAfterLunch => 'pastilles de després dinar';
 
   @override
-  String get pillsLongBeforeTea => 'pastilles de molt abans de l\'hora del cafè';
+  String get pillsLongBeforeTea =>
+      'pastilles de molt abans de l\'hora del cafè';
 
   @override
   String get pillsBeforeTea => 'pastilles d\'abans de l\'hora del cafè';
