@@ -12,4 +12,21 @@ class GlobalFunctions {
           backgroundColor: Colors.red,
         ),
       );
+
+  // ------------- LOCALIZATION ------------------------------------------------
+
+  /// The names of every weekly time table partition:
+  /// - The main one (without days of week)
+  /// - The other ones
+  static (String, List<String>) partitionNames(AppLocalizations t) {
+    return (
+      t.weeklyDefaultTimetable,
+      List.unmodifiable([
+        t.weeklyAltTimetable1,
+        t.weeklyAltTimetable2,
+        t.weeklyAltTimetable3,
+      ]),
+    );
+  }
+
 }

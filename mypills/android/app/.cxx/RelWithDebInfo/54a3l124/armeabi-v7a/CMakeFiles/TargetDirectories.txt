@@ -1,0 +1,2 @@
+/home/cesc/Documents/cursos/flutter/flutter_projecte_cifo/mypills/android/app/.cxx/RelWithDebInfo/54a3l124/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/cesc/Documents/cursos/flutter/flutter_projecte_cifo/mypills/android/app/.cxx/RelWithDebInfo/54a3l124/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -9,7 +9,7 @@ import 'dart:async';
 import 'dart:io' show exit;
 // Flutter
 import 'package:flutter/material.dart';
-import 'package:mypills/model/global_constants.dart';
+import 'package:mypills/common/global_constants.dart';
 // Project files
 import '../styles/app_styles.dart';
 import '../main.dart' as main;

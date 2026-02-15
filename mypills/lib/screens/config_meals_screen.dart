@@ -3,13 +3,13 @@ import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
-import 'package:mypills/model/global_functions.dart';
+import 'package:mypills/common/global_functions.dart';
 import 'package:mypills/model/weekly_time_table.dart';
 import 'package:provider/provider.dart';
 // Localizations
 import '../l10n/app_localizations.dart';
 // Project files
-import '../model/global_constants.dart';
+import '../common/global_constants.dart';
 import '../styles/app_styles.dart';
 import '../providers/config_preferences.dart';
 import '../widgets/custom_back_button.dart';
@@ -114,25 +114,25 @@ class _ConfigMealsScreenState extends State<ConfigMealsScreen> {
                           tabs: [
                             Center(
                               child: Text(
-                                WeeklyTimeTable.partitionNames(t).$1,
+                                GlobalFunctions.partitionNames(t).$1,
                                 style: AppStyles.constFonts.display,
                               ),
                             ),
                             Center(
                               child: Text(
-                                WeeklyTimeTable.partitionNames(t).$2[0],
+                                GlobalFunctions.partitionNames(t).$2[0],
                                 style: AppStyles.constFonts.labelLarge,
                               ),
                             ),
                             Center(
                               child: Text(
-                                WeeklyTimeTable.partitionNames(t).$2[1],
+                                GlobalFunctions.partitionNames(t).$2[1],
                                 style: AppStyles.constFonts.labelLarge,
                               ),
                             ),
                             Center(
                               child: Text(
-                                WeeklyTimeTable.partitionNames(t).$2[2],
+                                GlobalFunctions.partitionNames(t).$2[2],
                                 style: AppStyles.constFonts.labelLarge,
                               ),
                             ),

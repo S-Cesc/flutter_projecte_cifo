@@ -6,14 +6,14 @@ import 'dart:async';
 import 'dart:convert';
 // Flutter
 import 'package:flutter/material.dart';
-import 'package:mypills/model/global_constants.dart';
+import 'package:mypills/common/global_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../extensions/date_time_extensions.dart';
 import '../model/alarm.dart';
 import '../model/alarm_key_iterator.dart';
 import '../model/enum/day_of_week.dart';
-import '../model/json_keys.dart';
+import '../common/json_keys.dart';
 import '../providers/config_preferences.dart';
 import '../services/background_alarm_helper.dart';
 

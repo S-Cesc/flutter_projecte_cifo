@@ -9,7 +9,7 @@ import 'dart:convert';
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mypills/model/global_constants.dart';
+import 'package:mypills/common/global_constants.dart';
 import 'package:one_clock/one_clock.dart';
 // Localization
 import '../l10n/app_localizations.dart';

@@ -1,7 +1,7 @@
 name: mypills #flutter_projecte_cifo
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.0+1
 
 environment:
   sdk: ^3.7.0
@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.0
+  intl: 0.19.0
   android_alarm_manager_plus: ^4.0.6
   confirm_dialog: ^1.0.4
   day_picker: ^2.3.0

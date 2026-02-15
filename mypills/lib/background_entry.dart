@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:mypills/model/global_constants.dart';
+import 'package:mypills/common/global_constants.dart';
 // Project files
 import '../main.dart' show uiWakeupPortName, uiAlarmPortName;
 import '../model/alarm.dart';

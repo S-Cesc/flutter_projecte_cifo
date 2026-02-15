@@ -29,8 +29,8 @@ class MealsTableSpecialDays extends StatefulWidget {
 }
 
 class _MealsTableSpecialDaysState extends State<MealsTableSpecialDays> {
-  late List<String> weekDayNames;
-  late AppLocalizations t;
+  late final List<String> weekDayNames;
+  late final AppLocalizations t;
   bool _isInitialized = false;
 
   void _initialize() {

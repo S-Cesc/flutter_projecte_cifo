@@ -9,8 +9,8 @@ import 'package:provider/provider.dart';
 // Localization
 import '../l10n/app_localizations.dart';
 // Project files
-import '../model/global_constants.dart';
-import '../model/global_functions.dart';
+import '../common/global_constants.dart';
+import '../common/global_functions.dart';
 import '../styles/app_styles.dart';
 import '../providers/config_preferences.dart';
 import '../providers/edit_providers/edit_provider_meal_durations_adjustment.dart';

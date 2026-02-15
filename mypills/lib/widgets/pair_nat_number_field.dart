@@ -109,8 +109,9 @@ class PairNatNumberField extends StatefulWidget {
 }
 
 class _PairNatNumberFieldState extends State<PairNatNumberField> {
+  //TODO: Translate
   static const nullErrorMsg = "Natural number required";
-  late String rangeErrorMsg;
+  late final String rangeErrorMsg;
 
   bool _isValid(int? value1, int? value2) {
     bool result;
@@ -130,9 +131,9 @@ class _PairNatNumberFieldState extends State<PairNatNumberField> {
 
   final FocusNode _focus1 = FocusNode();
   final FocusNode _focus2 = FocusNode();
-  late Color borderColor;
-  late Color focusColor;
-  late Color errorColor;
+  late final Color borderColor;
+  late final Color focusColor;
+  late final Color errorColor;
   Color? actualBorderColor;
   String? errorMessage;
   int? value1;

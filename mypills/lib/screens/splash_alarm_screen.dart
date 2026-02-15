@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:mypills/model/global_constants.dart';
+import 'package:mypills/common/global_constants.dart';
 import '../l10n/app_localizations.dart';
 // Project files
 import '../main.dart' show alarmScreenPath;

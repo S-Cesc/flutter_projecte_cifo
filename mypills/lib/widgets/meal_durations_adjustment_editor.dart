@@ -25,7 +25,7 @@ class MealDurationsAdjustmentEditor extends StatefulWidget {
 
 class _MealDurationsAdjustmentEditorState
     extends State<MealDurationsAdjustmentEditor> {
-  late List<TextEditingController> _controllers;
+  late final List<TextEditingController> _controllers;
   bool saved = true;
 
   @override

@@ -4,9 +4,14 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- TODO: FOREGROUND_SERVICE_SYSTEM_EXEMPTED: https://developer.android.com/about/versions/14/changes/fgs-types-required#system-exempted
+        - TODO: Incorporar FLAG_SECURE en pantallas prescripciones: https://pub.dev/packages/flag_secure/versions/1.0.2
+    -->
+    <!--
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    -->
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>

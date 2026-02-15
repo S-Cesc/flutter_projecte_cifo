@@ -4,7 +4,7 @@ import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mypills/model/json_keys.dart';
+import 'package:mypills/common/json_keys.dart';
 // Localizations
 import '../l10n/app_localizations.dart';
 // Project files

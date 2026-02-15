@@ -15,7 +15,7 @@ import '../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 // Project files
 import '../main.dart' as main;
-import '../model/global_constants.dart';
+import '../common/global_constants.dart';
 import '../styles/app_styles.dart';
 import '../util/port_facilities.dart';
 import '../services/background_alarm_helper.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../model/global_constants.dart';
+import '../common/global_constants.dart';
 
 /// Widget to input a natural number,
 /// a number greater than or equal to zero, with no sign or decimal place

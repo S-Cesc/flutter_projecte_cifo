@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart' show SystemNavigator;
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:mypills/screens/meals4pills_screen.dart';
 import 'package:provider/provider.dart';
 // Localization
 import '../l10n/app_localizations.dart';
 // Project files
-import '../model/global_constants.dart';
+import '../common/global_constants.dart';
 import '../providers/config_preferences.dart';
 import '../styles/app_styles.dart';
 import 'alarm_list_screen.dart';
@@ -255,15 +256,12 @@ class _MainConfigScreenState extends State<MainConfigScreen> {
                   onPressed:
                       isWttFullyDefined
                           ? () {
-                            // TODO: Meals for pills screen
-                            /*
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<ConfigMealsScreen>(
-                        builder: (context) => ConfigMealsScreen(),
-                      ),
-                    );
-                    */
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<Meals4pillsScreen>(
+                                builder: (context) => Meals4pillsScreen(),
+                              ),
+                            );
                           }
                           : null,
                   style: AppStyles.customButtonStyle,

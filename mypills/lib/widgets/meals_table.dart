@@ -37,7 +37,7 @@ class MealsTable extends StatefulWidget {
 }
 
 class _MealsTableState extends State<MealsTable> {
-  late AppLocalizations _localizations;
+  late final AppLocalizations _localizations;
   bool _isInitialized = false;
 
   @override

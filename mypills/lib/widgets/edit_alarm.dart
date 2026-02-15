@@ -19,7 +19,7 @@ class EditAlarm extends StatefulWidget {
 }
 
 class _EditAlarmState extends State<EditAlarm> {
-  late AppLocalizations _localizations;
+  late  final AppLocalizations _localizations;
   bool _isInitialized = false;
   Meal? mealValue;
   PillMealTime? pillMealTimeValue;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mypills/model/global_functions.dart';
 
 import '../l10n/app_localizations.dart';
 import '../styles/app_styles.dart';

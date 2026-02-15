@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart' show protected;
 import 'package:shared_preferences/shared_preferences.dart';
 // Project files
-import '../model/json_keys.dart';
+import '../common/json_keys.dart';
 import '../model/general_preferences.dart';
 import '../model/meals_for_pills.dart';
 import '../model/weekly_time_table.dart';

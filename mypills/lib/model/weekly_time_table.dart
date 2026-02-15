@@ -3,11 +3,9 @@ import 'dart:developer' as developer;
 import 'package:logging/logging.dart' show Level;
 // Flutter
 import 'package:flutter/material.dart';
-// l10n
-import '../l10n/app_localizations.dart' show AppLocalizations;
 // projecte
 import '../extensions/time_of_day_extensions.dart';
-import 'global_constants.dart';
+import '../common/global_constants.dart';
 import 'enum/day_of_week_bitset.dart';
 import 'enum/speed_label.dart';
 import 'enum/meal.dart';
@@ -43,20 +41,6 @@ class WeeklyTimeTable {
 
   /// Shortname
   static const _nMealPrescriptions = GlobalConstants.nMealPrescriptions;
-
-  /// The names of every partition:
-  /// - The main one (without days of week)
-  /// - The others ones
-  static (String, List<String>) partitionNames(AppLocalizations t) {
-    return (
-      t.weeklyDefaultTimetable,
-      List.unmodifiable([
-        t.weeklyAltTimetable1,
-        t.weeklyAltTimetable2,
-        t.weeklyAltTimetable3,
-      ]),
-    );
-  }
 
   static Map<String, dynamic> _timeTableToJson(
     Map<Meal, (TimeOfDay, SpeedLabel)> value,

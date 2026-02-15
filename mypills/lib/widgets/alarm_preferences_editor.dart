@@ -26,7 +26,7 @@ class AlarmPreferencesEditor extends StatefulWidget {
 }
 
 class _AlarmPreferencesEditorState extends State<AlarmPreferencesEditor> {
-  late List<TextEditingController> _controllers;
+  late final List<TextEditingController> _controllers;
 
   @override
   void initState() {

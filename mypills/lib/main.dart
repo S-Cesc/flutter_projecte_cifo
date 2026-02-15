@@ -44,7 +44,7 @@ final int isolateId = Isolate.current.hashCode;
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// A port used to communicate from a background isolate to the UI isolate.
-ReceivePort? wakeupPort; // warning! there is a late intialization
+ReceivePort? wakeupPort; // warning! there is a late initialization
 
 /// the stream listened on the [wakeupPort] [ReceivePort]
 /// with name [uiWakeupPortName]

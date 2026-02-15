@@ -26,7 +26,7 @@ class TimePreferencesEditor extends StatefulWidget {
 }
 
 class _TimePreferencesEditorState extends State<TimePreferencesEditor> {
-  late List<TextEditingController> _controllers;
+  late final List<TextEditingController> _controllers;
   bool saved = true;
 
   @override

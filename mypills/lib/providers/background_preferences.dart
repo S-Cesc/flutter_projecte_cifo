@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Project files
 import '../model/alarm.dart';
 import '../model/general_preferences.dart';
-import '../model/json_keys.dart';
+import '../common/json_keys.dart';
 import '../model/weekly_time_table.dart';
 import 'general_settings.dart';
 
@@ -28,7 +28,7 @@ class BackgroundPreferences {
   //-----------------class state members and constructors ----------------------
 
   final SharedPreferencesAsync _shPrefs;
-  late ReadOnlyGeneralSettings _generalSettings;
+  late final ReadOnlyGeneralSettings _generalSettings;
 
   Alarm? _currentAlarm;
 
